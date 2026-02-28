@@ -1,0 +1,183 @@
+{
+  "projectType": "cli-tool",
+  "projectName": "Claude Code Templates",
+  "projectDescription": "A comprehensive CLI tool for installing and managing Claude Code components including agents, commands, MCPs, hooks, and settings.",
+  "theme": "aspen",
+  "primaryColor": "#F97316",
+  "lightColor": "#FB923C",
+  "darkColor": "#EA580C",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "installation"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/components",
+              "concepts/agents",
+              "concepts/commands",
+              "concepts/mcps",
+              "concepts/hooks",
+              "concepts/settings",
+              "concepts/templates"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/installing-components",
+              "guides/batch-installation",
+              "guides/interactive-mode",
+              "guides/workflows",
+              "guides/global-agents"
+            ]
+          },
+          {
+            "group": "Tools",
+            "pages": [
+              "tools/analytics-dashboard",
+              "tools/conversation-monitor",
+              "tools/health-check",
+              "tools/plugin-dashboard",
+              "tools/stats-tools"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": [
+              "advanced/sandbox-execution",
+              "advanced/session-sharing",
+              "advanced/remote-access",
+              "advanced/creating-components"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Component Library",
+        "groups": [
+          {
+            "group": "Browse Components",
+            "pages": [
+              "components/overview",
+              "components/agents",
+              "components/commands",
+              "components/mcps",
+              "components/hooks",
+              "components/settings",
+              "components/templates"
+            ]
+          },
+          {
+            "group": "Featured Categories",
+            "pages": [
+              "categories/development-team",
+              "categories/security",
+              "categories/database",
+              "categories/devops-infrastructure",
+              "categories/testing"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "CLI Reference",
+        "groups": [
+          {
+            "group": "Commands",
+            "pages": [
+              "cli/overview",
+              "cli/install-component",
+              "cli/create-agent",
+              "cli/list-agents",
+              "cli/analytics",
+              "cli/health-check"
+            ]
+          },
+          {
+            "group": "Options",
+            "pages": [
+              "cli/flags",
+              "cli/configuration",
+              "cli/environment-variables"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API",
+        "groups": [
+          {
+            "group": "Endpoints",
+            "pages": [
+              "api/overview",
+              "api/track-download",
+              "api/discord-integration",
+              "api/claude-code-check"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Contributing",
+        "groups": [
+          {
+            "group": "Development",
+            "pages": [
+              "contributing/getting-started",
+              "contributing/adding-components",
+              "contributing/component-guidelines",
+              "contributing/testing"
+            ]
+          },
+          {
+            "group": "Resources",
+            "pages": [
+              "contributing/architecture",
+              "contributing/publishing",
+              "contributing/code-standards"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "600+ AI agents for specialized development tasks",
+    "200+ custom slash commands for workflows",
+    "55+ MCP integrations with external services",
+    "Real-time analytics dashboard for monitoring Claude Code sessions",
+    "Mobile-optimized conversation monitor with remote access",
+    "Health check system for validating Claude Code setup",
+    "Interactive component browser at aitmpl.com",
+    "Batch installation and workflow support"
+  ],
+  "publicApiSurface": [
+    "npx claude-code-templates",
+    "cct",
+    "--agent <name>",
+    "--command <name>",
+    "--mcp <name>",
+    "--hook <name>",
+    "--setting <name>",
+    "--template <template>",
+    "--analytics",
+    "--chats",
+    "--health-check",
+    "--create-agent <name>",
+    "--list-agents",
+    "--sandbox <provider>",
+    "--workflow <hash>",
+    "--plugins",
+    "--tunnel"
+  ]
+}
