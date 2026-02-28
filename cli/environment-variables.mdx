@@ -202,6 +202,66 @@ DEBUG=* cct --analytics
 DEBUG=claude:* cct --agent frontend-developer
 ```
 
+### CCT_DEBUG
+
+<ParamField path="CCT_DEBUG" type="string">
+  Enable Claude Code Templates debug logging
+</ParamField>
+
+**Usage**:
+```bash
+export CCT_DEBUG=true
+```
+
+**Purpose**: 
+- Show tracking debug messages
+- Display non-critical errors
+- Troubleshoot analytics issues
+
+**Example**:
+```bash
+CCT_DEBUG=true npx claude-code-templates --agent frontend-developer
+```
+
+### CCT_NO_TRACKING
+
+<ParamField path="CCT_NO_TRACKING" type="string">
+  Disable usage tracking and analytics
+</ParamField>
+
+**Usage**:
+```bash
+export CCT_NO_TRACKING=true
+```
+
+**Purpose**: 
+- Opt out of anonymous usage analytics
+- Disable component download tracking
+- Privacy-focused installations
+
+**Example**:
+```bash
+CCT_NO_TRACKING=true npx claude-code-templates --agent security-auditor
+```
+
+### CCT_NO_ANALYTICS
+
+<ParamField path="CCT_NO_ANALYTICS" type="string">
+  Alias for CCT_NO_TRACKING (disables analytics)
+</ParamField>
+
+**Usage**:
+```bash
+export CCT_NO_ANALYTICS=true
+```
+
+**Purpose**: 
+- Same as CCT_NO_TRACKING
+- Alternative environment variable name
+- Disables all telemetry
+
+**Note**: Setting either `CCT_NO_TRACKING` or `CCT_NO_ANALYTICS` to `true` will disable tracking.
+
 ## Shell Configuration
 
 ### PATH
@@ -260,6 +320,29 @@ source ~/.bashrc  # Or ~/.zshrc, ~/.config/fish/config.fish
 - Detect shell for PATH configuration
 - Shell-specific features
 - Autocompletion setup
+
+### CI
+
+<ParamField path="CI" type="string">
+  Continuous Integration environment indicator
+</ParamField>
+
+**Values**:
+- `true` - Running in CI environment
+- Unset - Local development
+
+**Purpose**: 
+- Automatically disables tracking in CI/CD
+- Prevents analytics in automated environments
+- Skips interactive prompts
+
+**Set by**: GitHub Actions, GitLab CI, CircleCI, Jenkins, and other CI platforms automatically set this variable.
+
+**Manual Override**:
+```bash
+# Force CI mode locally
+CI=true npx claude-code-templates --agent frontend-developer
+```
 
 ## Project-Specific Variables
 
