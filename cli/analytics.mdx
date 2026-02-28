@@ -1,0 +1,603 @@
+---
+title: Analytics Dashboard
+description: Real-time analytics dashboard for monitoring Claude Code usage and sessions
+---
+
+# Analytics Dashboard
+
+The Analytics Dashboard provides comprehensive real-time monitoring of your Claude Code usage, conversations, and performance metrics.
+
+## Launch Analytics
+
+### Basic Launch
+
+Start the analytics dashboard:
+
+```bash
+cct --analytics
+```
+
+This:
+1. Starts web server on `http://localhost:3333`
+2. Opens dashboard in your default browser
+3. Begins real-time monitoring
+
+### With Remote Access
+
+Enable Cloudflare Tunnel for remote access:
+
+```bash
+cct --analytics --tunnel
+```
+
+Generates a public URL like:
+```
+https://analytics-abc123.trycloudflare.com
+```
+
+Access from any device with internet connection.
+
+### Specific Views
+
+Open to specific dashboard pages:
+
+```bash
+# Open to agents view
+cct --agents
+
+# Open to Year in Review 2025
+cct --2025
+```
+
+## Dashboard Features
+
+### Overview Page
+
+The main dashboard shows:
+
+**Real-time Statistics**:
+- Total conversations
+- Token usage (input/output)
+- Cache usage (creation/read)
+- Active projects count
+- Last activity timestamp
+
+**Recent Conversations**:
+- Conversation list with timestamps
+- Project names and paths
+- Message counts
+- Token usage per conversation
+- Conversation states (active/completed)
+
+**Activity Heatmap**:
+- Visual representation of daily activity
+- Hour-by-hour usage patterns
+- Peak usage times
+- Activity trends
+
+### Agents Analytics
+
+Dedicated agent performance tracking:
+
+```bash
+cct --agents
+```
+
+**Metrics**:
+- Agent usage frequency
+- Average tokens per agent
+- Success rates
+- Response times
+- Popular agents
+
+**Analysis**:
+- Most used agents
+- Agent effectiveness
+- Usage patterns
+- Recommendations
+
+### Session Data
+
+Max plan usage tracking:
+
+**Session Limits**:
+- Current session count
+- 5-hour rolling window
+- Remaining messages
+- Reset time
+
+**Historical Data**:
+- Session history
+- Usage patterns
+- Peak periods
+
+### Conversation Details
+
+Detailed conversation breakdown:
+
+**For each conversation**:
+- Project name and path
+- Creation timestamp
+- Last update time
+- Message count
+- Total tokens (input/output)
+- Cache tokens (creation/read)
+- Tool usage statistics
+- Conversation state
+
+### Token Analytics
+
+**Input Tokens**:
+- Total input tokens
+- Average per message
+- Trends over time
+
+**Output Tokens**:
+- Total output tokens
+- Average per response
+- Generation patterns
+
+**Cache Tokens**:
+- Cache creation tokens
+- Cache read tokens
+- Cache efficiency
+
+### Project Analytics
+
+**Active Projects**:
+- Project names
+- Last activity
+- Conversation counts
+- Token usage per project
+- Project status
+
+**Project Insights**:
+- Most active projects
+- Token consumption by project
+- Project trends
+
+## Year in Review 2025
+
+Comprehensive annual usage statistics:
+
+```bash
+cct --2025
+```
+
+### Metrics Included
+
+**Usage Stats**:
+- Total conversations
+- Total messages
+- Total tokens
+- Active days
+- Average daily usage
+
+**Top Lists**:
+- Most used agents
+- Most active projects
+- Busiest days
+- Peak hours
+
+**Achievements**:
+- Milestones reached
+- Productivity metrics
+- Growth trends
+
+**Visualizations**:
+- Usage timeline
+- Activity calendar
+- Token distribution
+- Agent usage breakdown
+
+## Real-Time Updates
+
+The dashboard updates automatically:
+
+**WebSocket Connection**:
+- Real-time data streaming
+- Instant conversation updates
+- Live token counting
+- State change notifications
+
+**Refresh Intervals**:
+- Conversations: Live updates
+- Statistics: Every 5 seconds
+- Charts: Every 10 seconds
+
+## Analytics Options
+
+<ParamField path="--analytics" type="boolean">
+  Launch analytics dashboard
+</ParamField>
+
+<ParamField path="--tunnel" type="boolean">
+  Enable Cloudflare Tunnel for remote access (use with --analytics)
+</ParamField>
+
+<ParamField path="--agents" type="boolean">
+  Launch analytics dashboard with agents view
+</ParamField>
+
+<ParamField path="--2025" type="boolean">
+  Launch Year in Review 2025 dashboard
+</ParamField>
+
+<ParamField path="--verbose" type="boolean">
+  Enable verbose logging for debugging
+</ParamField>
+
+## Configuration
+
+### Port Configuration
+
+Default port: `3333`
+
+To use a different port, modify environment:
+
+```bash
+PORT=8080 cct --analytics
+```
+
+### Data Sources
+
+Analytics reads from:
+
+```bash
+~/.claude/                    # Claude Code directory
+~/.claude/conversations/      # Conversation history
+~/.claude/statsig/            # Usage statistics
+```
+
+### Cache Configuration
+
+Data caching for performance:
+
+- **Cache duration**: 60 seconds
+- **Refresh interval**: 5 seconds
+- **Memory threshold**: 300 MB
+
+## Performance Monitoring
+
+### System Resources
+
+The dashboard monitors:
+
+**Memory Usage**:
+- Current memory consumption
+- Memory threshold (300 MB)
+- Garbage collection triggers
+
+**Performance Metrics**:
+- Data load times
+- Query performance
+- WebSocket latency
+
+### Optimization
+
+For large conversation histories:
+
+1. **Cleanup old conversations**:
+   ```bash
+   # Set retention policy
+   cct --setting retention/retention-7-days
+   ```
+
+2. **Limit conversation loading**:
+   - Dashboard loads last 1000 conversations
+   - Older conversations available on demand
+
+3. **Use cache effectively**:
+   - Data cached for 60 seconds
+   - Reduces file system reads
+
+## Cloudflare Tunnel
+
+### Setup Remote Access
+
+Enable public URL:
+
+```bash
+cct --analytics --tunnel
+```
+
+**Output**:
+```
+🌐 Cloudflare Tunnel:
+✅ Public URL: https://analytics-abc123.trycloudflare.com
+📱 Scan QR code to access from mobile
+```
+
+### Security Considerations
+
+**Public URLs**:
+- URLs are temporary (expire after session)
+- No authentication by default
+- Anyone with URL can access
+
+**Best Practices**:
+1. Use only when needed
+2. Share URL privately
+3. Close tunnel after use
+4. Don't share URLs publicly
+
+### Mobile Access
+
+Access from mobile devices:
+
+1. Launch with tunnel:
+   ```bash
+   cct --analytics --tunnel
+   ```
+
+2. Scan QR code displayed in terminal
+
+3. Or open generated URL in mobile browser
+
+## Chats Mobile Interface
+
+Mobile-optimized conversation browser:
+
+```bash
+cct --chats
+cct --chats-mobile
+```
+
+**Features**:
+- Touch-optimized UI
+- Quick conversation access
+- Search and filter
+- Swipe gestures
+- Responsive design
+
+**With Remote Access**:
+```bash
+cct --chats --tunnel
+```
+
+## Plugin Dashboard
+
+Manage Claude Code plugins:
+
+```bash
+cct --plugins
+```
+
+**Features**:
+- Browse plugin marketplace
+- View installed plugins
+- Manage permissions
+- Enable/disable plugins
+
+## Skills Dashboard
+
+Explore Claude Code skills:
+
+```bash
+cct --skills-manager
+```
+
+**Features**:
+- View installed skills
+- Explore skill catalog
+- Skill documentation
+- Installation status
+
+## Teams Dashboard
+
+Multi-agent collaboration review:
+
+```bash
+cct --teams
+```
+
+**Features**:
+- Team session history
+- Agent collaboration metrics
+- Team performance
+- Collaboration patterns
+
+## Use Cases
+
+### 1. Daily Monitoring
+
+```bash
+# Start day with analytics check
+cct --analytics
+
+# Review:
+# - Yesterday's usage
+# - Active conversations
+# - Token consumption
+```
+
+### 2. Team Reporting
+
+```bash
+# Generate weekly report
+cct --analytics
+
+# Export metrics:
+# - Screenshot dashboard
+# - Note key statistics
+# - Share with team
+```
+
+### 3. Performance Optimization
+
+```bash
+# Analyze token usage
+cct --analytics
+
+# Identify:
+# - High token conversations
+# - Inefficient patterns
+# - Optimization opportunities
+```
+
+### 4. Mobile Monitoring
+
+```bash
+# Enable remote access
+cct --analytics --tunnel
+
+# Monitor from:
+# - Smartphone
+# - Tablet
+# - Another computer
+```
+
+### 5. Agent Effectiveness
+
+```bash
+# Review agent performance
+cct --agents
+
+# Analyze:
+# - Most used agents
+# - Agent success rates
+# - Usage patterns
+```
+
+## Troubleshooting
+
+### Dashboard Won't Open
+
+**Check port availability**:
+```bash
+lsof -i :3333
+```
+
+**Kill conflicting process**:
+```bash
+kill -9 $(lsof -t -i :3333)
+```
+
+**Use different port**:
+```bash
+PORT=8080 cct --analytics
+```
+
+### No Data Displayed
+
+**Verify Claude directory**:
+```bash
+ls -la ~/.claude/
+ls -la ~/.claude/conversations/
+```
+
+**Check permissions**:
+```bash
+chmod -R 755 ~/.claude/
+```
+
+**Verify conversations exist**:
+```bash
+find ~/.claude/conversations/ -name "*.json" | head
+```
+
+### Slow Performance
+
+**Clear old conversations**:
+```bash
+# Set retention policy
+cct --setting retention/retention-7-days
+
+# Manual cleanup
+find ~/.claude/conversations/ -mtime +30 -delete
+```
+
+**Increase memory threshold**:
+Edit `src/analytics.js` (for advanced users).
+
+### Tunnel Connection Failed
+
+**Check network**:
+```bash
+ping trycloudflare.com
+```
+
+**Retry tunnel**:
+```bash
+cct --analytics --tunnel
+```
+
+**Use without tunnel**:
+```bash
+cct --analytics
+```
+
+### WebSocket Disconnects
+
+**Check firewall**:
+- Allow WebSocket connections on port 3333
+- Disable firewall temporarily to test
+
+**Restart dashboard**:
+```bash
+# Kill existing
+pkill -f analytics
+
+# Restart
+cct --analytics
+```
+
+## Advanced Usage
+
+### Custom Analytics
+
+Extend with custom queries:
+
+```javascript
+// Read conversation data
+const fs = require('fs');
+const path = require('path');
+const homeDir = require('os').homedir();
+
+const conversationsDir = path.join(homeDir, '.claude', 'conversations');
+const conversations = fs.readdirSync(conversationsDir)
+  .filter(f => f.endsWith('.json'))
+  .map(f => JSON.parse(fs.readFileSync(path.join(conversationsDir, f))));
+
+// Custom analysis
+const totalTokens = conversations.reduce((sum, conv) => {
+  return sum + (conv.usage?.input_tokens || 0) + (conv.usage?.output_tokens || 0);
+}, 0);
+
+console.log('Total tokens:', totalTokens);
+```
+
+### Export Analytics Data
+
+```bash
+# Export to JSON
+node -e "const fs = require('fs'); const data = require('$HOME/.claude/conversations/conversation-123.json'); fs.writeFileSync('export.json', JSON.stringify(data, null, 2));"
+```
+
+### Integration with Monitoring Tools
+
+Forward metrics to external tools:
+
+```javascript
+// Example: Send to monitoring service
+const metrics = {
+  timestamp: Date.now(),
+  conversations: conversationCount,
+  tokens: totalTokens,
+  projects: activeProjects.length
+};
+
+// POST to monitoring API
+fetch('https://monitoring.example.com/metrics', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(metrics)
+});
+```
+
+## Next Steps
+
+- [Health Check](/cli/health-check) - Verify Claude Code setup
+- [CLI Flags Reference](/cli/flags) - Complete flags documentation
+- [Configuration Guide](/cli/configuration) - Settings and config files
+- [Environment Variables](/cli/environment-variables) - Configure analytics

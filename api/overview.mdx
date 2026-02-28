@@ -1,0 +1,114 @@
+---
+title: 'API Overview'
+description: 'Claude Code Templates API endpoints for download tracking, Discord integration, and version monitoring'
+---
+
+## Base URL
+
+All API endpoints are hosted on Vercel:
+
+```
+https://www.aitmpl.com/api
+```
+
+## Available Endpoints
+
+### Download Tracking
+
+**POST** `/api/track-download-supabase`
+
+Tracks component downloads for analytics. Used automatically by the CLI on every component installation.
+
+[View documentation →](/api/track-download)
+
+### Discord Integration
+
+**POST** `/api/discord/interactions`
+
+Handles Discord bot slash commands for searching and installing components.
+
+[View documentation →](/api/discord-integration)
+
+### Claude Code Monitoring
+
+**POST/GET** `/api/claude-code-check`
+
+Monitors Claude Code releases and sends Discord notifications. Runs automatically via Vercel Cron every 30 minutes.
+
+[View documentation →](/api/claude-code-check)
+
+## Authentication
+
+Most endpoints do not require authentication. The Discord interactions endpoint validates requests using Ed25519 signature verification.
+
+## CORS
+
+All endpoints support Cross-Origin Resource Sharing (CORS) with the following headers:
+
+```http
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: POST, GET, OPTIONS
+Access-Control-Allow-Headers: Content-Type, User-Agent
+```
+
+## Rate Limiting
+
+There are no explicit rate limits, but endpoints are subject to Vercel's serverless function limits:
+
+- **Execution time**: 10 seconds (Hobby), 60 seconds (Pro)
+- **Memory**: 1024 MB
+- **Payload size**: 4.5 MB
+
+## Error Responses
+
+All endpoints return consistent error responses:
+
+<ResponseField name="error" type="string">
+  Error type or message
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable error description
+</ResponseField>
+
+<ResponseField name="details" type="string" optional>
+  Additional error details (development mode only)
+</ResponseField>
+
+### Example Error Response
+
+```json
+{
+  "error": "Internal server error",
+  "message": "Failed to track download",
+  "details": "Database connection failed"
+}
+```
+
+## Environment
+
+The API runs on Vercel Serverless Functions with the following infrastructure:
+
+- **Database (Download Tracking)**: Supabase
+- **Database (Claude Code Monitoring)**: Neon PostgreSQL
+- **Runtime**: Node.js
+- **Region**: Auto-selected by Vercel Edge Network
+
+## Status & Monitoring
+
+Monitor API health:
+
+```bash
+# View production logs
+vercel logs aitmpl.com --follow
+
+# Check deployment status
+vercel ls
+```
+
+## Support
+
+For API issues or questions:
+
+- GitHub Issues: [github.com/anomalyco/opencode](https://github.com/anomalyco/opencode)
+- Documentation: [aitmpl.com](https://aitmpl.com)

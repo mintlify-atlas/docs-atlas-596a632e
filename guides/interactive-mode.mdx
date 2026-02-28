@@ -1,0 +1,543 @@
+---
+title: Interactive Mode
+description: Use the interactive CLI menu to browse, select, and install components with a visual interface
+---
+
+# Interactive Mode
+
+Interactive mode provides a terminal-based visual interface for browsing and installing components. It's perfect when you don't know exactly which components you need or want to explore what's available.
+
+## Launching Interactive Mode
+
+Run the CLI without any flags:
+
+```bash
+npx claude-code-templates@latest
+```
+
+You'll see the branded welcome screen:
+
+```
+════════════════════════════════════════════════════════════════
+
+       🔮 Claude Code Templates
+
+       Your starting point for Claude Code projects
+
+════════════════════════════════════════════════════════════════
+
+🚀 Setup Claude Code for any project language 🚀
+                             v1.2.3
+
+🌐 Templates: https://aitmpl.com
+📖 Documentation: https://docs.aitmpl.com
+```
+
+## Main Menu
+
+The main menu offers several options:
+
+```bash
+? What would you like to do?
+  📊 Analytics Dashboard - Monitor your Claude Code usage and sessions
+  💬 Chats Mobile - AI-first mobile interface for conversations
+  🤖 Agents Dashboard - View and analyze Claude conversations with agent tools
+❯ ⚙️ Project Setup - Configure Claude Code for your project
+  🔍 Health Check - Verify your Claude Code setup and configuration
+```
+
+<Accordion title="Menu Options Explained">
+
+- **Analytics Dashboard** - Opens a web dashboard showing your usage statistics, session history, and download metrics
+- **Chats Mobile** - Launches a mobile-optimized chat interface for Claude conversations
+- **Agents Dashboard** - Opens agent management interface with conversation analysis
+- **Project Setup** - Starts the component installation workflow (most common choice)
+- **Health Check** - Scans your project for configuration issues and recommends fixes
+
+</Accordion>
+
+## Project Setup Flow
+
+Selecting "Project Setup" starts the component selection wizard.
+
+<Steps>
+
+### Project Detection
+
+```bash
+⠋ Detecting project type...
+✔ Project detection complete
+
+Target directory: /Users/you/projects/my-app
+```
+
+The CLI automatically detects:
+- Programming language (from `package.json`, `requirements.txt`, etc.)
+- Framework (React, Next.js, Django, etc.)
+- Existing Claude Code configuration
+
+### Template Selection
+
+```bash
+? Select a template for your project:
+❯ common - Universal Claude Code setup for any language
+  javascript-typescript - Node.js, TypeScript, React, Vue
+  python - Python, Django, Flask, FastAPI
+  ruby - Ruby, Rails
+  java - Java, Spring, Maven, Gradle
+  go - Go, Gin, Echo
+  rust - Rust, Cargo
+```
+
+<Note>
+**Template Recommendation**: If your language is detected, it will be pre-selected. You can change it if needed.
+</Note>
+
+### Agent Selection
+
+```bash
+? Select agents to install (Space to select, Enter to continue):
+  Development Team
+    ◯ frontend-developer - React, Vue, Angular specialist
+    ◉ backend-developer - Node.js, Python, API development
+    ◯ full-stack-developer - End-to-end web development
+  
+  Security
+    ◉ security-auditor - Security analysis and vulnerability detection
+    ◯ penetration-tester - Security testing and exploitation
+  
+  Data/AI
+    ◯ ml-engineer - Machine learning model development
+    ◯ data-scientist - Data analysis and visualization
+```
+
+**Navigation**:
+- **Arrow keys** - Move selection up/down
+- **Space** - Toggle selection on/off
+- **Enter** - Confirm and continue
+- **Ctrl+C** - Cancel and exit
+
+### Command Selection
+
+```bash
+? Select commands to install:
+  Development
+    ◉ docker-setup - Docker and docker-compose configuration
+    ◉ setup-testing - Jest, Pytest, or other test frameworks
+    ◯ git-setup - Git configuration and hooks
+  
+  DevOps
+    ◯ ci-pipeline - GitHub Actions, GitLab CI setup
+    ◯ deploy-vercel - Vercel deployment configuration
+```
+
+Same navigation as agent selection.
+
+### MCP Selection
+
+```bash
+? Select MCP servers to install:
+  ◉ filesystem - File system access for Claude
+  ◉ web-fetch - HTTP requests and web scraping
+  ◯ database - PostgreSQL/MySQL integration
+  ◯ github-integration - GitHub API access
+```
+
+<Warning>
+**MCP Dependencies**: Some MCPs require additional setup (API keys, etc.). Check the documentation after installation.
+</Warning>
+
+### Hooks Selection
+
+```bash
+? Select automation hooks to install:
+  Git Workflow
+    ◉ git/pre-commit-lint - Run linting before git commit
+    ◯ git/prevent-force-push - Block git push --force
+  
+  Automation
+    ◉ automation/simple-notifications - Desktop notifications
+    ◯ automation/build-on-change - Auto-build on file save
+```
+
+### Settings Selection
+
+```bash
+? Select settings to configure:
+  ◉ enable-telemetry - Share usage data to improve Claude Code
+  ◯ use-sonnet - Use Claude Sonnet model (faster)
+  ◯ use-opus - Use Claude Opus model (more powerful)
+  ◯ read-only-mode - Prevent file modifications
+```
+
+### Installation Location
+
+For settings and hooks:
+
+```bash
+? Where would you like to install settings and hooks?
+  ◯ User settings (~/.claude/settings.json) - All projects
+  ◯ Project settings (.claude/settings.json) - This project, shared with team
+  ◉ Local settings (.claude/settings.local.json) - This project, personal only
+```
+
+### Confirmation
+
+```bash
+📋 Installation Summary:
+
+  Agents (2):
+    • backend-developer
+    • security-auditor
+  
+  Commands (2):
+    • docker-setup
+    • setup-testing
+  
+  MCPs (2):
+    • filesystem
+    • web-fetch
+  
+  Hooks (2):
+    • git/pre-commit-lint
+    • automation/simple-notifications
+  
+  Settings (1):
+    • enable-telemetry
+
+? Proceed with installation? (Y/n)
+```
+
+### Installation Progress
+
+```bash
+⠋ Copying template files...
+✔ Template files copied successfully
+
+🤖 Installing Claude Code agents...
+✅ Agent "backend-developer" installed successfully!
+✅ Agent "security-auditor" installed successfully!
+
+⚡ Installing commands...
+✅ Command "docker-setup" installed successfully!
+✅ Command "setup-testing" installed successfully!
+
+🔌 Installing MCPs...
+✅ MCP "filesystem" installed successfully!
+✅ MCP "web-fetch" installed successfully!
+
+🪝 Installing hooks...
+✅ Hook "git/pre-commit-lint" installed successfully!
+✅ Hook "automation/simple-notifications" installed successfully!
+
+⚙️ Configuring settings...
+✅ Setting "enable-telemetry" installed successfully!
+
+✅ Claude Code configuration setup complete!
+```
+
+### Post-Installation Summary
+
+```bash
+📚 Next steps:
+  1. Review the generated CLAUDE.md file
+  2. Customize the configuration for your project
+  3. Start using Claude Code with: claude
+
+🌐 View all available templates at: https://aitmpl.com/
+📖 Read the complete documentation at: https://docs.aitmpl.com/
+
+💡 Language-specific features for javascript-typescript have been configured
+🎯 Framework-specific commands for react are available
+🔧 4 automation hooks have been configured
+🔧 2 MCP servers have been configured
+```
+
+</Steps>
+
+## Interactive Features
+
+### Back Navigation
+
+You can go back to previous steps using **Ctrl+C** and restarting, or by using the back option in some prompts.
+
+### Search and Filter
+
+When selecting components, you can filter by typing:
+
+```bash
+? Select agents to install:
+  Filter: security ▊
+  
+  Security
+    ◯ security-auditor
+    ◯ penetration-tester
+    ◯ security-researcher
+```
+
+Type to filter, press **Backspace** to clear filter.
+
+### Select All / Deselect All
+
+Some prompts support bulk selection:
+
+- **Ctrl+A** - Select all visible items
+- **Ctrl+D** - Deselect all items
+
+### Component Details
+
+Some interactive prompts show component descriptions when you hover over them.
+
+## Health Check Mode
+
+Selecting "Health Check" from the main menu:
+
+<Steps>
+
+### Run Diagnostics
+
+```bash
+🔍 Running Health Check...
+
+✔ Claude CLI detected
+✔ Project directory accessible
+✔ .claude directory exists
+⚠ No agents installed
+⚠ No commands installed
+✔ .mcp.json configured correctly
+⚠ No hooks configured
+```
+
+### Review Recommendations
+
+```bash
+📋 Health Check Results:
+
+✅ Passed: 3/6 checks
+⚠️ Warnings: 3/6 checks
+❌ Errors: 0/6 checks
+
+💡 Recommendations:
+  • Install at least one agent for task automation
+  • Consider adding development commands
+  • Configure automation hooks for better workflow
+
+? Would you like to run Project Setup now? (Y/n)
+```
+
+### Auto-Fix (Optional)
+
+If you select "Yes", it automatically launches Project Setup with recommended components pre-selected.
+
+</Steps>
+
+## Analytics Dashboard
+
+Selecting "Analytics Dashboard" opens a web interface:
+
+```bash
+📊 Launching Claude Code Analytics Dashboard...
+🌐 Dashboard available at: http://localhost:3001
+```
+
+The dashboard shows:
+- Session history and duration
+- Component usage statistics
+- Download counts for your installed components
+- Trending components in the community
+- Agent conversation analytics
+
+<Note>
+**Tunnel Mode**: Add `--tunnel` flag to expose the dashboard publicly via Cloudflare:
+
+```bash
+npx claude-code-templates@latest --analytics --tunnel
+```
+</Note>
+
+## Chats Mobile Interface
+
+Selecting "Chats Mobile" launches a mobile-optimized chat interface:
+
+```bash
+💬 Launching Claude Code Mobile Chats...
+🌐 Interface available at: http://localhost:3002
+```
+
+Optimized for:
+- Touch interactions
+- Small screens
+- Conversation history
+- Quick component installation
+
+## Non-Interactive Equivalent
+
+Every interactive selection can be replicated with CLI flags:
+
+<CodeGroup>
+
+```bash Interactive
+npx claude-code-templates@latest
+# ... make selections ...
+```
+
+```bash Non-Interactive (Equivalent)
+npx claude-code-templates@latest \
+  --template javascript-typescript \
+  --agent backend-developer \
+  --agent security-auditor \
+  --command docker-setup \
+  --command setup-testing \
+  --mcp filesystem \
+  --mcp web-fetch \
+  --hook git/pre-commit-lint \
+  --setting enable-telemetry \
+  --yes
+```
+
+</CodeGroup>
+
+The CLI prints the equivalent command after installation for future automation.
+
+## Customizing Interactive Mode
+
+### Pre-select Components
+
+You can start interactive mode with some components already specified:
+
+```bash
+npx claude-code-templates@latest \
+  --agent security-auditor \
+  --mcp filesystem
+# Interactive mode opens with these pre-selected
+```
+
+### Skip Specific Prompts
+
+Use `--yes` to skip confirmation prompts:
+
+```bash
+npx claude-code-templates@latest --yes
+# Skips "Proceed with installation?" confirmation
+```
+
+### Target Directory
+
+Specify directory before launching interactive mode:
+
+```bash
+npx claude-code-templates@latest --directory ./my-project
+# Interactive mode installs to ./my-project
+```
+
+## Keyboard Shortcuts Reference
+
+| Shortcut | Action |
+|----------|--------|
+| **Arrow Up/Down** | Navigate options |
+| **Space** | Toggle selection (checkboxes) |
+| **Enter** | Confirm and continue |
+| **Ctrl+C** | Cancel and exit |
+| **Ctrl+A** | Select all (where supported) |
+| **Ctrl+D** | Deselect all (where supported) |
+| **Backspace** | Clear filter text |
+| **Tab** | Auto-complete (in some prompts) |
+
+## Troubleshooting Interactive Mode
+
+### Terminal Display Issues
+
+If the interface looks broken:
+
+```bash
+# Force UTF-8 encoding
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+npx claude-code-templates@latest
+```
+
+### Arrow Keys Not Working
+
+Some terminals (especially in Docker) don't support interactive prompts:
+
+**Solution**: Use non-interactive mode with flags instead:
+
+```bash
+npx claude-code-templates@latest \
+  --agent security-auditor \
+  --command docker-setup \
+  --yes
+```
+
+### Session Timeout
+
+If you wait too long on a prompt:
+
+```bash
+⚠️ Session timeout. Exiting...
+```
+
+**Solution**: Restart and proceed quickly, or use `--yes` flag.
+
+### Component List Not Loading
+
+If components don't appear:
+
+```bash
+⚠️ Failed to load components. Please check your internet connection.
+```
+
+**Solution**: Check internet connection and retry. Components are fetched from GitHub.
+
+## Best Practices
+
+### First-Time Users
+
+1. **Run Health Check First**: Understand your current setup
+2. **Start with Recommended**: Let the CLI suggest components based on your project
+3. **Install Incrementally**: Don't install everything at once—add components as you need them
+
+### Team Onboarding
+
+1. **Generate Command**: One person runs interactive mode
+2. **Copy Non-Interactive Command**: Share the equivalent CLI command with team
+3. **Document in README**: Add the command to project documentation
+
+```markdown
+## Setup Claude Code
+
+Run this command to install required components:
+
+\`\`\`bash
+npx claude-code-templates@latest \
+  --agent backend-developer \
+  --command docker-setup \
+  --yes
+\`\`\`
+```
+
+### Exploring Components
+
+Use interactive mode to discover components, then:
+
+1. Note which components you selected
+2. Visit [aitmpl.com](https://aitmpl.com) to read full documentation
+3. Create a saved workflow for future projects
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Batch Installation" icon="layer-group" href="/guides/batch-installation">
+    Install multiple components at once
+  </Card>
+  <Card title="Workflows" icon="diagram-project" href="/guides/workflows">
+    Save your selection as a reusable workflow
+  </Card>
+  <Card title="Global Agents" icon="globe" href="/guides/global-agents">
+    Create agents accessible from anywhere
+  </Card>
+  <Card title="Component Browser" icon="grid" href="https://aitmpl.com">
+    Browse all available components
+  </Card>
+</CardGroup>

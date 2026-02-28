@@ -1,0 +1,537 @@
+---
+title: Publishing Workflow
+description: Complete guide to publishing components and releases to npm
+---
+
+This guide covers the complete publishing workflow for releasing components and updates to npm.
+
+## Publishing Overview
+
+The Claude Code Templates project publishes to npm as [`claude-code-templates`](https://www.npmjs.com/package/claude-code-templates). The package provides the CLI tool that users run with `npx claude-code-templates@latest`.
+
+<Info>
+  Current version: Check [package.json](https://github.com/davila7/claude-code-templates/blob/main/package.json) or run `npm view claude-code-templates version`
+</Info>
+
+## Prerequisites
+
+### 1. npm Account Setup
+
+- Create account at [npmjs.com](https://www.npmjs.com)
+- Request access to the `claude-code-templates` package (for maintainers)
+
+### 2. npm Authentication
+
+<Warning>
+  Classic npm tokens were revoked in December 2025. You MUST use **granular access tokens**.
+</Warning>
+
+Create a granular access token:
+
+<Steps>
+  <Step title="Generate Token">
+    1. Go to [npmjs.com/settings/~/tokens](https://www.npmjs.com/settings/~/tokens)
+    2. Click "Generate New Token" → "Granular Access Token"
+    3. Configure:
+       - **Permissions**: Read and Write
+       - **Packages**: Select `claude-code-templates`
+       - **IP Allowlist**: Optional (for security)
+       - **Bypass 2FA**: Enable (required for publishing)
+  </Step>
+  
+  <Step title="Store Token Securely">
+    ```bash
+    # Store in environment variable (recommended)
+    export NPM_TOKEN="npm_xxx..."
+    
+    # Or configure npm
+    npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+  Never commit tokens to the repository. Always clean up after publishing:
+  ```bash
+  npm config delete //registry.npmjs.org/:_authToken
+  ```
+</Warning>
+
+## Complete Publishing Workflow
+
+### Step 1: Update Component Catalog
+
+Before publishing, regenerate the component catalog to include all changes:
+
+```bash
+# Generate updated catalog
+python scripts/generate_components_json.py
+
+# Verify catalog was updated
+ls -lh docs/components.json
+
+# Check for errors in output
+# Should show component counts and no errors
+```
+
+The script:
+- Scans all components in `cli-tool/components/`
+- Validates format and structure
+- Generates `docs/components.json` (~2MB)
+- Runs security validation
+
+### Step 2: Run Tests
+
+Ensure all tests pass before publishing:
+
+```bash
+# Run CLI test suite
+cd cli-tool
+npm test
+
+# Run API tests
+cd ../api
+npm install
+npm test
+
+# Test component installation
+cd ..
+npx claude-code-templates@latest --agent frontend-developer --dry-run
+```
+
+All tests must pass. Fix any failures before continuing.
+
+### Step 3: Version Management
+
+Determine and update the version number:
+
+```bash
+# Check current published version
+npm view claude-code-templates version
+
+# Check local version
+cat package.json | grep '"version"'
+
+# Decide on version bump
+# - patch: 1.28.16 → 1.28.17 (bug fixes, minor updates)
+# - minor: 1.28.16 → 1.29.0 (new features, backward compatible)
+# - major: 1.28.16 → 2.0.0 (breaking changes)
+```
+
+#### Manual Version Update
+
+Edit `package.json` to bump the version:
+
+```json
+{
+  "name": "claude-code-templates",
+  "version": "1.28.17",  // Increment this
+  // ...
+}
+```
+
+#### Automated Version Bump
+
+Or use npm version command:
+
+```bash
+# Patch version (1.28.16 → 1.28.17)
+npm version patch
+
+# Minor version (1.28.16 → 1.29.0)
+npm version minor
+
+# Major version (1.28.16 → 2.0.0)
+npm version major
+```
+
+<Info>
+  The local `package.json` version may drift from npm if published from CI. Always check `npm view claude-code-templates version` first.
+</Info>
+
+### Step 4: Commit Version Bump
+
+Commit the version change:
+
+```bash
+# Stage version change
+git add package.json
+
+# If catalog was updated
+git add docs/components.json
+
+# Commit with version message
+git commit -m "chore: Bump version to 1.28.17"
+
+# Push to main
+git push origin main
+```
+
+### Step 5: Publish to npm
+
+<Warning>
+  Publishing is irreversible. Double-check version and changes before publishing.
+</Warning>
+
+```bash
+# Configure npm with token
+npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+
+# Publish to npm
+npm publish
+
+# Clean up token (IMPORTANT)
+npm config delete //registry.npmjs.org/:_authToken
+unset NPM_TOKEN
+```
+
+Expected output:
+```bash
+npm notice 
+npm notice 📦  claude-code-templates@1.28.17
+npm notice === Tarball Contents === 
+npm notice 2.1kB   package.json
+npm notice 11.2kB  README.md
+npm notice === Tarball Details === 
+npm notice name:          claude-code-templates
+npm notice version:       1.28.17
+npm notice package size:  123.4 kB
+npm notice unpacked size: 456.7 kB
+npm notice total files:   234
+npm notice 
++ claude-code-templates@1.28.17
+```
+
+### Step 6: Tag Release
+
+Create a Git tag for the release:
+
+```bash
+# Create tag
+git tag v1.28.17
+
+# Push tag to GitHub
+git push origin v1.28.17
+
+# Verify tag was created
+git tag -l
+```
+
+### Step 7: Deploy Website
+
+Deploy the updated website with new components:
+
+```bash
+# Deploy to Vercel production
+vercel --prod
+
+# Or use deployment script
+npm run deploy:site
+
+# Monitor deployment
+vercel logs aitmpl.com --follow
+```
+
+<Info>
+  For production deployments, always use the deployer agent (`.claude/agents/deployer.md`) which runs pre-deploy checks.
+</Info>
+
+### Step 8: Verify Release
+
+Verify the release was successful:
+
+```bash
+# Check npm shows new version
+npm view claude-code-templates version
+# Should show: 1.28.17
+
+# Test installation from npm
+npx claude-code-templates@latest --version
+
+# Test component installation
+npx claude-code-templates@latest --agent frontend-developer
+
+# Check website shows updated components
+curl https://aitmpl.com/components.json | jq '.agents | length'
+```
+
+## Publishing Components Only
+
+If you're adding components without changing the CLI:
+
+```bash
+# 1. Update component catalog
+python scripts/generate_components_json.py
+
+# 2. Commit changes
+git add docs/components.json cli-tool/components/
+git commit -m "feat: Add new agent for X"
+git push origin main
+
+# 3. Deploy website (no npm publish needed)
+vercel --prod
+```
+
+Users will see new components immediately on the website. The CLI will fetch them from GitHub.
+
+## Version Numbering Guidelines
+
+### Patch Version (x.x.X)
+
+Increment for:
+- Bug fixes
+- Documentation updates
+- Minor component improvements
+- Security patches
+
+### Minor Version (x.X.0)
+
+Increment for:
+- New components added
+- New features (backward compatible)
+- Significant improvements
+- New CLI options
+
+### Major Version (X.0.0)
+
+Increment for:
+- Breaking changes
+- Major architecture changes
+- Incompatible API changes
+- CLI breaking changes
+
+## Rollback Procedure
+
+If a release has issues:
+
+### 1. Deprecate Bad Version
+
+```bash
+# Deprecate the problematic version
+npm deprecate claude-code-templates@1.28.17 "This version has issues, use 1.28.16 instead"
+```
+
+### 2. Publish Fixed Version
+
+```bash
+# Fix the issue
+# Bump to next patch version
+# Publish new version
+npm version patch
+npm publish
+```
+
+### 3. Rollback Website
+
+```bash
+# List deployments
+vercel ls
+
+# Promote previous deployment
+vercel promote <previous-deployment-url>
+```
+
+<Warning>
+  npm does NOT allow unpublishing versions after 72 hours. You can only deprecate them.
+</Warning>
+
+## Common Issues
+
+### "Version already exists"
+
+```bash
+# Error: This version already exists on npm
+# Solution: Bump version number
+npm version patch
+npm publish
+```
+
+### "401 Unauthorized"
+
+```bash
+# Error: Authentication failed
+# Solution: Check token configuration
+npm config get //registry.npmjs.org/:_authToken
+
+# Reconfigure with correct token
+npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+```
+
+### "403 Forbidden"
+
+```bash
+# Error: No permission to publish
+# Solution: Ensure token has correct permissions:
+# - Read and Write access
+# - Bypass 2FA enabled
+# - Correct package selected
+
+# Request maintainer access if needed
+```
+
+### "EPUBLISHCONFLICT"
+
+```bash
+# Error: Another publish in progress
+# Solution: Wait a few minutes and retry
+
+# Or check npm for the published version
+npm view claude-code-templates version
+```
+
+## npm Publishing Notes
+
+### Granular Access Tokens
+
+- **Classic tokens** were revoked December 2025
+- Use **granular access tokens** from [npmjs.com/settings/~/tokens](https://www.npmjs.com/settings/~/tokens)
+- Token must have:
+  - **Read and Write** permissions for `claude-code-templates`
+  - **"Bypass 2FA"** enabled (required for publishing)
+- Always remove token after publishing: `npm config delete`
+
+### Package Scope
+
+Package is unscoped (`claude-code-templates` not `@org/claude-code-templates`):
+- Simpler installation: `npx claude-code-templates`
+- No organization required
+- Public package (not private)
+
+### .npmignore
+
+Files excluded from npm package:
+
+```bash
+# See .npmignore in project root
+.git/
+.github/
+node_modules/
+tests/
+*.test.js
+.env
+```
+
+## Publishing Checklist
+
+Before publishing:
+
+<Steps>
+  <Step title="Component Catalog">
+    ```bash
+    python scripts/generate_components_json.py
+    ```
+    ✅ No errors during generation
+  </Step>
+  
+  <Step title="Tests Pass">
+    ```bash
+    npm test
+    cd api && npm test
+    ```
+    ✅ All tests passing
+  </Step>
+  
+  <Step title="Version Updated">
+    ```bash
+    # Check version is incremented
+    cat package.json | grep version
+    ```
+    ✅ Version bumped correctly
+  </Step>
+  
+  <Step title="Changes Committed">
+    ```bash
+    git status
+    ```
+    ✅ All changes committed and pushed
+  </Step>
+  
+  <Step title="Token Configured">
+    ```bash
+    npm config get //registry.npmjs.org/:_authToken
+    ```
+    ✅ Token configured correctly
+  </Step>
+  
+  <Step title="Publish">
+    ```bash
+    npm publish
+    ```
+    ✅ Published successfully
+  </Step>
+  
+  <Step title="Tag Release">
+    ```bash
+    git tag v1.28.17 && git push origin v1.28.17
+    ```
+    ✅ Git tag created
+  </Step>
+  
+  <Step title="Deploy Website">
+    ```bash
+    vercel --prod
+    ```
+    ✅ Website deployed
+  </Step>
+  
+  <Step title="Clean Up">
+    ```bash
+    npm config delete //registry.npmjs.org/:_authToken
+    ```
+    ✅ Token removed
+  </Step>
+  
+  <Step title="Verify">
+    ```bash
+    npm view claude-code-templates version
+    npx claude-code-templates@latest --version
+    ```
+    ✅ Version verified on npm
+  </Step>
+</Steps>
+
+## Post-Publishing
+
+After successful publishing:
+
+### 1. Announce Release
+
+- Update GitHub Discussions
+- Post in Discord community
+- Tweet about new features (if significant)
+
+### 2. Monitor for Issues
+
+```bash
+# Monitor npm downloads
+npm view claude-code-templates
+
+# Monitor GitHub issues
+# Check for new issues related to release
+
+# Monitor Vercel logs
+vercel logs aitmpl.com --follow
+```
+
+### 3. Update Documentation
+
+- Update CHANGELOG.md with release notes
+- Update README.md if features changed
+- Update docs site if needed
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Component Guidelines" icon="check-circle" href="/contributing/component-guidelines">
+    Best practices for creating components
+  </Card>
+  <Card title="Testing Workflow" icon="vial" href="/contributing/testing">
+    Complete testing guide
+  </Card>
+  <Card title="Architecture" icon="sitemap" href="/contributing/architecture">
+    Project architecture overview
+  </Card>
+  <Card title="Code Standards" icon="code" href="/contributing/code-standards">
+    Coding conventions and style
+  </Card>
+</CardGroup>

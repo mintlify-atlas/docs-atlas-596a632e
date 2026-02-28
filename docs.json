@@ -1,122 +1,167 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Claude Code Templates",
+  "theme": "aspen",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#F97316",
+    "light": "#FB923C",
+    "dark": "#EA580C"
   },
   "favicon": "/favicon.svg",
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/davila7/claude-code-templates"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/davila7/claude-code-templates"
+    }
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Get Started",
             "pages": [
-              "index",
+              "introduction",
               "quickstart",
-              "development"
+              "installation"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Core Concepts",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "concepts/components",
+              "concepts/agents",
+              "concepts/commands",
+              "concepts/mcps",
+              "concepts/hooks",
+              "concepts/settings",
+              "concepts/templates"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Guides",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "guides/installing-components",
+              "guides/batch-installation",
+              "guides/interactive-mode",
+              "guides/workflows",
+              "guides/global-agents"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Tools",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "tools/analytics-dashboard",
+              "tools/conversation-monitor",
+              "tools/health-check",
+              "tools/plugin-dashboard",
+              "tools/stats-tools"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": [
+              "advanced/sandbox-execution",
+              "advanced/session-sharing",
+              "advanced/remote-access",
+              "advanced/creating-components"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Component Library",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Browse Components",
             "pages": [
-              "api-reference/introduction"
+              "components/overview",
+              "components/agents",
+              "components/commands",
+              "components/mcps",
+              "components/hooks",
+              "components/settings",
+              "components/templates"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Featured Categories",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "categories/development-team",
+              "categories/security",
+              "categories/database",
+              "categories/devops-infrastructure",
+              "categories/testing"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "CLI Reference",
+        "groups": [
+          {
+            "group": "Commands",
+            "pages": [
+              "cli/overview",
+              "cli/install-component",
+              "cli/create-agent",
+              "cli/list-agents",
+              "cli/analytics",
+              "cli/health-check"
+            ]
+          },
+          {
+            "group": "Options",
+            "pages": [
+              "cli/flags",
+              "cli/configuration",
+              "cli/environment-variables"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API",
+        "groups": [
+          {
+            "group": "Endpoints",
+            "pages": [
+              "api/overview",
+              "api/track-download",
+              "api/discord-integration",
+              "api/claude-code-check"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Contributing",
+        "groups": [
+          {
+            "group": "Development",
+            "pages": [
+              "contributing/getting-started",
+              "contributing/adding-components",
+              "contributing/component-guidelines",
+              "contributing/testing"
+            ]
+          },
+          {
+            "group": "Resources",
+            "pages": [
+              "contributing/architecture",
+              "contributing/publishing",
+              "contributing/code-standards"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+    ]
   }
 }

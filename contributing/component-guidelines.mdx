@@ -1,0 +1,451 @@
+---
+title: Component Guidelines
+description: Best practices and quality standards for creating components
+---
+
+This guide covers the quality standards, best practices, and review process for contributing components to Claude Code Templates.
+
+## Critical: Component Reviewer Agent
+
+<Warning>
+  **ALWAYS use the component-reviewer agent before submitting components.** This is a mandatory step that validates format, security, naming conventions, and best practices.
+</Warning>
+
+### When to Use Component Reviewer
+
+Use the `component-reviewer` agent for ALL component changes:
+
+```bash
+# After creating a new agent
+Use the component-reviewer agent to review cli-tool/components/agents/development-team/react-expert.md
+
+# Before committing hook changes  
+Use the component-reviewer agent to review cli-tool/components/hooks/git/prevent-force-push.json
+
+# For PR reviews with multiple components
+Use the component-reviewer agent to review all modified components in cli-tool/components/
+```
+
+### What the Component Reviewer Checks
+
+The agent validates:
+
+- ✅ Valid YAML frontmatter and required fields
+- ✅ Proper kebab-case naming conventions
+- ✅ No hardcoded secrets (API keys, tokens, passwords)
+- ✅ Relative paths only (no absolute paths)
+- ✅ Supporting files exist (for hooks with scripts)
+- ✅ Clear, specific descriptions
+- ✅ Correct category placement
+- ✅ Security best practices
+
+### Review Feedback Levels
+
+The agent provides prioritized feedback:
+
+- **❌ Critical Issues**: Must fix before merge (security, missing fields)
+- **⚠️ Warnings**: Should fix (clarity, best practices)
+- **📋 Suggestions**: Nice to have improvements
+
+## Component Creation Workflow
+
+<Steps>
+  <Step title="Create Component File">
+    Create your component file in the appropriate directory:
+    ```bash
+    cli-tool/components/{type}/{category}/{name}.md
+    ```
+  </Step>
+  
+  <Step title="Use Descriptive Naming">
+    Use kebab-case (lowercase with hyphens):
+    - ✅ `frontend-developer.md`
+    - ✅ `generate-tests.md`
+    - ❌ `FrontendDeveloper.md`
+    - ❌ `generate_tests.md`
+  </Step>
+  
+  <Step title="Add Clear Description">
+    Include clear descriptions and usage examples in the component.
+  </Step>
+  
+  <Step title="Review with Component Reviewer">
+    **CRITICAL**: Review with the component-reviewer agent:
+    ```bash
+    Use the component-reviewer agent to review [component-path]
+    ```
+  </Step>
+  
+  <Step title="Fix Issues">
+    Address any critical issues or warnings identified by the reviewer.
+  </Step>
+  
+  <Step title="Update Catalog">
+    Run the Python script to update the component catalog:
+    ```bash
+    python scripts/generate_components_json.py
+    ```
+  </Step>
+</Steps>
+
+## Naming Conventions
+
+### File Names
+
+All component files must use **kebab-case**:
+
+```bash
+# ✅ Correct
+frontend-developer.md
+generate-tests.md
+simple-notifications.json
+api-security-audit.md
+
+# ❌ Wrong
+FrontendDeveloper.md
+generate_tests.md
+SimpleNotifications.json
+API-Security-Audit.md
+```
+
+### Component Names (in frontmatter)
+
+Component names in YAML frontmatter must match the filename:
+
+```yaml
+# ✅ Correct (file: frontend-developer.md)
+name: frontend-developer
+
+# ❌ Wrong (file: frontend-developer.md)  
+name: FrontendDeveloper
+name: frontend_developer
+```
+
+## Security Requirements
+
+<Warning>
+  **NEVER hardcode secrets in components.** This includes API keys, tokens, passwords, URLs, project IDs, or any sensitive identifier.
+</Warning>
+
+### Prohibited Content
+
+```json
+// ❌ WRONG - Hardcoded API key
+{
+  "mcpServers": {
+    "service": {
+      "env": {
+        "API_KEY": "sk-proj-abc123xyz"
+      }
+    }
+  }
+}
+
+// ✅ CORRECT - Placeholder format
+{
+  "mcpServers": {
+    "service": {
+      "env": {
+        "API_KEY": "<YOUR_API_KEY>"
+      }
+    }
+  }
+}
+```
+
+### Path Requirements
+
+Use **relative paths** only:
+
+```bash
+# ✅ Correct
+.claude/scripts/
+.claude/hooks/
+$CLAUDE_PROJECT_DIR/.claude/
+
+# ❌ Wrong
+/Users/username/.claude/
+/home/user/project/.claude/
+~/project/.claude/
+```
+
+## Component-Specific Guidelines
+
+### Agents
+
+#### Required Fields
+
+```yaml
+---
+name: frontend-developer
+description: Frontend development specialist for React applications
+tools: Read, Write, Edit, Bash, Glob, Grep
+model: sonnet
+---
+```
+
+#### Description Quality
+
+Descriptions must be:
+- **Specific** - Not generic ("helps with frontend" ❌)
+- **Comprehensive** - Explain full capabilities
+- **Example-driven** - Include use cases
+
+```yaml
+# ❌ Generic description
+description: "Frontend developer agent"
+
+# ✅ Specific description  
+description: "Frontend development specialist for React applications with expertise in responsive design, state management, TypeScript, and testing. Use for building complete frontend applications with 85%+ test coverage."
+```
+
+#### Content Structure
+
+Agents should include:
+
+1. **Clear role definition** - What the agent does
+2. **Communication protocol** - How to interact with other agents
+3. **Execution flow** - Step-by-step process
+4. **Best practices** - Guidelines and standards
+5. **Deliverables** - What the agent produces
+
+### Commands
+
+#### Required Fields
+
+```yaml
+---
+allowed-tools: Read, Write, Edit, Bash
+argument-hint: [file-path] | [component-name]
+description: Generate comprehensive test suite with unit, integration, and edge case coverage
+---
+```
+
+#### Allowed Tools Specification
+
+Be specific about permitted bash commands:
+
+```yaml
+# ✅ Specific permissions
+allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*)
+
+# ⚠️ Too broad (only if necessary)
+allowed-tools: Bash
+```
+
+#### Argument Hints
+
+Provide clear usage syntax:
+
+```yaml
+# ✅ Clear argument patterns
+argument-hint: [file-path] | [component-name]
+argument-hint: [message] | --no-verify | --amend
+argument-hint: <pattern> [--include-tests]
+
+# ❌ Vague
+argument-hint: options
+```
+
+#### Current State Queries
+
+Use `!` syntax for dynamic values:
+
+```markdown
+## Current Testing Setup
+
+- Test framework: @package.json or @jest.config.js
+- Existing tests: !`find . -name "*.test.*" | head -5`
+- Test coverage: !`npm run test:coverage 2>/dev/null || echo "No coverage script"`
+- Target file: @$ARGUMENTS
+```
+
+### Hooks
+
+#### Required Structure
+
+```json
+{
+  "description": "Clear description of what the hook does",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command to execute"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+#### Supporting Scripts
+
+If your hook references a Python or shell script:
+
+1. **Create the script file** with matching name
+2. **Use correct file extension** (`.py`, `.sh`)
+3. **Use relative paths** in the hook JSON
+4. **Make scripts executable** for `.sh` files
+
+```bash
+# Hook file structure
+cli-tool/components/hooks/git/
+├── prevent-force-push.json       # Hook configuration
+└── prevent-force-push.py         # Supporting script
+```
+
+#### Hook Matchers
+
+Valid matcher values:
+- `*` - All tools
+- `Bash` - Bash commands
+- `Read` - File reads
+- `Write` - File writes
+- `Edit` - File edits
+
+### MCPs
+
+#### Environment Variables
+
+Always use placeholder format:
+
+```json
+{
+  "env": {
+    "API_KEY": "<YOUR_API_KEY>",
+    "BASE_URL": "<YOUR_BASE_URL>",
+    "DATABASE_URL": "<YOUR_DATABASE_URL>"
+  }
+}
+```
+
+#### Include Description
+
+Every MCP server configuration should include a description:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "description": "GitHub integration for repository management, issues, and PRs",
+      "env": {
+        "GITHUB_TOKEN": "<YOUR_GITHUB_TOKEN>"
+      }
+    }
+  }
+}
+```
+
+## Quality Standards
+
+### Documentation
+
+All components must include:
+
+- Clear purpose and use cases
+- Usage examples
+- Configuration instructions
+- Required dependencies (if any)
+- Expected behavior
+
+### Testing
+
+Before submitting:
+
+```bash
+# Test dry-run installation
+npx claude-code-templates@latest --agent your-agent --dry-run
+npx claude-code-templates@latest --command your-command --dry-run
+npx claude-code-templates@latest --hook your-category/your-hook --dry-run
+
+# Verify no errors occur
+```
+
+### Comprehensive Configuration
+
+For templates:
+- Include all necessary Claude Code setup files
+- Well-documented CLAUDE.md with examples
+- Useful slash commands for the domain
+- Relevant external integrations (MCPs)
+
+## Common Issues and Fixes
+
+### Invalid YAML Frontmatter
+
+```yaml
+# ❌ Wrong - Missing closing ---
+---
+name: my-agent
+
+# ✅ Correct
+---
+name: my-agent
+---
+```
+
+### Missing Required Fields
+
+```yaml
+# ❌ Missing model field
+---
+name: my-agent
+description: Does things
+tools: Read, Write
+---
+
+# ✅ Complete
+---
+name: my-agent  
+description: Does things
+tools: Read, Write
+model: sonnet
+---
+```
+
+### Incorrect File Location
+
+```bash
+# ❌ Wrong - No category
+cli-tool/components/agents/my-agent.md
+
+# ✅ Correct - In proper category
+cli-tool/components/agents/domain-experts/my-agent.md
+```
+
+## Update Component Catalog
+
+After creating or modifying components, update the catalog:
+
+```bash
+python scripts/generate_components_json.py
+```
+
+This script:
+1. Scans all components in `cli-tool/components/`
+2. Validates format and structure
+3. Generates `docs/components.json` with embedded content
+4. Updates the website component browser
+
+<Info>
+  The `generate_components_json.py` script automatically validates component format and detects common issues during catalog generation.
+</Info>
+
+## Next Steps
+
+After following these guidelines:
+
+1. Review with component-reviewer agent
+2. Fix any issues identified
+3. Update component catalog
+4. Test installation with `--dry-run`
+5. Submit pull request
+
+See the [Testing Workflow](/contributing/testing) for comprehensive testing instructions.

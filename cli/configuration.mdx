@@ -1,0 +1,682 @@
+---
+title: Configuration Files
+description: Claude Code configuration files, settings, and project structure
+---
+
+# Configuration Files and Settings
+
+Claude Code uses multiple configuration files to manage settings, permissions, hooks, and integrations. Understanding these files helps you customize and optimize your Claude Code setup.
+
+## Configuration Hierarchy
+
+Claude Code reads configuration from multiple locations with a specific precedence:
+
+```
+1. ~/.claude/settings.json           (User-level settings)
+2. .claude/settings.json             (Project-level settings)
+3. .claude/settings.local.json       (Local developer overrides)
+```
+
+Settings cascade and merge, with later files overriding earlier ones.
+
+## Directory Structure
+
+### User Directory
+
+Global configuration directory:
+
+```
+~/.claude/
+├── settings.json              # User-level settings
+├── .claude.json               # Authentication config
+├── agents/                    # Global agents
+│   ├── customer-support.md
+│   └── security-auditor.md
+├── commands/                  # Global commands
+│   ├── check-file.md
+│   └── generate-tests.md
+├── conversations/             # Conversation history
+│   ├── conv-123.json
+│   └── conv-456.json
+└── statsig/                   # Usage statistics
+```
+
+### Project Directory
+
+Project-specific configuration:
+
+```
+.claude/
+├── CLAUDE.md                  # Project context and guidelines
+├── settings.json              # Project settings
+├── settings.local.json        # Local overrides (gitignored)
+├── agents/                    # Project agents
+│   ├── frontend-developer.md
+│   └── backend-developer.md
+├── commands/                  # Project commands
+│   ├── setup-testing.md
+│   └── deploy-staging.md
+└── scripts/                   # Helper scripts
+    ├── context-monitor.py
+    └── token-counter.py
+
+.mcp.json                      # MCP server configurations
+```
+
+## settings.json
+
+### User Settings
+
+Location: `~/.claude/settings.json`
+
+User-level settings apply globally across all projects.
+
+**Example**:
+
+```json
+{
+  "model": "claude-sonnet-4-20250514",
+  "telemetryEnabled": false,
+  "cleanupPeriodDays": 30,
+  "permissions": {
+    "allow": [
+      {
+        "type": "exec",
+        "pattern": "npm"
+      },
+      {
+        "type": "exec",
+        "pattern": "git"
+      }
+    ],
+    "deny": [
+      {
+        "type": "read",
+        "pattern": "**/.env*"
+      },
+      {
+        "type": "read",
+        "pattern": "**/secrets/**"
+      }
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "command": "echo 'Pre-tool use hook'",
+        "description": "Log before tool usage"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "command": "echo 'Post-tool use hook'",
+        "description": "Log after tool usage"
+      }
+    ]
+  },
+  "env": {
+    "NODE_ENV": "development"
+  }
+}
+```
+
+### Project Settings
+
+Location: `.claude/settings.json`
+
+Project-specific settings for team sharing (committed to git).
+
+**Example**:
+
+```json
+{
+  "model": "claude-sonnet-4-20250514",
+  "permissions": {
+    "allow": [
+      {
+        "type": "exec",
+        "pattern": "npm run *"
+      },
+      {
+        "type": "exec",
+        "pattern": "yarn *"
+      }
+    ],
+    "additionalDirectories": [
+      "~/projects/shared-library"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "command": "npm run lint",
+        "description": "Run linter before file modifications"
+      }
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "github",
+    "web-fetch"
+  ]
+}
+```
+
+### Local Settings
+
+Location: `.claude/settings.local.json`
+
+Developer-specific overrides (gitignored, never committed).
+
+**Example**:
+
+```json
+{
+  "model": "claude-haiku-4-20250514",
+  "telemetryEnabled": false,
+  "permissions": {
+    "additionalDirectories": [
+      "~/my-personal-scripts"
+    ]
+  },
+  "env": {
+    "DEBUG": "true"
+  }
+}
+```
+
+## settings.json Fields
+
+### Model Selection
+
+<ParamField path="model" type="string">
+  Claude model to use for conversations
+</ParamField>
+
+**Options**:
+- `claude-sonnet-4-20250514` - Balanced performance
+- `claude-opus-4-20250514` - Maximum capability
+- `claude-haiku-4-20250514` - Fast responses
+
+**Example**:
+```json
+{
+  "model": "claude-sonnet-4-20250514"
+}
+```
+
+### Permissions
+
+<ParamField path="permissions" type="object">
+  Control what Claude Code can access and execute
+</ParamField>
+
+**Structure**:
+```json
+{
+  "permissions": {
+    "allow": [
+      {
+        "type": "exec|read|write",
+        "pattern": "glob-pattern"
+      }
+    ],
+    "deny": [
+      {
+        "type": "exec|read|write",
+        "pattern": "glob-pattern"
+      }
+    ],
+    "additionalDirectories": [
+      "/path/to/directory"
+    ]
+  }
+}
+```
+
+**Permission Types**:
+- `exec` - Command execution
+- `read` - File reading
+- `write` - File writing
+
+**Pattern Examples**:
+```json
+{
+  "permissions": {
+    "allow": [
+      { "type": "exec", "pattern": "npm" },
+      { "type": "exec", "pattern": "git *" },
+      { "type": "read", "pattern": "**/*.js" },
+      { "type": "write", "pattern": "src/**" }
+    ],
+    "deny": [
+      { "type": "read", "pattern": "**/.env*" },
+      { "type": "read", "pattern": "**/secrets/**" },
+      { "type": "exec", "pattern": "rm -rf" }
+    ]
+  }
+}
+```
+
+### Hooks
+
+<ParamField path="hooks" type="object">
+  Automation hooks triggered at specific lifecycle events
+</ParamField>
+
+**Hook Types**:
+- `PreToolUse` - Before tool execution
+- `PostToolUse` - After tool execution
+- `Stop` - On session stop
+- `Notification` - For notifications
+
+**Example**:
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "command": "npm run lint",
+        "description": "Lint before changes"
+      },
+      {
+        "command": "npm test",
+        "description": "Run tests"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "command": "git add .",
+        "description": "Stage changes"
+      }
+    ],
+    "Stop": [
+      {
+        "command": "echo 'Session ended'",
+        "description": "Log session end"
+      }
+    ]
+  }
+}
+```
+
+### Environment Variables
+
+<ParamField path="env" type="object">
+  Environment variables available to Claude Code
+</ParamField>
+
+**Example**:
+```json
+{
+  "env": {
+    "NODE_ENV": "development",
+    "DEBUG": "true",
+    "API_URL": "http://localhost:3000"
+  }
+}
+```
+
+**Warning**: Never put sensitive keys in project settings (use `.claude/settings.local.json` instead).
+
+### Telemetry
+
+<ParamField path="telemetryEnabled" type="boolean">
+  Enable or disable usage telemetry
+</ParamField>
+
+**Default**: `true`
+
+**Example**:
+```json
+{
+  "telemetryEnabled": false
+}
+```
+
+### Cleanup Period
+
+<ParamField path="cleanupPeriodDays" type="number">
+  Number of days to retain conversation history
+</ParamField>
+
+**Default**: `30`
+
+**Options**:
+- `7` - One week
+- `30` - One month (default)
+- `90` - Three months
+- `365` - One year
+- `-1` - Never delete
+
+**Example**:
+```json
+{
+  "cleanupPeriodDays": 7
+}
+```
+
+### MCP Configuration
+
+<ParamField path="enableAllProjectMcpServers" type="boolean">
+  Auto-approve all MCP servers from .mcp.json
+</ParamField>
+
+**Default**: `false`
+
+**Example**:
+```json
+{
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "github",
+    "web-fetch",
+    "filesystem"
+  ],
+  "disabledMcpjsonServers": [
+    "memory"
+  ]
+}
+```
+
+### Statusline
+
+<ParamField path="statusline" type="object">
+  Configure statusline display
+</ParamField>
+
+**Example**:
+```json
+{
+  "statusline": {
+    "command": "python3",
+    "args": [".claude/scripts/context-monitor.py"],
+    "refreshInterval": 5000
+  }
+}
+```
+
+## .mcp.json
+
+MCP (Model Context Protocol) server configurations.
+
+**Location**: Project root (`.mcp.json`)
+
+**Structure**:
+
+```json
+{
+  "mcpServers": {
+    "server-name": {
+      "command": "executable",
+      "args": ["arg1", "arg2"],
+      "env": {
+        "VAR_NAME": "value"
+      }
+    }
+  }
+}
+```
+
+### Complete Example
+
+```json
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "env": {
+        "ALLOWED_DIRECTORIES": "."
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    }
+  }
+}
+```
+
+### Server Configuration Fields
+
+<ParamField path="command" type="string" required>
+  Executable command to start the server
+</ParamField>
+
+<ParamField path="args" type="array">
+  Command-line arguments (optional)
+</ParamField>
+
+<ParamField path="env" type="object">
+  Environment variables for the server (optional)
+</ParamField>
+
+## .claude.json
+
+Authentication configuration.
+
+**Location**: `~/.claude.json`
+
+**Structure**:
+
+```json
+{
+  "oauthAccount": {
+    "accountUuid": "uuid-here",
+    "emailAddress": "user@example.com",
+    "refreshToken": "encrypted-token"
+  },
+  "apiKey": "sk-ant-xxx"
+}
+```
+
+**Warning**: Contains sensitive authentication data. Never commit to git.
+
+## CLAUDE.md
+
+Project context and guidelines.
+
+**Location**: `.claude/CLAUDE.md`
+
+**Purpose**: 
+- Project overview
+- Coding standards
+- Architecture notes
+- Development guidelines
+- Important context for Claude
+
+**Example**:
+
+```markdown
+# Project Name
+
+Brief project description.
+
+## Architecture
+
+Key architectural decisions and patterns.
+
+## Code Standards
+
+- Follow ESLint rules
+- Write tests for new features
+- Update documentation
+
+## Important Files
+
+- `src/index.js` - Main entry point
+- `config/` - Configuration files
+
+## Commands
+
+- `npm test` - Run tests
+- `npm run build` - Build for production
+```
+
+## Gitignore Recommendations
+
+Add to `.gitignore`:
+
+```gitignore
+# Claude Code local settings
+.claude/settings.local.json
+
+# Claude authentication (never commit!)
+.claude.json
+
+# Conversation history (optional, team preference)
+.claude/conversations/
+
+# Scripts cache
+.claude/scripts/*.pyc
+```
+
+**Commit to git**:
+- `.claude/CLAUDE.md`
+- `.claude/settings.json`
+- `.claude/agents/`
+- `.claude/commands/`
+- `.mcp.json`
+
+## Configuration Presets
+
+Install pre-configured settings:
+
+### Security-Focused
+
+```bash
+cct --setting security/read-only-mode
+cct --setting permissions/deny-sensitive-files
+cct --setting security/strict-permissions
+```
+
+### Performance-Optimized
+
+```bash
+cct --setting model/use-haiku
+cct --setting retention/retention-7-days
+cct --setting telemetry/disable-telemetry
+```
+
+### Development-Friendly
+
+```bash
+cct --setting permissions/allow-npm-commands
+cct --setting model/use-sonnet
+cct --setting retention/retention-30-days
+```
+
+## Best Practices
+
+### 1. Separate Concerns
+
+- **User settings**: Personal preferences, global permissions
+- **Project settings**: Team standards, project permissions
+- **Local settings**: Developer-specific overrides, API keys
+
+### 2. Security
+
+- Never commit API keys or secrets
+- Use environment variables for sensitive data
+- Add `.claude/settings.local.json` to `.gitignore`
+- Review permissions regularly
+
+### 3. Team Collaboration
+
+- Commit `.claude/settings.json` for team consistency
+- Document required settings in README
+- Use environment variables for deployment-specific config
+- Share MCP configurations in `.mcp.json`
+
+### 4. Performance
+
+- Set appropriate `cleanupPeriodDays` for conversation retention
+- Use Haiku model for simple tasks
+- Limit `additionalDirectories` to necessary paths
+- Monitor conversation history size
+
+### 5. Documentation
+
+- Keep `CLAUDE.md` up to date with project changes
+- Document custom agents and commands
+- Explain hook purposes
+- Note required environment variables
+
+## Troubleshooting
+
+### Settings Not Applied
+
+**Check file locations**:
+```bash
+ls -la ~/.claude/settings.json
+ls -la .claude/settings.json
+ls -la .claude/settings.local.json
+```
+
+**Verify JSON syntax**:
+```bash
+jsonlint ~/.claude/settings.json
+jsonlint .claude/settings.json
+```
+
+**Check permissions**:
+```bash
+chmod 644 .claude/settings.json
+```
+
+### Hooks Not Running
+
+**Verify hook configuration**:
+```bash
+cat .claude/settings.json | jq '.hooks'
+```
+
+**Test command manually**:
+```bash
+npm run lint  # Test if command works
+```
+
+**Check command availability**:
+```bash
+which npm
+which git
+```
+
+### MCP Servers Not Working
+
+**Verify .mcp.json**:
+```bash
+cat .mcp.json | jq '.mcpServers'
+```
+
+**Test server manually**:
+```bash
+npx -y @modelcontextprotocol/server-fetch
+```
+
+**Check server permissions**:
+```bash
+# In .claude/settings.json
+{
+  "enabledMcpjsonServers": ["server-name"]
+}
+```
+
+## Next Steps
+
+- [CLI Flags Reference](/cli/flags) - All CLI flags
+- [Environment Variables](/cli/environment-variables) - Environment configuration
+- [Install Components](/cli/install-component) - Component installation
+- [Health Check](/cli/health-check) - Verify configuration

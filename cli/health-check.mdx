@@ -1,0 +1,565 @@
+---
+title: Health Check
+description: Verify Claude Code setup, configuration, and system requirements
+---
+
+# Health Check
+
+The health check command performs comprehensive verification of your Claude Code installation, configuration, and project setup.
+
+## Run Health Check
+
+### Basic Usage
+
+Run the health check:
+
+```bash
+cct --health-check
+cct --health        # Short alias
+cct --verify        # Alternative alias
+cct --check         # Another alias
+```
+
+### Interactive Flow
+
+The health check:
+1. Runs all verification tests
+2. Displays results in real-time
+3. Generates health score
+4. Provides recommendations
+5. Optionally launches project setup
+
+## Health Check Categories
+
+The health check verifies seven categories:
+
+### 1. System Requirements
+
+Verifies your development environment:
+
+**Operating System**:
+- Platform: macOS, Linux, or Windows
+- Version: Compatible release
+- Status: ✅ Pass / ❌ Fail
+
+**Node.js Version**:
+- Required: Node.js 18+
+- Current version check
+- Compatibility verification
+
+**Memory Available**:
+- Recommended: 4GB+ total memory
+- Current memory status
+- Free memory available
+
+**Network Connection**:
+- Anthropic API connectivity
+- Response time check
+- Network accessibility
+
+**Shell Environment**:
+- Shell type (bash, zsh, fish)
+- Autocompletion support
+- Compatibility status
+
+### 2. Claude Code Setup
+
+Verifies Claude installation:
+
+**Installation**:
+- Claude Code CLI presence
+- Version information
+- Global/local installation
+
+**Authentication**:
+- OAuth account check
+- API key verification
+- Environment variable check
+
+**Auto-updates**:
+- Update settings
+- Version currency
+
+**Permissions**:
+- Directory permissions
+- Write access
+- Configuration access
+
+### 3. Project Setup
+
+Verifies project configuration:
+
+**Project Structure**:
+- Project indicators (package.json, etc.)
+- Directory structure
+- Project type detection
+
+**Configuration Files**:
+- `.claude/` directory existence
+- File count and structure
+- Configuration validity
+
+**User Settings**:
+- `~/.claude/settings.json`
+- Settings structure
+- Permission rules
+- Environment variables
+
+**Project Settings**:
+- `.claude/settings.json`
+- Project-specific configuration
+- Hook definitions
+- MCP server lists
+
+**Local Settings**:
+- `.claude/settings.local.json`
+- Local overrides
+- Developer-specific config
+
+### 4. Agents
+
+Verifies installed agents:
+
+**Project Agents**:
+- `.claude/agents/` directory
+- Agent file count
+- Recursive directory scan
+
+**Personal Agents**:
+- `~/.claude/agents/` directory
+- Global agent count
+- Agent availability
+
+**Agent Syntax**:
+- YAML frontmatter validation
+- Required fields (name, description)
+- Proper markdown structure
+
+### 5. MCP Servers
+
+Verifies MCP configuration:
+
+**Project MCP Config**:
+- `.mcp.json` existence
+- Server count
+- Configuration validity
+
+**MCP Config Syntax**:
+- JSON validity
+- Required fields (command)
+- Args and env format
+- Server configuration completeness
+
+### 6. Custom Commands
+
+Verifies slash commands:
+
+**Project Commands**:
+- `.claude/commands/` directory
+- Command count
+- File structure
+
+**Personal Commands**:
+- `~/.claude/commands/` directory
+- Global command count
+
+**Command Syntax**:
+- Markdown structure
+- `$ARGUMENTS` placeholder
+- Proper formatting
+
+### 7. Hooks Configuration
+
+Verifies automation hooks:
+
+**User Hooks**:
+- `~/.claude/settings.json` hooks
+- Hook count and types
+
+**Project Hooks**:
+- `.claude/settings.json` hooks
+- Project-specific automation
+
+**Local Hooks**:
+- `.claude/settings.local.json` hooks
+- Developer-specific hooks
+
+**Hook Commands**:
+- Command executability
+- Shell builtin recognition
+- Command availability verification
+
+**MCP Hooks**:
+- MCP-specific hook validation
+- Integration checks
+
+## Health Check Output
+
+### Real-Time Display
+
+As checks run:
+
+```
+┌───────────────────────┐
+│  SYSTEM REQUIREMENTS  │
+└───────────────────────┘
+✅ Operating System     │ macOS 15.0 (compatible)
+✅ Node.js Version      │ v22.11.0 (compatible)
+✅ Memory Available     │ 16.0GB total, 8.5GB free (sufficient)
+✅ Network Connection   │ Connected to Anthropic API
+✅ Shell Environment    │ zsh (excellent autocompletion support)
+
+┌─────────────────────┐
+│  CLAUDE CODE SETUP  │
+└─────────────────────┘
+✅ Installation         │ v2.0.0 (globally installed)
+✅ Authentication       │ Authenticated via OAuth (user@example.com)
+✅ Auto-updates         │ Auto-updates assumed enabled
+✅ Permissions          │ Claude directory permissions OK
+```
+
+### Health Score
+
+Final summary:
+
+```
+📊 Health Score: 28/30 checks passed (93%)
+
+💡 Recommendations:
+   • Add proper frontmatter (name, description) to agent files
+   • Create .mcp.json file to configure MCP servers for your project
+```
+
+### Status Icons
+
+- ✅ **Pass**: Check passed, no issues
+- ⚠️ **Warn**: Check passed with warnings
+- ❌ **Fail**: Check failed, needs attention
+
+## Health Check Recommendations
+
+Based on results, the health check suggests:
+
+### System Issues
+
+**Low Memory**:
+```
+Recommended 4GB+ memory for optimal performance
+Consider closing other applications
+```
+
+**Network Issues**:
+```
+Cannot reach Anthropic API
+Check your internet connection and firewall settings
+```
+
+**Shell Environment**:
+```
+Consider switching to Zsh for better autocompletion and features
+```
+
+### Configuration Issues
+
+**Missing Frontmatter**:
+```
+Add proper frontmatter (name, description) to agent files
+Example:
+---
+name: My Agent
+description: Agent description
+---
+```
+
+**Missing MCP Config**:
+```
+Create .mcp.json file to configure MCP servers for your project
+Use: cct --mcp web-fetch
+```
+
+**Missing Agents Directory**:
+```
+Create .claude/agents/ directory to organize your custom agents
+Use: cct --agent frontend-developer
+```
+
+**Invalid JSON**:
+```
+Fix JSON syntax errors in MCP configuration files
+Validate with: jsonlint .mcp.json
+```
+
+**Missing Hook Commands**:
+```
+Add missing command fields to MCP server configurations
+Ensure all servers have a 'command' field
+```
+
+## After Health Check
+
+### Setup Recommendation
+
+If health score is low (below 80%), the CLI prompts:
+
+```
+Would you like to run the Project Setup? (Y/n)
+```
+
+Selecting "Yes" launches interactive setup:
+```bash
+cct  # Interactive setup
+```
+
+### Manual Fixes
+
+For specific issues, fix manually:
+
+```bash
+# Fix agent syntax
+vi .claude/agents/my-agent.md
+# Add frontmatter:
+# ---
+# name: My Agent
+# description: Description here
+# ---
+
+# Fix MCP config
+vi .mcp.json
+# Ensure valid JSON structure
+
+# Fix permissions
+chmod 755 .claude/
+chmod 644 .claude/settings.json
+```
+
+## Use Cases
+
+### 1. Initial Setup Verification
+
+```bash
+# After installing Claude Code
+cct --health-check
+
+# Review results
+# Fix any issues
+# Re-run to verify fixes
+```
+
+### 2. Troubleshooting
+
+```bash
+# When experiencing issues
+cct --health-check
+
+# Identify problem areas
+# Follow recommendations
+```
+
+### 3. Team Onboarding
+
+```bash
+# New team member setup
+cct --health-check
+
+# Ensure all requirements met
+# Verify configuration
+# Launch setup if needed
+```
+
+### 4. Pre-Deployment
+
+```bash
+# Before deploying to production
+cct --health-check
+
+# Verify all configurations
+# Ensure no warnings
+# Document health score
+```
+
+### 5. Regular Maintenance
+
+```bash
+# Monthly health check
+cct --health-check
+
+# Monitor degradation
+# Proactive maintenance
+```
+
+## Troubleshooting
+
+### Health Check Hangs
+
+**Network timeout**:
+- Check internet connection
+- Verify Anthropic API access
+- Use `Ctrl+C` to cancel
+
+**File system issues**:
+- Check `.claude/` permissions
+- Verify disk space
+- Close other applications
+
+### False Negatives
+
+**Claude CLI not detected**:
+```bash
+# Verify installation
+which claude
+claude --version
+
+# Reinstall if needed
+npm install -g @anthropic-ai/claude-code
+```
+
+**Authentication fails**:
+```bash
+# Check authentication
+cat ~/.claude.json
+
+# Re-authenticate
+claude login
+```
+
+### Performance Issues
+
+**Slow health check**:
+- Large conversation history
+- Many agents/commands
+- Network latency
+
+**Solutions**:
+```bash
+# Clear old conversations
+cct --setting retention/retention-7-days
+
+# Optimize configuration
+# Remove unused agents/commands
+```
+
+## Health Check Options
+
+<ParamField path="--health-check" type="boolean">
+  Run comprehensive health check
+</ParamField>
+
+<ParamField path="--health" type="boolean">
+  Short alias for --health-check
+</ParamField>
+
+<ParamField path="--verify" type="boolean">
+  Alternative alias for --health-check
+</ParamField>
+
+<ParamField path="--check" type="boolean">
+  Another alias for --health-check
+</ParamField>
+
+## Best Practices
+
+### Regular Checks
+
+Run health checks:
+- After installation
+- Before major updates
+- Monthly maintenance
+- When troubleshooting
+- Team onboarding
+
+### Documentation
+
+Document health scores:
+
+```bash
+# Save health check output
+cct --health-check > health-$(date +%Y%m%d).txt
+
+# Track over time
+ls -l health-*.txt
+```
+
+### Team Standards
+
+Set minimum health score:
+
+```bash
+# Team policy: 90%+ health score required
+cct --health-check
+# If score < 90%, fix issues before proceeding
+```
+
+### Automation
+
+Automate health checks:
+
+```bash
+#!/bin/bash
+# pre-commit-health-check.sh
+
+HEALTH_OUTPUT=$(cct --health-check)
+HEALTH_SCORE=$(echo "$HEALTH_OUTPUT" | grep -oP '\d+(?=%)')
+
+if [ "$HEALTH_SCORE" -lt 90 ]; then
+  echo "❌ Health score too low: $HEALTH_SCORE%"
+  echo "Fix issues before committing"
+  exit 1
+fi
+
+echo "✅ Health check passed: $HEALTH_SCORE%"
+```
+
+## Advanced Usage
+
+### Custom Health Checks
+
+Extend with custom validations:
+
+```bash
+#!/bin/bash
+# custom-health-check.sh
+
+# Run standard health check
+cct --health-check
+
+# Add custom checks
+echo "
+Custom Checks:"
+
+# Check for specific files
+if [ -f "CLAUDE.md" ]; then
+  echo "✅ CLAUDE.md exists"
+else
+  echo "❌ CLAUDE.md missing"
+fi
+
+# Check git repository
+if [ -d ".git" ]; then
+  echo "✅ Git repository initialized"
+else
+  echo "⚠️ No git repository"
+fi
+```
+
+### Health Check API
+
+Programmatic access:
+
+```javascript
+const { runHealthCheck } = require('claude-code-templates/src/health-check');
+
+async function checkHealth() {
+  const results = await runHealthCheck();
+  console.log('Health Score:', results.healthScore);
+  console.log('Recommendations:', results.recommendations);
+}
+
+checkHealth();
+```
+
+## Next Steps
+
+- [CLI Overview](/cli/overview) - Complete CLI documentation
+- [Configuration Guide](/cli/configuration) - Settings and config files
+- [Analytics Dashboard](/cli/analytics) - Monitor Claude Code usage
+- [Environment Variables](/cli/environment-variables) - Configure authentication

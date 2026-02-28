@@ -1,0 +1,585 @@
+---
+title: Environment Variables
+description: Environment variables for Claude Code Templates CLI configuration
+---
+
+# Environment Variables
+
+Configure the Claude Code Templates CLI and Claude Code using environment variables for authentication, API keys, and runtime settings.
+
+## Authentication Variables
+
+### ANTHROPIC_API_KEY
+
+<ParamField path="ANTHROPIC_API_KEY" type="string" required>
+  Anthropic API key for Claude Code authentication
+</ParamField>
+
+**Usage**:
+```bash
+export ANTHROPIC_API_KEY=sk-ant-xxx
+```
+
+**Purpose**: 
+- Authenticate Claude Code CLI
+- Enable API-based authentication
+- Alternative to OAuth authentication
+
+**Obtain Key**:
+1. Visit https://console.anthropic.com/
+2. Navigate to API Keys section
+3. Create new API key
+4. Copy and set as environment variable
+
+**Priority**: Environment variable takes precedence over `~/.claude.json` API key.
+
+**Security**:
+- Never commit to git
+- Use `.env` files with `.gitignore`
+- Rotate keys regularly
+- Use different keys for dev/prod
+
+**Example `.env` file**:
+```bash
+# .env
+ANTHROPIC_API_KEY=sk-ant-api03-xxx
+```
+
+**Load in shell**:
+```bash
+# Bash/Zsh
+export $(cat .env | xargs)
+
+# Or use dotenv
+source .env
+```
+
+### ANTHROPIC_AUTH_TOKEN
+
+<ParamField path="ANTHROPIC_AUTH_TOKEN" type="string">
+  Alternative authentication token (if using OAuth)
+</ParamField>
+
+**Usage**:
+```bash
+export ANTHROPIC_AUTH_TOKEN=your-token
+```
+
+**Purpose**: Alternative authentication method for enterprise setups.
+
+## Sandbox Variables
+
+### E2B_API_KEY
+
+<ParamField path="E2B_API_KEY" type="string">
+  E2B API key for sandbox execution
+</ParamField>
+
+**Usage**:
+```bash
+export E2B_API_KEY=e2b_xxx
+```
+
+**Purpose**: 
+- Enable E2B sandbox execution
+- Required for `--sandbox e2b` flag
+
+**Obtain Key**:
+1. Visit https://e2b.dev/
+2. Sign up for account
+3. Create API key
+4. Set as environment variable
+
+**Example**:
+```bash
+export E2B_API_KEY=e2b_xxx
+cct --sandbox e2b --prompt "Create a React app"
+```
+
+**Alternative**: Use `--e2b-api-key` flag:
+```bash
+cct --sandbox e2b --e2b-api-key e2b_xxx --prompt "Create app"
+```
+
+### CLOUDFLARE_TUNNEL_TOKEN
+
+<ParamField path="CLOUDFLARE_TUNNEL_TOKEN" type="string">
+  Cloudflare Tunnel token for remote access (optional)
+</ParamField>
+
+**Usage**:
+```bash
+export CLOUDFLARE_TUNNEL_TOKEN=your-token
+```
+
+**Purpose**: 
+- Use custom Cloudflare Tunnel
+- Persistent tunnel URLs
+- Team access to dashboards
+
+**Obtain Token**:
+1. Create Cloudflare account
+2. Install `cloudflared`
+3. Create tunnel: `cloudflared tunnel create my-tunnel`
+4. Get token from tunnel config
+
+**Note**: The CLI uses temporary tunnels by default. This is only needed for persistent URLs.
+
+## Runtime Configuration
+
+### PORT
+
+<ParamField path="PORT" type="number">
+  Port for analytics dashboard and web interfaces
+</ParamField>
+
+**Usage**:
+```bash
+export PORT=8080
+cct --analytics
+```
+
+**Default**: `3333`
+
+**Purpose**: 
+- Change default port if 3333 is in use
+- Run multiple dashboards simultaneously
+
+**Example**:
+```bash
+# Terminal 1
+PORT=3333 cct --analytics
+
+# Terminal 2
+PORT=4444 cct --chats
+```
+
+### NODE_ENV
+
+<ParamField path="NODE_ENV" type="string">
+  Node.js environment (development, production, test)
+</ParamField>
+
+**Usage**:
+```bash
+export NODE_ENV=development
+```
+
+**Values**:
+- `development` - Development mode (verbose logging)
+- `production` - Production mode (minimal logging)
+- `test` - Testing mode
+
+**Purpose**: 
+- Control logging verbosity
+- Enable debug features
+- Configure behavior
+
+### DEBUG
+
+<ParamField path="DEBUG" type="string">
+  Enable debug logging for specific modules
+</ParamField>
+
+**Usage**:
+```bash
+export DEBUG=*
+export DEBUG=claude:*
+export DEBUG=analytics:*
+```
+
+**Purpose**: 
+- Detailed debugging output
+- Module-specific logs
+- Troubleshooting
+
+**Examples**:
+```bash
+# All debug output
+DEBUG=* cct --analytics
+
+# Specific module
+DEBUG=claude:* cct --agent frontend-developer
+```
+
+## Shell Configuration
+
+### PATH
+
+<ParamField path="PATH" type="string">
+  System PATH for global agent executables
+</ParamField>
+
+**Usage**:
+```bash
+export PATH="$HOME/.claude-code-templates/bin:$PATH"
+```
+
+**Purpose**: 
+- Make global agents accessible
+- Enable command-line execution
+- Required for user-directory installations
+
+**Add to Shell Config**:
+
+**Bash** (`~/.bashrc` or `~/.bash_profile`):
+```bash
+# Claude Code Templates - Global Agents
+export PATH="$HOME/.claude-code-templates/bin:$PATH"
+```
+
+**Zsh** (`~/.zshrc`):
+```bash
+# Claude Code Templates - Global Agents
+export PATH="$HOME/.claude-code-templates/bin:$PATH"
+```
+
+**Fish** (`~/.config/fish/config.fish`):
+```fish
+# Claude Code Templates - Global Agents
+set -gx PATH $HOME/.claude-code-templates/bin $PATH
+```
+
+**Apply Changes**:
+```bash
+source ~/.bashrc  # Or ~/.zshrc, ~/.config/fish/config.fish
+```
+
+### SHELL
+
+<ParamField path="SHELL" type="string">
+  Current shell (automatically set by system)
+</ParamField>
+
+**Values**:
+- `/bin/bash`
+- `/bin/zsh`
+- `/usr/bin/fish`
+
+**Purpose**: 
+- Detect shell for PATH configuration
+- Shell-specific features
+- Autocompletion setup
+
+## Project-Specific Variables
+
+These can be set in `.claude/settings.json` under the `env` field:
+
+```json
+{
+  "env": {
+    "NODE_ENV": "development",
+    "DEBUG": "true",
+    "API_URL": "http://localhost:3000",
+    "DATABASE_URL": "${DATABASE_URL}"
+  }
+}
+```
+
+**Variable Expansion**: Use `${VAR_NAME}` to reference system environment variables.
+
+## Environment Variable Precedence
+
+When multiple sources define the same variable:
+
+1. **Command-line flags** (highest priority)
+2. **Environment variables**
+3. **Local settings** (`.claude/settings.local.json`)
+4. **Project settings** (`.claude/settings.json`)
+5. **User settings** (`~/.claude/settings.json`) (lowest priority)
+
+**Example**:
+```bash
+# Environment variable
+export ANTHROPIC_API_KEY=sk-ant-111
+
+# CLI flag (takes precedence)
+cct --anthropic-api-key sk-ant-222 --prompt "test"
+# Uses sk-ant-222
+```
+
+## .env Files
+
+### Project .env
+
+Store environment variables in `.env` file:
+
+```bash
+# .env
+ANTHROPIC_API_KEY=sk-ant-xxx
+E2B_API_KEY=e2b_xxx
+GITHUB_TOKEN=ghp_xxx
+DATABASE_URL=postgresql://localhost/mydb
+API_URL=http://localhost:3000
+```
+
+**Load with dotenv**:
+
+```bash
+# Install dotenv-cli
+npm install -g dotenv-cli
+
+# Run with .env
+dotenv cct --analytics
+```
+
+**Load in shell**:
+```bash
+export $(cat .env | grep -v '^#' | xargs)
+```
+
+### .env.example
+
+Create template for team:
+
+```bash
+# .env.example
+ANTHROPIC_API_KEY=sk-ant-your-key-here
+E2B_API_KEY=e2b_your-key-here
+GITHUB_TOKEN=ghp_your-token-here
+DATABASE_URL=postgresql://user:pass@localhost/dbname
+```
+
+**Usage**:
+```bash
+# Team member copies and fills in
+cp .env.example .env
+vim .env  # Add real values
+```
+
+### Gitignore
+
+Always exclude `.env` from git:
+
+```gitignore
+# .gitignore
+.env
+.env.local
+.env.*.local
+.claude.json
+.claude/settings.local.json
+```
+
+## CI/CD Configuration
+
+### GitHub Actions
+
+Set secrets in repository settings:
+
+```yaml
+# .github/workflows/claude.yml
+name: Claude Code
+
+on: [push, pull_request]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      
+      - name: Install CLI
+        run: npm install -g claude-code-templates
+      
+      - name: Run Health Check
+        run: cct --health-check
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+```
+
+**Set Secrets**:
+1. Go to repository Settings > Secrets and variables > Actions
+2. Add `ANTHROPIC_API_KEY` secret
+3. Reference with `${{ secrets.ANTHROPIC_API_KEY }}`
+
+### GitLab CI
+
+```yaml
+# .gitlab-ci.yml
+review:
+  image: node:18
+  script:
+    - npm install -g claude-code-templates
+    - cct --health-check
+  variables:
+    ANTHROPIC_API_KEY: $ANTHROPIC_API_KEY
+```
+
+**Set Variables**:
+1. Go to Settings > CI/CD > Variables
+2. Add `ANTHROPIC_API_KEY` (protected, masked)
+
+## Docker Configuration
+
+### Dockerfile
+
+```dockerfile
+FROM node:18
+
+WORKDIR /app
+
+RUN npm install -g claude-code-templates
+
+COPY . .
+
+ENV NODE_ENV=production
+
+CMD ["cct", "--analytics"]
+```
+
+### docker-compose.yml
+
+```yaml
+version: '3.8'
+
+services:
+  claude-analytics:
+    build: .
+    ports:
+      - "3333:3333"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - NODE_ENV=production
+      - PORT=3333
+    env_file:
+      - .env
+```
+
+**Run**:
+```bash
+docker-compose up
+```
+
+## Security Best Practices
+
+### 1. Never Commit Secrets
+
+```bash
+# Check for secrets before commit
+git diff | grep -i "api.key\|secret\|token\|password"
+
+# Use git-secrets
+git secrets --install
+git secrets --register-aws
+```
+
+### 2. Use Separate Keys
+
+- **Development**: Personal API key
+- **Staging**: Team staging key
+- **Production**: Production key (rotate regularly)
+
+### 3. Restrict Permissions
+
+```bash
+# Secure .env file
+chmod 600 .env
+
+# Verify
+ls -la .env
+# -rw------- (only owner can read/write)
+```
+
+### 4. Rotate Keys Regularly
+
+```bash
+# Monthly rotation schedule
+# 1. Generate new key
+# 2. Update environment variables
+# 3. Test applications
+# 4. Revoke old key
+```
+
+### 5. Use Key Management Systems
+
+**AWS Secrets Manager**:
+```bash
+# Fetch secret
+export ANTHROPIC_API_KEY=$(aws secretsmanager get-secret-value \
+  --secret-id anthropic-api-key \
+  --query SecretString \
+  --output text)
+```
+
+**HashiCorp Vault**:
+```bash
+# Read secret
+export ANTHROPIC_API_KEY=$(vault kv get -field=api_key secret/claude)
+```
+
+## Troubleshooting
+
+### Variables Not Loading
+
+**Check if variable is set**:
+```bash
+echo $ANTHROPIC_API_KEY
+env | grep ANTHROPIC
+```
+
+**Source shell config**:
+```bash
+source ~/.bashrc  # or ~/.zshrc
+```
+
+**Verify .env file**:
+```bash
+cat .env | grep ANTHROPIC_API_KEY
+```
+
+### Authentication Fails
+
+**Test API key**:
+```bash
+curl https://api.anthropic.com/v1/messages \
+  -H "x-api-key: $ANTHROPIC_API_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "content-type: application/json" \
+  -d '{
+    "model": "claude-3-5-sonnet-20241022",
+    "max_tokens": 1024,
+    "messages": [{"role": "user", "content": "Hello"}]
+  }'
+```
+
+**Check key format**:
+- Should start with `sk-ant-`
+- No whitespace or special characters
+- Not expired
+
+### PATH Not Working
+
+**Verify PATH includes bin directory**:
+```bash
+echo $PATH | grep claude-code-templates
+```
+
+**Add to PATH manually**:
+```bash
+export PATH="$HOME/.claude-code-templates/bin:$PATH"
+```
+
+**Check executable exists**:
+```bash
+ls -la ~/.claude-code-templates/bin/
+```
+
+### Permission Denied
+
+**Fix file permissions**:
+```bash
+chmod 600 .env
+chmod 755 ~/.claude-code-templates/bin/*
+```
+
+## Next Steps
+
+- [CLI Flags Reference](/cli/flags) - All CLI flags
+- [Configuration Guide](/cli/configuration) - Settings files
+- [Health Check](/cli/health-check) - Verify configuration
+- [CLI Overview](/cli/overview) - Complete CLI documentation

@@ -1,0 +1,517 @@
+---
+title: Commands
+description: Custom slash commands that extend Claude Code with specialized workflows
+---
+
+Commands are custom slash commands that provide Claude Code with specialized workflows, automation, and context-aware operations. They're like custom macros that execute complex tasks with a simple `/command` syntax.
+
+## What Are Commands?
+
+Commands are markdown files (`.md`) stored in `.claude/commands/` that define:
+
+- **Workflow steps** - Automated sequences of operations
+- **Context gathering** - What information to collect before execution
+- **Tool usage** - Which Claude Code tools the command needs
+- **Output format** - How results are presented
+
+<Info>
+Commands appear in Claude Code's command palette (press `/`) and provide autocomplete with hints.
+</Info>
+
+## Command Structure
+
+Commands use YAML frontmatter followed by markdown instructions:
+
+```markdown
+---
+allowed-tools: Read, Write, Edit, Bash
+argument-hint: [pipeline-name] | setup | status | fix
+description: Manage and automate CI/CD pipeline configuration with GitHub Actions
+---
+
+# CI/CD Pipeline Manager
+
+Manage CI/CD pipeline automation: $ARGUMENTS
+
+## Current Pipeline State
+
+- GitHub Actions: !`find .github/workflows -name "*.yml"`
+- CI configuration: @.github/workflows/
+- Package scripts: @package.json
+
+## Task
+
+Automate CI/CD pipeline management with comprehensive workflow orchestration.
+
+## Pipeline Operations
+
+### Setup New Pipeline
+Create complete CI/CD pipeline with:
+...
+```
+
+### Frontmatter Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `allowed-tools` | Yes | Comma-separated list of tools command can use |
+| `argument-hint` | No | Usage hint shown in autocomplete |
+| `description` | Yes | Clear description of command's purpose |
+
+### Special Syntax
+
+Commands support special syntax for dynamic context:
+
+- `$ARGUMENTS` - User-provided arguments after command name
+- `@path/to/file` - Read and include file contents
+- `!\`command\`` - Execute shell command and include output
+
+## Command Categories
+
+<Tabs>
+  <Tab title="Setup & Configuration">
+    Project setup and configuration commands:
+    
+    - **setup-testing** - Configure testing framework (Jest, Vitest, etc.)
+    - **setup-linting** - Set up ESLint, Prettier, and code quality tools
+    - **setup-typescript** - Initialize TypeScript with optimal config
+    - **setup-docker** - Create Docker and docker-compose files
+    
+    ```bash
+    npx claude-code-templates@latest --command setup/setup-testing
+    ```
+    
+    Usage:
+    ```
+    /setup-testing jest
+    /setup-linting eslint+prettier
+    ```
+  </Tab>
+  
+  <Tab title="Git Workflow">
+    Git operations and workflow automation:
+    
+    - **conventional-commits** - Format commits with conventional commit style
+    - **branch-strategy** - Implement git-flow or trunk-based development
+    - **pr-template** - Create pull request templates
+    - **changelog-generator** - Generate changelog from commits
+    
+    ```bash
+    npx claude-code-templates@latest --command git-workflow/conventional-commits
+    ```
+    
+    Usage:
+    ```
+    /conventional-commits feat: add user authentication
+    /changelog-generator v2.0.0
+    ```
+  </Tab>
+  
+  <Tab title="Deployment">
+    Deployment and infrastructure commands:
+    
+    - **ci-pipeline** - GitHub Actions CI/CD pipeline setup
+    - **vercel-deploy** - Vercel deployment configuration
+    - **docker-deploy** - Docker deployment workflow
+    - **kubernetes-deploy** - Kubernetes manifests and deployment
+    
+    ```bash
+    npx claude-code-templates@latest --command deployment/ci-pipeline
+    ```
+    
+    Usage:
+    ```
+    /ci-pipeline setup
+    /vercel-deploy production
+    ```
+  </Tab>
+  
+  <Tab title="Database">
+    Database operations and migrations:
+    
+    - **migration-create** - Create database migration files
+    - **seed-data** - Generate seed data for testing
+    - **schema-diff** - Compare database schemas
+    - **query-optimizer** - Analyze and optimize SQL queries
+    
+    ```bash
+    npx claude-code-templates@latest --command database/migration-create
+    ```
+    
+    Usage:
+    ```
+    /migration-create add_user_roles
+    /query-optimizer slow-queries.sql
+    ```
+  </Tab>
+  
+  <Tab title="Security">
+    Security analysis and hardening:
+    
+    - **vulnerability-scan** - Scan dependencies for vulnerabilities
+    - **security-audit** - Comprehensive security review
+    - **secrets-check** - Find exposed secrets in code
+    - **permissions-audit** - Review access controls
+    
+    ```bash
+    npx claude-code-templates@latest --command security/vulnerability-scan
+    ```
+    
+    Usage:
+    ```
+    /vulnerability-scan
+    /security-audit src/api/
+    ```
+  </Tab>
+  
+  <Tab title="Documentation">
+    Documentation generation and maintenance:
+    
+    - **api-docs** - Generate API documentation from code
+    - **readme-generator** - Create comprehensive README files
+    - **changelog-update** - Update changelog with recent changes
+    - **component-docs** - Document React/Vue components
+    
+    ```bash
+    npx claude-code-templates@latest --command documentation/api-docs
+    ```
+    
+    Usage:
+    ```
+    /api-docs src/api/
+    /readme-generator
+    ```
+  </Tab>
+</Tabs>
+
+## Real-World Example: CI/CD Pipeline Command
+
+**File**: `.claude/commands/ci-pipeline.md`
+
+```markdown
+---
+allowed-tools: Read, Write, Edit, Bash
+argument-hint: [pipeline-name] | setup | status | fix
+description: Manage and automate CI/CD pipeline configuration with GitHub Actions
+---
+
+# CI/CD Pipeline Manager
+
+Manage CI/CD pipeline automation: $ARGUMENTS
+
+## Current Pipeline State
+
+- GitHub Actions: !`find .github/workflows -name "*.yml" -o -name "*.yaml" 2>/dev/null | head -5`
+- CI configuration: @.github/workflows/
+- Package scripts: @package.json
+- Recent workflow runs: !`gh run list --limit 5 2>/dev/null || echo "GitHub CLI not available"`
+
+## Task
+
+Automate CI/CD pipeline management with comprehensive workflow orchestration.
+
+## Pipeline Operations
+
+### Setup New Pipeline
+Create complete CI/CD pipeline with:
+
+```yaml
+name: CI Pipeline
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test:coverage
+      - run: npm run build
+```
+
+### Multi-Environment Deployment
+
+Configure staging and production deployments with environment-specific secrets.
+
+### Security & Quality Gates
+
+- Dependency vulnerability scanning
+- Secret detection with TruffleHog
+- SAST analysis with Super Linter
+```
+
+**Usage**:
+```
+/ci-pipeline setup
+/ci-pipeline status
+/ci-pipeline fix
+```
+
+## Dynamic Context Gathering
+
+Commands can gather context dynamically:
+
+### File References
+
+Include file contents in command context:
+
+```markdown
+Current configuration: @.github/workflows/ci.yml
+Package scripts: @package.json
+```
+
+When the command runs, Claude reads these files automatically.
+
+### Shell Commands
+
+Execute commands to gather system information:
+
+```markdown
+Installed dependencies: !`npm list --depth=0`
+Git status: !`git status --short`
+Recent commits: !`git log --oneline -5`
+```
+
+Results are included in the command's context.
+
+### User Arguments
+
+Capture user input after the command:
+
+```markdown
+Process user request: $ARGUMENTS
+```
+
+Usage: `/command arg1 arg2` makes `$ARGUMENTS` equal to "arg1 arg2".
+
+## Using Commands
+
+### Installation
+
+```bash
+# Single command
+npx claude-code-templates@latest --command ci-pipeline
+
+# Multiple commands
+npx claude-code-templates@latest \
+  --command ci-pipeline \
+  --command vulnerability-scan \
+  --command api-docs
+
+# With category prefix
+npx claude-code-templates@latest --command deployment/ci-pipeline
+```
+
+### Invocation
+
+Commands appear in Claude Code's command palette:
+
+```
+/ci-pipeline setup
+/vulnerability-scan
+/api-docs src/api/
+```
+
+<Info>
+Press `/` in Claude Code to see all available commands with autocomplete.
+</Info>
+
+## Command Best Practices
+
+### 1. Clear Argument Hints
+
+Provide helpful argument hints:
+
+```yaml
+argument-hint: <feature-name> | list | status | rollback
+```
+
+Shows users exactly how to use the command.
+
+### 2. Context Before Action
+
+Gather context before executing:
+
+```markdown
+## Current State
+
+- Project type: @package.json
+- Existing config: @.eslintrc.js
+- Git status: !`git status --short`
+```
+
+### 3. Clear Sections
+
+Organize commands into logical sections:
+
+```markdown
+## Current State
+[Context gathering]
+
+## Task
+[What the command does]
+
+## Operations
+[How to execute]
+
+## Examples
+[Usage examples]
+```
+
+### 4. Error Handling
+
+Include fallbacks for missing tools:
+
+```markdown
+Recent runs: !`gh run list --limit 5 2>/dev/null || echo "GitHub CLI not available"`
+```
+
+### 5. Tool Permissions
+
+Only request necessary tools:
+
+```yaml
+allowed-tools: Read, Write, Edit  # No Bash if not needed
+```
+
+## Creating Custom Commands
+
+<Steps>
+  <Step title="Create Command File">
+    Create `.claude/commands/my-command.md`
+  </Step>
+  
+  <Step title="Add Frontmatter">
+    Define tools, arguments, and description
+    
+    ```yaml
+    ---
+    allowed-tools: Read, Write, Edit, Bash
+    argument-hint: <action> [options]
+    description: My custom command for specific workflow
+    ---
+    ```
+  </Step>
+  
+  <Step title="Define Context">
+    Specify what information to gather:
+    
+    ```markdown
+    ## Current State
+    
+    - Project files: !`ls -la`
+    - Config: @config.json
+    ```
+  </Step>
+  
+  <Step title="Write Instructions">
+    Provide clear steps for execution:
+    
+    ```markdown
+    ## Task
+    
+    Execute workflow: $ARGUMENTS
+    
+    ## Steps
+    
+    1. Analyze current state
+    2. Execute operation
+    3. Validate results
+    ```
+  </Step>
+  
+  <Step title="Test">
+    Use the command in Claude Code:
+    
+    ```
+    /my-command test
+    ```
+  </Step>
+</Steps>
+
+## Command vs Agent
+
+When to use commands vs agents:
+
+| Use Command | Use Agent |
+|------------|----------|
+| Specific workflow automation | General expertise domain |
+| One-time operations | Ongoing conversation |
+| Context + instructions format | Natural language interaction |
+| `/command syntax` | `@agent syntax` |
+
+<Info>
+Commands are great for repeatable workflows. Agents are better for exploratory tasks and ongoing assistance.
+</Info>
+
+## Advanced Features
+
+### Conditional Execution
+
+Commands can include conditional logic:
+
+```markdown
+If TypeScript project (@tsconfig.json exists):
+  - Use TypeScript configuration
+Else:
+  - Use JavaScript configuration
+```
+
+### Multi-Tool Workflows
+
+Combine tools for complex operations:
+
+```markdown
+1. Read current config (Read)
+2. Generate new config (Edit)
+3. Install dependencies (Bash)
+4. Validate setup (Bash)
+```
+
+### Integration with Hooks
+
+Commands can be triggered by hooks:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit",
+      "hooks": [{
+        "type": "command",
+        "command": "/validate-code"
+      }]
+    }]
+  }
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Browse Commands" icon="terminal" href="/components/commands">
+    Explore 200+ available commands
+  </Card>
+  <Card title="Create Custom Commands" icon="code" href="/advanced/creating-components">
+    Build your own commands
+  </Card>
+  <Card title="Hooks" icon="webhook" href="/concepts/hooks">
+    Automate command execution
+  </Card>
+  <Card title="Workflows" icon="diagram-project" href="/guides/workflows">
+    Combine commands into workflows
+  </Card>
+</CardGroup>

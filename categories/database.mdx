@@ -1,0 +1,559 @@
+---
+title: Database Components
+description: Database specialists, MCPs, and tools for PostgreSQL, MySQL, Neon, Supabase, and more
+---
+
+# Database Components
+
+The Database category includes specialized agents, MCPs, and commands for database architecture, optimization, migrations, and platform-specific integrations.
+
+<Card title="Browse Database Components" icon="globe" href="https://aitmpl.com/?category=database">
+  Explore all database components at **aitmpl.com**
+</Card>
+
+## Quick Install
+
+```bash
+# Install database essentials
+npx claude-code-templates@latest \
+  --agent database-architect \
+  --agent postgres-pro \
+  --mcp neon \
+  --mcp supabase
+
+# Or install the database template
+npx claude-code-templates@latest --template database-project
+```
+
+## Database Agents
+
+<CardGroup cols={2}>
+  <Card title="Database Architect" icon="sitemap">
+    Expert in database schema design, normalization, and architecture
+    
+    **Expertise:**
+    - Schema design and normalization
+    - Data modeling (ER diagrams)
+    - Index strategy
+    - Partitioning and sharding
+    - Replication architecture
+    - Backup and recovery planning
+    
+    **Technologies:**
+    - PostgreSQL, MySQL, MongoDB
+    - Redis, Cassandra, DynamoDB
+    - Database design patterns
+    - Capacity planning
+    
+    ```bash
+    npx claude-code-templates@latest --agent database-architect
+    ```
+    
+    **Example Usage:**
+    ```
+    @database-architect Design a multi-tenant database schema for a SaaS
+    application with 10k tenants. Include user management, subscriptions,
+    and usage tracking.
+    ```
+  </Card>
+  
+  <Card title="Database Administrator" icon="user-gear">
+    Database administration, maintenance, and operations
+    
+    **Expertise:**
+    - Database configuration
+    - Performance tuning
+    - Backup and recovery
+    - User and permission management
+    - Monitoring and alerting
+    - Disaster recovery
+    
+    ```bash
+    npx claude-code-templates@latest --agent database-administrator
+    ```
+  </Card>
+  
+  <Card title="Database Optimizer" icon="gauge-high">
+    Query optimization, indexing, and performance tuning
+    
+    **Expertise:**
+    - Query performance analysis
+    - Index optimization
+    - Query plan analysis (EXPLAIN)
+    - Connection pooling
+    - Caching strategies
+    - Slow query detection
+    
+    **Techniques:**
+    - Index selection and design
+    - Query rewriting
+    - Materialized views
+    - Partitioning strategies
+    - Denormalization when needed
+    
+    ```bash
+    npx claude-code-templates@latest --agent database-optimizer
+    ```
+    
+    **Example Usage:**
+    ```
+    @database-optimizer Analyze and optimize this slow query.
+    It's taking 5 seconds to fetch user orders with related products.
+    
+    SELECT * FROM orders o
+    JOIN order_items oi ON o.id = oi.order_id
+    JOIN products p ON oi.product_id = p.id
+    WHERE o.user_id = 123
+    ```
+  </Card>
+  
+  <Card title="Database Optimization" icon="bolt">
+    Systematic database performance optimization
+    
+    ```bash
+    npx claude-code-templates@latest --agent database-optimization
+    ```
+  </Card>
+</CardGroup>
+
+## PostgreSQL Specialists
+
+<CardGroup cols={2}>
+  <Card title="Postgres Pro" icon="elephant">
+    PostgreSQL expert for advanced features and optimization
+    
+    **Expertise:**
+    - Advanced SQL features (CTEs, window functions, LATERAL joins)
+    - PostgreSQL-specific features (JSONB, full-text search, arrays)
+    - Extensions (PostGIS, pg_stat_statements, pg_cron)
+    - Replication (streaming, logical)
+    - Connection pooling (PgBouncer)
+    - Performance tuning
+    
+    **Use cases:**
+    - Complex query optimization
+    - Full-text search implementation
+    - Geospatial queries with PostGIS
+    - JSON/JSONB data handling
+    - Advanced indexing (GiST, GIN, BRIN)
+    
+    ```bash
+    npx claude-code-templates@latest --agent postgres-pro
+    ```
+  </Card>
+  
+  <Card title="NoSQL Specialist" icon="database">
+    NoSQL databases (MongoDB, Cassandra, Redis)
+    
+    ```bash
+    npx claude-code-templates@latest --agent nosql-specialist
+    ```
+  </Card>
+</CardGroup>
+
+## Platform-Specific Agents
+
+<Tabs>
+  <Tab title="Neon">
+    ### Neon Database Specialists
+    
+    <CardGroup cols={2}>
+      <Card title="Neon Expert" icon="bolt">
+        Neon serverless Postgres specialist
+        
+        **Expertise:**
+        - Neon branching workflows
+        - Autoscaling configuration
+        - Branch-based development
+        - Instant provisioning
+        - Connection pooling
+        - Cost optimization
+        
+        ```bash
+        npx claude-code-templates@latest --agent neon-expert
+        ```
+        
+        **Example Usage:**
+        ```
+        @neon-expert Set up a branching workflow where each PR gets
+        its own database branch for testing.
+        ```
+      </Card>
+      
+      <Card title="Neon Database Architect" icon="diagram-project">
+        Neon-specific architecture and design
+        
+        ```bash
+        npx claude-code-templates@latest --agent neon-database-architect
+        ```
+      </Card>
+      
+      <Card title="Neon Auth Specialist" icon="key">
+        Neon authentication and security
+        
+        ```bash
+        npx claude-code-templates@latest --agent neon-auth-specialist
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Supabase">
+    ### Supabase Database Specialists
+    
+    <CardGroup cols={2}>
+      <Card title="Supabase Schema Architect" icon="table">
+        Supabase schema design and RLS policies
+        
+        **Expertise:**
+        - PostgreSQL schema design for Supabase
+        - Row Level Security (RLS) policies
+        - Supabase Auth integration
+        - Realtime subscriptions
+        - Storage bucket configuration
+        
+        ```bash
+        npx claude-code-templates@latest --agent supabase-schema-architect
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+## Database MCPs
+
+<CardGroup cols={2}>
+  <Card title="Neon MCP" icon="bolt">
+    Direct integration with Neon database platform
+    
+    **Capabilities:**
+    - Query databases directly from Claude
+    - Create and manage database branches
+    - Access Neon Management API
+    - Monitor database metrics
+    - Manage connection strings
+    
+    ```bash
+    npx claude-code-templates@latest --mcp neon
+    ```
+    
+    **Setup:**
+    ```bash
+    # Add Neon API key to .env
+    echo "NEON_API_KEY=your_api_key" >> .env
+    ```
+    
+    **Example Usage:**
+    ```
+    # In Claude Code chat:
+    Query my Neon database for all users created in the last 7 days
+    
+    Create a new database branch called "feature-auth" from main
+    
+    Show me the current database metrics and connection count
+    ```
+  </Card>
+  
+  <Card title="Supabase MCP" icon="database">
+    Direct integration with Supabase platform
+    
+    **Capabilities:**
+    - Query database
+    - Manage authentication
+    - Storage operations
+    - Realtime subscriptions
+    - Edge functions
+    
+    ```bash
+    npx claude-code-templates@latest --mcp supabase
+    ```
+    
+    **Setup:**
+    ```bash
+    # Add Supabase credentials to .env
+    echo "SUPABASE_URL=https://xxx.supabase.co" >> .env
+    echo "SUPABASE_KEY=your_service_key" >> .env
+    ```
+  </Card>
+  
+  <Card title="PostgreSQL MCP" icon="elephant">
+    Direct PostgreSQL database connection
+    
+    ```bash
+    npx claude-code-templates@latest --mcp postgresql-integration
+    ```
+  </Card>
+  
+  <Card title="MySQL MCP" icon="database">
+    Direct MySQL database connection
+    
+    ```bash
+    npx claude-code-templates@latest --mcp mysql-integration
+    ```
+  </Card>
+</CardGroup>
+
+## Database Commands
+
+<Tabs>
+  <Tab title="Supabase">
+    ### Supabase Management Commands
+    
+    <CardGroup cols={2}>
+      <Card title="Migration Assistant" icon="arrows-up-down">
+        Create and manage Supabase migrations
+        ```bash
+        npx claude-code-templates@latest --command supabase-migration-assistant
+        ```
+      </Card>
+      
+      <Card title="Schema Sync" icon="sync">
+        Sync local schema with Supabase
+        ```bash
+        npx claude-code-templates@latest --command supabase-schema-sync
+        ```
+      </Card>
+      
+      <Card title="Performance Optimizer" icon="gauge">
+        Optimize Supabase database performance
+        ```bash
+        npx claude-code-templates@latest --command supabase-performance-optimizer
+        ```
+      </Card>
+      
+      <Card title="Security Audit" icon="shield">
+        Audit Supabase security and RLS policies
+        ```bash
+        npx claude-code-templates@latest --command supabase-security-audit
+        ```
+      </Card>
+      
+      <Card title="Data Explorer" icon="magnifying-glass">
+        Explore and analyze Supabase data
+        ```bash
+        npx claude-code-templates@latest --command supabase-data-explorer
+        ```
+      </Card>
+      
+      <Card title="Backup Manager" icon="floppy-disk">
+        Manage Supabase backups
+        ```bash
+        npx claude-code-templates@latest --command supabase-backup-manager
+        ```
+      </Card>
+      
+      <Card title="Realtime Monitor" icon="broadcast-tower">
+        Monitor Supabase realtime connections
+        ```bash
+        npx claude-code-templates@latest --command supabase-realtime-monitor
+        ```
+      </Card>
+      
+      <Card title="Type Generator" icon="code">
+        Generate TypeScript types from Supabase schema
+        ```bash
+        npx claude-code-templates@latest --command supabase-type-generator
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Snowflake">
+    ### Snowflake Commands
+    
+    <CardGroup cols={2}>
+      <Card title="Semantic View" icon="eye">
+        Create semantic views in Snowflake
+        ```bash
+        npx claude-code-templates@latest --command snowflake-semanticview
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+## Database Workflows
+
+### Schema Design Workflow
+
+```bash
+# 1. Design schema
+@database-architect Design a schema for a social media platform
+with users, posts, comments, and likes. Include proper indexing.
+
+# 2. Implement in database
+@postgres-pro Implement the schema with appropriate indexes,
+constraints, and triggers.
+
+# 3. Optimize
+@database-optimizer Review the schema and suggest optimizations
+for queries that fetch a user's feed.
+```
+
+### Migration Workflow
+
+```bash
+# Install Supabase tools
+npx claude-code-templates@latest \
+  --agent supabase-schema-architect \
+  --command supabase-migration-assistant
+
+# Create migration
+/supabase-migration-assistant create add_user_profiles
+
+# Apply migration
+/supabase-migration-assistant apply
+
+# Verify
+/supabase-schema-sync verify
+```
+
+### Performance Optimization Workflow
+
+```bash
+# Identify slow queries
+@database-optimizer Analyze slow queries in the application
+
+# Create indexes
+@postgres-pro Add appropriate indexes for the identified queries
+
+# Test performance
+@database-optimizer Measure query performance improvements
+
+# Monitor
+/supabase-performance-optimizer monitor
+```
+
+## Best Practices
+
+### 1. Schema Design
+
+```bash
+@database-architect Design schema with:
+- Proper normalization (3NF for transactional data)
+- Strategic denormalization for performance
+- Appropriate data types
+- Constraints for data integrity
+- Indexes for common queries
+```
+
+### 2. Query Optimization
+
+```bash
+@database-optimizer Review queries for:
+- Index usage (check EXPLAIN plans)
+- N+1 query problems
+- Unnecessary joins
+- Large result sets
+- Missing WHERE clauses
+```
+
+### 3. Security
+
+```bash
+# Use RLS with Supabase
+@supabase-schema-architect Implement Row Level Security policies
+for multi-tenant isolation
+
+# Audit security
+/supabase-security-audit
+```
+
+### 4. Monitoring
+
+```bash
+# Monitor performance
+/supabase-performance-optimizer monitor
+
+# Monitor realtime
+/supabase-realtime-monitor
+
+# Regular backups
+/supabase-backup-manager schedule
+```
+
+## Real-World Examples
+
+### Example 1: E-commerce Database
+
+```bash
+# Install tools
+npx claude-code-templates@latest \
+  --agent database-architect \
+  --agent postgres-pro \
+  --mcp neon
+
+# Design schema
+@database-architect Design an e-commerce database with:
+- Products with variants and inventory
+- Shopping carts and orders
+- Payment transactions
+- Customer reviews
+- Order fulfillment tracking
+
+# Implement
+@postgres-pro Implement the schema with:
+- JSONB for product attributes
+- Partial indexes for active products
+- Triggers for inventory updates
+- Full-text search for products
+```
+
+### Example 2: Multi-Tenant SaaS
+
+```bash
+# Install Supabase tools
+npx claude-code-templates@latest \
+  --agent supabase-schema-architect \
+  --command supabase-security-audit
+
+# Design tenant isolation
+@supabase-schema-architect Design multi-tenant schema with:
+- Tenant-scoped data access
+- RLS policies for isolation
+- Shared and tenant-specific tables
+
+# Audit security
+/supabase-security-audit
+```
+
+### Example 3: Analytics Database
+
+```bash
+# Install specialists
+npx claude-code-templates@latest \
+  --agent database-architect \
+  --agent database-optimizer
+
+# Design analytics schema
+@database-architect Design a time-series analytics schema
+with partitioning by date and appropriate aggregation tables.
+
+# Optimize queries
+@database-optimizer Optimize queries for dashboard that shows:
+- Daily active users (last 30 days)
+- Top 10 features by usage
+- User cohort retention
+```
+
+## Database Template
+
+```bash
+npx claude-code-templates@latest --template database-project
+```
+
+**Includes:**
+- Database architect agent
+- Database optimizer agent
+- Postgres pro agent
+- Neon MCP
+- Supabase MCP
+- Migration commands
+- Performance monitoring
+
+## Next Steps
+
+- [Browse all database components](https://aitmpl.com/?category=database)
+- [View development team](/categories/development-team)
+- [Explore DevOps components](/categories/devops-infrastructure)
+- [Check out security components](/categories/security)

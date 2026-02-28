@@ -1,0 +1,244 @@
+---
+title: Agent Components
+description: 600+ AI specialist agents for every development task - from frontend to DevOps
+---
+
+# Agent Components
+
+Agents are AI specialists that help with specific development tasks. Each agent has expertise in particular technologies, frameworks, or methodologies.
+
+<Card title="Browse All Agents" icon="globe" href="https://aitmpl.com/?type=agents">
+  Explore 600+ agents with search and filtering at **aitmpl.com**
+</Card>
+
+## Installation
+
+```bash
+# Install a single agent
+npx claude-code-templates@latest --agent backend-developer
+
+# Install multiple agents
+npx claude-code-templates@latest --agent backend-developer --agent frontend-developer
+
+# Install from specific category
+npx claude-code-templates@latest --agent development-team/backend-developer
+```
+
+## Agent Categories
+
+<Tabs>
+  <Tab title="Development">
+    ### Development Team
+    
+    Core development specialists for building applications:
+    
+    <CardGroup cols={2}>
+      <Card title="backend-developer" icon="server">
+        Senior backend developer specializing in APIs, microservices, and scalable systems
+        ```bash
+        npx claude-code-templates@latest --agent backend-developer
+        ```
+      </Card>
+      <Card title="frontend-developer" icon="browser">
+        Expert in React, Vue, Angular, and modern frontend frameworks
+        ```bash
+        npx claude-code-templates@latest --agent frontend-developer
+        ```
+      </Card>
+      <Card title="fullstack-developer" icon="layer-group">
+        End-to-end application development with frontend and backend expertise
+        ```bash
+        npx claude-code-templates@latest --agent fullstack-developer
+        ```
+      </Card>
+      <Card title="mobile-developer" icon="mobile">
+        iOS, Android, React Native, and Flutter development specialist
+        ```bash
+        npx claude-code-templates@latest --agent mobile-developer
+        ```
+      </Card>
+      <Card title="devops-engineer" icon="gear">
+        Infrastructure, CI/CD, containerization, and deployment automation
+        ```bash
+        npx claude-code-templates@latest --agent devops-engineer
+        ```
+      </Card>
+      <Card title="test-generator" icon="vial">
+        Automated test generation with comprehensive coverage
+        ```bash
+        npx claude-code-templates@latest --agent test-generator
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Database">
+    ### Database Specialists
+    
+    Database architecture, optimization, and platform-specific experts:
+    
+    <CardGroup cols={2}>
+      <Card title="database-architect" icon="database">
+        Schema design, normalization, and database architecture
+        ```bash
+        npx claude-code-templates@latest --agent database-architect
+        ```
+      </Card>
+      <Card title="postgres-pro" icon="database">
+        PostgreSQL optimization, query tuning, and advanced features
+        ```bash
+        npx claude-code-templates@latest --agent postgres-pro
+        ```
+      </Card>
+      <Card title="neon-expert" icon="bolt">
+        Neon serverless Postgres specialist
+        ```bash
+        npx claude-code-templates@latest --agent neon-expert
+        ```
+      </Card>
+      <Card title="database-optimizer" icon="gauge-high">
+        Query optimization, indexing, and performance tuning
+        ```bash
+        npx claude-code-templates@latest --agent database-optimizer
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="DevOps">
+    ### DevOps & Infrastructure
+    
+    Cloud platforms, containerization, and infrastructure as code:
+    
+    <CardGroup cols={2}>
+      <Card title="cloud-architect" icon="cloud">
+        Multi-cloud architecture and infrastructure design
+        ```bash
+        npx claude-code-templates@latest --agent cloud-architect
+        ```
+      </Card>
+      <Card title="kubernetes-specialist" icon="dharmachakra">
+        K8s deployment, scaling, and orchestration
+        ```bash
+        npx claude-code-templates@latest --agent kubernetes-specialist
+        ```
+      </Card>
+      <Card title="terraform-engineer" icon="code">
+        Infrastructure as Code with Terraform
+        ```bash
+        npx claude-code-templates@latest --agent terraform-engineer
+        ```
+      </Card>
+      <Card title="azure-principal-architect" icon="microsoft">
+        Azure cloud architecture and best practices
+        ```bash
+        npx claude-code-templates@latest --agent azure-principal-architect
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="AI & Data">
+    ### AI Specialists
+    
+    Machine learning, LLM development, and AI ethics:
+    
+    <CardGroup cols={2}>
+      <Card title="llm-architect" icon="brain">
+        Large Language Model architecture and fine-tuning
+        ```bash
+        npx claude-code-templates@latest --agent llm-architect
+        ```
+      </Card>
+      <Card title="prompt-engineer" icon="comment">
+        Expert prompt design and optimization
+        ```bash
+        npx claude-code-templates@latest --agent prompt-engineer
+        ```
+      </Card>
+      <Card title="ai-ethics-advisor" icon="scale-balanced">
+        AI safety, bias detection, and ethical AI development
+        ```bash
+        npx claude-code-templates@latest --agent ai-ethics-advisor
+        ```
+      </Card>
+      <Card title="model-evaluator" icon="chart-line">
+        ML model evaluation and performance analysis
+        ```bash
+        npx claude-code-templates@latest --agent model-evaluator
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="API & GraphQL">
+    ### API Development
+    
+    RESTful APIs, GraphQL, and API architecture:
+    
+    <CardGroup cols={2}>
+      <Card title="api-architect" icon="diagram-project">
+        RESTful API design and architecture patterns
+        ```bash
+        npx claude-code-templates@latest --agent api-architect
+        ```
+      </Card>
+      <Card title="graphql-architect" icon="project-diagram">
+        GraphQL schema design and optimization
+        ```bash
+        npx claude-code-templates@latest --agent graphql-architect
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Documentation">
+    ### Documentation Specialists
+    
+    Technical writing, API docs, and documentation automation:
+    
+    <CardGroup cols={2}>
+      <Card title="documentation-expert" icon="book">
+        Comprehensive technical documentation
+        ```bash
+        npx claude-code-templates@latest --agent documentation-expert
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+## Agent Features
+
+All agents include:
+
+- **Specialized Knowledge**: Deep expertise in specific technologies
+- **Tool Access**: Pre-configured with appropriate tools (Read, Write, Bash, etc.)
+- **Best Practices**: Industry-standard patterns and conventions
+- **Model Selection**: Optimized model choice for the task
+
+## How Agents Work
+
+When you install an agent:
+
+1. The agent file is downloaded to `.claude/agents/`
+2. Use `@agent-name` in your Claude Code chat to invoke it
+3. The agent automatically uses its specialized knowledge and tools
+4. Results are integrated into your codebase
+
+## Example Usage
+
+```bash
+# Install backend developer agent
+npx claude-code-templates@latest --agent backend-developer
+
+# In Claude Code chat:
+# @backend-developer Create a REST API for user management with JWT auth
+```
+
+## Next Steps
+
+- [Browse all agents at aitmpl.com](https://aitmpl.com/?type=agents)
+- [View development team agents](/categories/development-team)
+- [Explore database agents](/categories/database)
+- [Check out DevOps agents](/categories/devops-infrastructure)

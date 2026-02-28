@@ -1,0 +1,341 @@
+---
+title: Hook Components
+description: 39+ automation hooks for git workflows, testing, security scanning, and more
+---
+
+# Hook Components
+
+Hooks are automation triggers that execute before or after specific events. They enable automated workflows, validation, and enforcement of best practices.
+
+<Card title="Browse All Hooks" icon="globe" href="https://aitmpl.com/?type=hooks">
+  Explore 39+ hooks at **aitmpl.com**
+</Card>
+
+## Installation
+
+```bash
+# Install a single hook
+npx claude-code-templates@latest --hook git/conventional-commits
+
+# Install multiple hooks
+npx claude-code-templates@latest --hook git/conventional-commits --hook security/secret-scanner
+
+# Install from specific category
+npx claude-code-templates@latest --hook security/dangerous-command-blocker
+```
+
+## Hook Categories
+
+<Tabs>
+  <Tab title="Git">
+    ### Git Hooks
+    
+    Automate git workflows and enforce commit standards:
+    
+    <CardGroup cols={2}>
+      <Card title="Conventional Commits" icon="comment">
+        Enforce conventional commit message format
+        ```bash
+        npx claude-code-templates@latest --hook git/conventional-commits
+        ```
+        **Validates:**
+        - Commit message format (feat:, fix:, docs:, etc.)
+        - Scope and description
+        - Breaking change notation
+      </Card>
+      <Card title="Prevent Direct Push" icon="ban">
+        Block direct pushes to protected branches
+        ```bash
+        npx claude-code-templates@latest --hook git/prevent-direct-push
+        ```
+        **Protects:**
+        - main/master branches
+        - production branches
+        - Enforces PR workflow
+      </Card>
+      <Card title="Validate Branch Name" icon="code-branch">
+        Enforce branch naming conventions
+        ```bash
+        npx claude-code-templates@latest --hook git/validate-branch-name
+        ```
+        **Enforces:**
+        - feature/, bugfix/, hotfix/ prefixes
+        - Lowercase with hyphens
+        - Ticket/issue references
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Security">
+    ### Security Hooks
+    
+    Prevent security vulnerabilities and secrets leakage:
+    
+    <CardGroup cols={2}>
+      <Card title="Secret Scanner" icon="key">
+        Scan commits for hardcoded secrets and API keys
+        ```bash
+        npx claude-code-templates@latest --hook security/secret-scanner
+        ```
+        **Detects:**
+        - API keys and tokens
+        - Private keys and certificates
+        - Database credentials
+        - OAuth secrets
+      </Card>
+      <Card title="Dangerous Command Blocker" icon="shield">
+        Block dangerous commands and operations
+        ```bash
+        npx claude-code-templates@latest --hook security/dangerous-command-blocker
+        ```
+        **Blocks:**
+        - Force pushes to main
+        - Destructive operations
+        - Unsafe shell commands
+      </Card>
+      <Card title="Security Scanner" icon="bug">
+        Run security scans before commits
+        ```bash
+        npx claude-code-templates@latest --hook security/security-scanner
+        ```
+      </Card>
+      <Card title="File Protection" icon="lock">
+        Protect sensitive files from being committed
+        ```bash
+        npx claude-code-templates@latest --hook security/file-protection
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Testing">
+    ### Testing Hooks
+    
+    Automate test execution and validation:
+    
+    <CardGroup cols={2}>
+      <Card title="Test Runner" icon="vial">
+        Run tests automatically before commits
+        ```bash
+        npx claude-code-templates@latest --hook testing/test-runner
+        ```
+        **Features:**
+        - Pre-commit test execution
+        - Changed file detection
+        - Test coverage validation
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Git Workflow">
+    ### Git Workflow Hooks
+    
+    Advanced git flow automation:
+    
+    <CardGroup cols={2}>
+      <Card title="Branch Protection" icon="shield-alt">
+        Protect important branches from accidental changes
+        ```bash
+        npx claude-code-templates@latest --hook git-workflow/branch-protection
+        ```
+      </Card>
+      <Card title="Commit Linting" icon="spell-check">
+        Lint commit messages for quality
+        ```bash
+        npx claude-code-templates@latest --hook git-workflow/commit-linting
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Automation">
+    ### Automation Hooks
+    
+    General automation and notifications:
+    
+    <CardGroup cols={2}>
+      <Card title="Simple Notifications" icon="bell">
+        Send notifications on key events
+        ```bash
+        npx claude-code-templates@latest --hook automation/simple-notifications
+        ```
+      </Card>
+      <Card title="Changelog Generator" icon="list">
+        Auto-generate changelog entries
+        ```bash
+        npx claude-code-templates@latest --hook automation/changelog-generator
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Pre/Post Tool">
+    ### Tool Hooks
+    
+    Execute before or after Claude Code tools:
+    
+    <CardGroup cols={2}>
+      <Card title="Pre-Tool Validation" icon="circle-check">
+        Validate context before tool execution
+        ```bash
+        npx claude-code-templates@latest --hook pre-tool/validation
+        ```
+      </Card>
+      <Card title="Post-Tool Cleanup" icon="broom">
+        Clean up after tool execution
+        ```bash
+        npx claude-code-templates@latest --hook post-tool/cleanup
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Performance">
+    ### Performance Hooks
+    
+    Monitor and optimize performance:
+    
+    <CardGroup cols={2}>
+      <Card title="Bundle Size Check" icon="weight">
+        Warn on bundle size increases
+        ```bash
+        npx claude-code-templates@latest --hook performance/bundle-size-check
+        ```
+      </Card>
+      <Card title="Performance Monitor" icon="gauge">
+        Track operation performance
+        ```bash
+        npx claude-code-templates@latest --hook performance/monitor
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Monitoring">
+    ### Monitoring Hooks
+    
+    Track events and metrics:
+    
+    <CardGroup cols={2}>
+      <Card title="Error Tracking" icon="bug">
+        Track and report errors
+        ```bash
+        npx claude-code-templates@latest --hook monitoring/error-tracking
+        ```
+      </Card>
+      <Card title="Usage Analytics" icon="chart-bar">
+        Collect usage analytics
+        ```bash
+        npx claude-code-templates@latest --hook monitoring/usage-analytics
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+## Hook Types
+
+### Pre-Commit Hooks
+Run before a commit is created:
+- Validate commit messages
+- Run linters and formatters
+- Check for secrets
+- Run tests
+
+### Pre-Push Hooks
+Run before pushing to remote:
+- Run full test suite
+- Check branch protection
+- Validate no uncommitted changes
+
+### Pre-Tool Hooks
+Run before Claude Code tool execution:
+- Validate environment
+- Check permissions
+- Load context
+
+### Post-Tool Hooks
+Run after Claude Code tool execution:
+- Clean up temporary files
+- Update metrics
+- Send notifications
+
+## Hook Configuration
+
+Hooks are stored in `.claude/hooks/`:
+
+```json
+{
+  "name": "conventional-commits",
+  "description": "Enforce conventional commit messages",
+  "trigger": "pre-commit",
+  "command": "python",
+  "args": [".claude/scripts/conventional-commits.py"]
+}
+```
+
+## Python Script Hooks
+
+Many hooks use Python scripts for complex logic:
+
+```python
+# .claude/scripts/secret-scanner.py
+import re
+import sys
+
+patterns = [
+    r'(?i)(api[_-]?key|apikey)\s*=\s*["\'][^"\']',
+    r'(?i)(password|passwd)\s*=\s*["\'][^"\']',
+    # ... more patterns
+]
+
+def scan_file(filepath):
+    with open(filepath) as f:
+        content = f.read()
+        for pattern in patterns:
+            if re.search(pattern, content):
+                return True
+    return False
+```
+
+## Example Usage
+
+```bash
+# Install conventional commits hook
+npx claude-code-templates@latest --hook git/conventional-commits
+
+# Now all commits must follow conventional format
+git commit -m "feat: add user authentication"
+# ✓ Valid
+
+git commit -m "Added authentication"
+# ✗ Rejected - must use conventional format
+```
+
+## Disabling Hooks
+
+Temporarily bypass hooks when needed:
+
+```bash
+# Skip git hooks
+git commit --no-verify -m "emergency fix"
+
+# Disable specific hook
+chmod -x .claude/hooks/conventional-commits.json
+```
+
+## Creating Custom Hooks
+
+Create your own hooks:
+
+1. Create JSON config in `.claude/hooks/`
+2. Create Python script in `.claude/scripts/` (if needed)
+3. Test the hook
+4. Share with your team
+
+## Next Steps
+
+- [Browse all hooks at aitmpl.com](https://aitmpl.com/?type=hooks)
+- [View security hooks](/categories/security)
+- [Explore git workflow hooks](/components/hooks#git-workflow)
+- [Learn about testing hooks](/categories/testing)

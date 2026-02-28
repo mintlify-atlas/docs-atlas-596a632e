@@ -1,0 +1,706 @@
+---
+title: Settings
+description: Configure Claude Code behavior with permissions, models, and automation
+---
+
+Settings control how Claude Code behaves in your projects. They define permissions, model preferences, environment variables, hook configurations, and advanced features like status lines and context monitoring.
+
+## What Are Settings?
+
+Settings are JSON configuration files that customize Claude Code:
+
+- **Permissions** - What Claude can and cannot do
+- **Environment variables** - Configuration values and secrets
+- **Hooks** - Event-driven automation
+- **Model preferences** - Which Claude model to use
+- **Status lines** - Real-time monitoring and feedback
+- **Advanced features** - Telemetry, retention, and more
+
+<Info>
+Settings cascade from user → project → local, with later settings overriding earlier ones.
+</Info>
+
+## Settings Hierarchy
+
+Claude Code uses three levels of settings:
+
+<Tabs>
+  <Tab title="User Settings">
+    **Location**: `~/.claude/settings.json`
+    
+    **Scope**: All projects for the current user
+    
+    **Use for**:
+    - Personal preferences (editor, model)
+    - Global API keys
+    - User-specific automation
+    
+    ```bash
+    # Install to user settings
+    npx claude-code-templates@latest --setting use-sonnet
+    # Choose "User settings" when prompted
+    ```
+    
+    **Committed**: No (personal file)
+  </Tab>
+  
+  <Tab title="Project Settings">
+    **Location**: `.claude/settings.json`
+    
+    **Scope**: Current project, shared with team
+    
+    **Use for**:
+    - Team conventions
+    - Project-specific permissions
+    - Shared automation
+    - CI/CD configuration
+    
+    ```bash
+    # Install to project settings
+    npx claude-code-templates@latest --setting allow-npm-commands
+    # Choose "Project settings" when prompted
+    ```
+    
+    **Committed**: Yes (shared with team via git)
+  </Tab>
+  
+  <Tab title="Local Settings">
+    **Location**: `.claude/settings.local.json`
+    
+    **Scope**: Current project, personal overrides
+    
+    **Use for**:
+    - Personal overrides for project settings
+    - Local API keys and secrets
+    - Development-only hooks
+    
+    ```bash
+    # Install to local settings (default)
+    npx claude-code-templates@latest --setting context-monitor
+    # Choose "Local settings" when prompted
+    ```
+    
+    **Committed**: No (add to `.gitignore`)
+  </Tab>
+</Tabs>
+
+<Note>
+Local settings override project settings, which override user settings. This allows personal customization without affecting the team.
+</Note>
+
+## Settings Structure
+
+Settings files use JSON format:
+
+```json
+{
+  "permissions": {
+    "allow": ["Bash(npm run test)"],
+    "deny": ["Bash(rm -rf)"],
+    "ask": ["Bash(git push)"]
+  },
+  "env": {
+    "NODE_ENV": "development",
+    "API_KEY": "${API_KEY}"
+  },
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit",
+      "hooks": [{
+        "type": "command",
+        "command": "npm run format"
+      }]
+    }]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "python3 .claude/scripts/context-monitor.py"
+  },
+  "model": "sonnet",
+  "telemetry": true
+}
+```
+
+## Settings Categories
+
+<Tabs>
+  <Tab title="Permissions">
+    Control what Claude can execute:
+    
+    - **allow-npm-commands** - Enable npm/yarn operations
+    - **read-only-mode** - Prevent all file modifications
+    - **deny-sensitive-files** - Block access to secrets
+    - **allow-git-operations** - Enable git commands
+    
+    ```bash
+    npx claude-code-templates@latest --setting permissions/allow-npm-commands
+    ```
+    
+    **Configuration**:
+    ```json
+    {
+      "permissions": {
+        "allow": [
+          "Bash(npm run lint)",
+          "Bash(npm run test:*)",
+          "Bash(npm run build)",
+          "Bash(npm start)"
+        ]
+      }
+    }
+    ```
+    
+    **Permission Types**:
+    - `allow` - Always permit these operations
+    - `deny` - Always block these operations
+    - `ask` - Prompt user before executing
+  </Tab>
+  
+  <Tab title="Model Selection">
+    Choose which Claude model to use:
+    
+    - **use-sonnet** - Claude 3.5 Sonnet (balanced, default)
+    - **use-opus** - Claude 3 Opus (most capable)
+    - **use-haiku** - Claude 3.5 Haiku (fastest, cheapest)
+    
+    ```bash
+    npx claude-code-templates@latest --setting model/use-sonnet
+    ```
+    
+    **Configuration**:
+    ```json
+    {
+      "model": "sonnet"
+    }
+    ```
+    
+    **Model Comparison**:
+    
+    | Model | Speed | Cost | Best For |
+    |-------|-------|------|----------|
+    | Haiku | Fastest | Lowest | Simple tasks, formatting |
+    | Sonnet | Balanced | Medium | Most development work |
+    | Opus | Slowest | Highest | Complex analysis, architecture |
+  </Tab>
+  
+  <Tab title="Status Lines">
+    Real-time monitoring and feedback:
+    
+    - **context-monitor** - Track context usage with progress bars
+    - **token-counter** - Display token consumption
+    - **session-tracker** - Monitor session duration and cost
+    
+    ```bash
+    npx claude-code-templates@latest --setting statusline/context-monitor
+    ```
+    
+    **Configuration**:
+    ```json
+    {
+      "statusLine": {
+        "type": "command",
+        "command": "python3 .claude/scripts/context-monitor.py"
+      }
+    }
+    ```
+    
+    **Features**:
+    - Visual progress bars
+    - Color-coded alerts (green/yellow/red)
+    - Session analytics (cost, duration, lines changed)
+    - Auto-compact warnings
+  </Tab>
+  
+  <Tab title="Environment">
+    Set environment variables:
+    
+    - **env-development** - Development environment vars
+    - **env-production** - Production configuration
+    - **api-keys** - External service credentials
+    
+    ```bash
+    npx claude-code-templates@latest --setting environment/env-development
+    ```
+    
+    **Configuration**:
+    ```json
+    {
+      "env": {
+        "NODE_ENV": "development",
+        "DEBUG": "true",
+        "API_URL": "http://localhost:3000",
+        "DATABASE_URL": "${DATABASE_URL}"
+      }
+    }
+    ```
+    
+    <Warning>
+    Never hardcode secrets. Use `${VAR}` syntax to reference shell environment variables.
+    </Warning>
+  </Tab>
+  
+  <Tab title="Telemetry">
+    Control usage tracking:
+    
+    - **enable-telemetry** - Send anonymous usage data
+    - **disable-telemetry** - Opt out of tracking
+    
+    ```bash
+    npx claude-code-templates@latest --setting telemetry/disable-telemetry
+    ```
+    
+    **Configuration**:
+    ```json
+    {
+      "telemetry": false
+    }
+    ```
+    
+    Telemetry helps improve Claude Code but is optional.
+  </Tab>
+  
+  <Tab title="Retention">
+    Control conversation history:
+    
+    - **retention-7-days** - Keep 7 days of history
+    - **retention-30-days** - Keep 30 days of history
+    - **retention-90-days** - Keep 90 days of history
+    
+    ```bash
+    npx claude-code-templates@latest --setting cleanup/retention-7-days
+    ```
+    
+    **Configuration**:
+    ```json
+    {
+      "retention": {
+        "days": 7,
+        "autoCleanup": true
+      }
+    }
+    ```
+    
+    Automatically removes old conversations to save disk space.
+  </Tab>
+</Tabs>
+
+## Real-World Examples
+
+### Example 1: Allow NPM Commands
+
+**File**: Settings configuration
+
+```json
+{
+  "description": "Allow common npm development commands (lint, test, build, start)",
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint)",
+      "Bash(npm run test:*)",
+      "Bash(npm run build)",
+      "Bash(npm start)"
+    ]
+  }
+}
+```
+
+**Behavior**:
+- Claude can run `npm run lint`, `npm run test:unit`, `npm run build`, `npm start`
+- User is not prompted for permission
+- Wildcard `*` matches any suffix (e.g., `test:unit`, `test:integration`)
+
+### Example 2: Context Monitor Statusline
+
+**File**: Settings configuration
+
+```json
+{
+  "description": "Real-time Claude Code context usage monitor with visual progress bars",
+  "statusLine": {
+    "type": "command",
+    "command": "python3 .claude/scripts/context-monitor.py"
+  }
+}
+```
+
+**Supporting Script**: `.claude/scripts/context-monitor.py`
+
+The CLI automatically downloads the Python script when installing this setting.
+
+**Display Output**:
+```
+Context: [=========>    ] 67% (134k/200k tokens)
+Session: 12m 34s | Cost: $0.45 | 127 lines changed
+```
+
+### Example 3: Read-Only Mode
+
+**File**: Settings configuration
+
+```json
+{
+  "permissions": {
+    "deny": [
+      "Write(*)",
+      "Edit(*)",
+      "Bash(*)"
+    ],
+    "allow": [
+      "Read(*)",
+      "Glob(*)",
+      "Grep(*)"
+    ]
+  }
+}
+```
+
+**Behavior**:
+- Claude can only read files and search
+- All write operations are blocked
+- No shell commands allowed
+- Useful for code review and analysis
+
+## Installing Settings
+
+### Single Setting
+
+```bash
+npx claude-code-templates@latest --setting allow-npm-commands
+```
+
+You'll be prompted to choose installation location:
+
+1. User settings (~/.claude/settings.json)
+2. Project settings (.claude/settings.json)
+3. Local settings (.claude/settings.local.json)
+4. Enterprise managed settings (requires admin)
+
+### Multiple Settings
+
+```bash
+npx claude-code-templates@latest \
+  --setting use-sonnet \
+  --setting allow-npm-commands \
+  --setting context-monitor
+```
+
+### Batch Installation to Specific Location
+
+Skip prompts by using shared locations:
+
+```bash
+# Install all to local settings
+npx claude-code-templates@latest \
+  --setting use-sonnet \
+  --setting context-monitor \
+  --location local
+```
+
+<Info>
+Settings merge with existing configuration. Conflicting settings prompt for confirmation.
+</Info>
+
+## Permission Patterns
+
+Use wildcards and patterns for flexible permissions:
+
+### Wildcard Matching
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run test:*)"  // Matches test:unit, test:integration, etc.
+    ],
+    "deny": [
+      "Write(*.env*)"         // Blocks .env, .env.local, .env.production
+    ]
+  }
+}
+```
+
+### Tool-Level Permissions
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Read(*)",     // Allow all file reads
+      "Glob(*)",     // Allow all file searches
+      "Grep(*)"      // Allow all content searches
+    ],
+    "deny": [
+      "Bash(*)"      // Block all shell commands
+    ]
+  }
+}
+```
+
+### Path-Based Permissions
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Edit(src/*)",          // Allow edits in src/
+      "Write(tests/*)",       // Allow creating test files
+      "Bash(npm run test)"    // Allow test execution
+    ],
+    "deny": [
+      "Edit(node_modules/*)", // Prevent node_modules edits
+      "Write(.env*)"          // Prevent .env file creation
+    ]
+  }
+}
+```
+
+## Environment Variable Best Practices
+
+### Use Variable Substitution
+
+**DON'T** hardcode secrets:
+```json
+{
+  "env": {
+    "API_KEY": "sk-1234567890"  // ❌ Exposed in git
+  }
+}
+```
+
+**DO** reference environment variables:
+```json
+{
+  "env": {
+    "API_KEY": "${API_KEY}"  // ✅ Reads from shell
+  }
+}
+```
+
+### Use .env Files
+
+Create `.env` file (add to `.gitignore`):
+```bash
+API_KEY=sk-1234567890
+DATABASE_URL=postgresql://localhost/db
+```
+
+Reference in settings:
+```json
+{
+  "env": {
+    "API_KEY": "${API_KEY}",
+    "DATABASE_URL": "${DATABASE_URL}"
+  }
+}
+```
+
+Load with dotenv:
+```bash
+export $(cat .env | xargs)
+```
+
+## Conflict Resolution
+
+When installing settings that conflict with existing configuration:
+
+1. **Conflict Detection** - CLI identifies conflicting values
+2. **User Prompt** - Shows current vs new values
+3. **User Choice** - Overwrite or skip
+4. **Merge Strategy** - Arrays merge, objects overwrite
+
+Example conflict prompt:
+```
+⚠️ Conflicts detected:
+  • Setting "model" (current: "opus", new: "sonnet")
+  • Environment variable "NODE_ENV" (current: "production", new: "development")
+
+Do you want to overwrite the existing configuration? (y/N)
+```
+
+## Settings Merging
+
+### Array Merging
+
+Permission arrays merge uniquely:
+
+**Existing**:
+```json
+{
+  "permissions": {
+    "allow": ["Bash(npm test)"]
+  }
+}
+```
+
+**New**:
+```json
+{
+  "permissions": {
+    "allow": ["Bash(npm build)"]
+  }
+}
+```
+
+**Result**:
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm test)",
+      "Bash(npm build)"
+    ]
+  }
+}
+```
+
+### Object Overwriting
+
+Top-level settings overwrite:
+
+**Existing**:
+```json
+{
+  "model": "opus"
+}
+```
+
+**New**:
+```json
+{
+  "model": "sonnet"
+}
+```
+
+**Result**:
+```json
+{
+  "model": "sonnet"  // Overwrites
+}
+```
+
+## Enterprise Settings
+
+Enterprise managed settings enforce organization-wide policies:
+
+**Locations**:
+- macOS: `/Library/Application Support/ClaudeCode/managed-settings.json`
+- Linux: `/etc/claude-code/managed-settings.json`
+- Windows: `C:\ProgramData\ClaudeCode\managed-settings.json`
+
+**Requires**: Administrator privileges
+
+**Use cases**:
+- Security policies
+- Compliance requirements
+- Organization standards
+
+<Warning>
+Enterprise settings override all other settings and cannot be modified by users.
+</Warning>
+
+## Settings Best Practices
+
+### 1. Principle of Least Privilege
+
+Only grant necessary permissions:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run test)"  // Specific command
+    ]
+  }
+}
+```
+
+Not:
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)"  // Too permissive
+    ]
+  }
+}
+```
+
+### 2. Separate Concerns
+
+- **User settings**: Personal preferences
+- **Project settings**: Team conventions
+- **Local settings**: Secrets and overrides
+
+### 3. Document Settings
+
+Add comments (in description field during installation):
+
+```json
+{
+  "permissions": {
+    "allow": ["Bash(npm run test)"]  // Required for CI/CD pipeline
+  }
+}
+```
+
+### 4. Version Control
+
+**Commit**:
+- `.claude/settings.json` (project settings)
+
+**Don't commit**:
+- `.claude/settings.local.json` (personal overrides)
+- `~/.claude/settings.json` (user settings)
+
+Add to `.gitignore`:
+```
+.claude/settings.local.json
+```
+
+## Viewing Current Settings
+
+Check active settings:
+
+```bash
+# View project settings
+cat .claude/settings.json
+
+# View local settings
+cat .claude/settings.local.json
+
+# View user settings
+cat ~/.claude/settings.json
+```
+
+Settings cascade: user → project → local.
+
+## Removing Settings
+
+Manually edit settings files to remove configurations:
+
+```bash
+# Edit project settings
+code .claude/settings.json
+
+# Edit local settings
+code .claude/settings.local.json
+```
+
+Remove unwanted sections or reset to `{}`.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Browse Settings" icon="gear" href="/components/settings">
+    Explore 60+ available settings
+  </Card>
+  <Card title="Configuration" icon="gear" href="/cli/configuration">
+    Configure Claude Code settings
+  </Card>
+  <Card title="Hooks" icon="webhook" href="/concepts/hooks">
+    Automate with event-driven triggers
+  </Card>
+  <Card title="Templates" icon="layer-group" href="/concepts/templates">
+    Complete project configurations
+  </Card>
+</CardGroup>

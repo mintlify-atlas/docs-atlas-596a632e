@@ -1,0 +1,539 @@
+---
+title: List and Manage Agents
+description: View, update, and remove globally installed agents
+---
+
+# List and Manage Agents
+
+Manage your globally installed agents with listing, updating, and removal commands.
+
+## List Global Agents
+
+### View All Installed Agents
+
+Display all globally installed agents:
+
+```bash
+cct --list-agents
+```
+
+### Output Format
+
+The listing shows:
+
+```
+📋 Installed Global Agents:
+
+✅ Found 3 global agent(s):
+
+  ✅ customer-support (🌍 system)
+      Usage: customer-support "your prompt"
+      Created: 2/28/2026
+
+  ✅ security-auditor (🌍 system)
+      Usage: security-auditor "your prompt"
+      Created: 2/27/2026
+
+  ✅ frontend-developer (👤 user)
+      Usage: frontend-developer "your prompt"
+      Created: 2/26/2026
+
+🌟 Global Usage:
+  • Run from any directory: <agent-name> "prompt"
+  • List agents: npx claude-code-templates@latest --list-agents
+  • Remove agent: npx claude-code-templates@latest --remove-agent <name>
+```
+
+### Installation Locations
+
+Agents can be installed in two locations:
+
+**System Directory** (🌍):
+```
+/usr/local/bin/<agent-name>
+```
+- Immediately available
+- No PATH configuration required
+- Requires write permissions
+
+**User Directory** (👤):
+```
+~/.claude-code-templates/bin/<agent-name>
+```
+- User-specific installation
+- Requires PATH configuration
+- Works without sudo/admin rights
+
+### Information Displayed
+
+For each agent:
+
+<ResponseField name="Name" type="string">
+  The agent's command name
+</ResponseField>
+
+<ResponseField name="Location" type="string">
+  Installation directory (system or user)
+</ResponseField>
+
+<ResponseField name="Status" type="boolean">
+  Whether the agent is executable (✅ or ❌)
+</ResponseField>
+
+<ResponseField name="Usage" type="string">
+  Example command to invoke the agent
+</ResponseField>
+
+<ResponseField name="Created" type="date">
+  Installation date
+</ResponseField>
+
+## Update Global Agents
+
+### Update an Agent
+
+Update an agent to the latest version from GitHub:
+
+```bash
+cct --update-agent <agent-name>
+```
+
+### Examples
+
+```bash
+# Update customer support agent
+cct --update-agent customer-support
+
+# Update security auditor
+cct --update-agent security-auditor
+
+# Update frontend developer
+cct --update-agent frontend-developer
+```
+
+### What Happens During Update
+
+1. **Verification**: Checks if agent exists
+2. **Download**: Fetches latest version from GitHub main branch
+3. **Backup**: Preserves existing agent (overwritten on success)
+4. **Installation**: Writes new agent file and executable
+5. **Confirmation**: Displays success message
+
+### Update Output
+
+```bash
+cct --update-agent customer-support
+
+🔄 Updating global agent: customer-support
+🔄 Re-downloading latest version...
+🤖 Creating global agent: customer-support
+🌍 Installing to system directory (immediately available)
+✅ Agent downloaded successfully
+✅ Global agent 'customer-support' created successfully!
+📦 Usage:
+  customer-support "your prompt here"
+🎉 Ready to use immediately! No setup required.
+```
+
+### When to Update
+
+Update agents when:
+- New features are added to the agent
+- Bug fixes are released
+- System prompts are improved
+- You want the latest capabilities
+
+### Version Tracking
+
+Agents are always updated to the latest version from:
+```
+https://github.com/davila7/claude-code-templates/main/cli-tool/components/agents/
+```
+
+No version numbers are tracked; updates always fetch the current main branch version.
+
+## Remove Global Agents
+
+### Remove an Agent
+
+Delete a globally installed agent:
+
+```bash
+cct --remove-agent <agent-name>
+```
+
+### Examples
+
+```bash
+# Remove customer support agent
+cct --remove-agent customer-support
+
+# Remove security auditor
+cct --remove-agent security-auditor
+
+# Remove frontend developer
+cct --remove-agent frontend-developer
+```
+
+### What Gets Removed
+
+Deletion removes:
+
+1. **System executable**: `/usr/local/bin/<agent-name>` (if exists)
+2. **User executable**: `~/.claude-code-templates/bin/<agent-name>` (if exists)
+3. **Agent file**: `~/.claude-code-templates/agents/<agent-name>.md`
+
+### Removal Output
+
+```bash
+cct --remove-agent customer-support
+
+🗑️  Removing global agent: customer-support
+✅ Removed system executable: customer-support
+✅ Removed agent file: customer-support.md
+🎉 Global agent 'customer-support' removed successfully!
+```
+
+### Agent Not Found
+
+If the agent doesn't exist:
+
+```bash
+cct --remove-agent nonexistent
+
+🗑️  Removing global agent: nonexistent
+⚠️  Agent 'nonexistent' not found.
+💡 List available agents with: --list-agents
+```
+
+### Safety
+
+Removal is immediate and cannot be undone. To restore:
+
+```bash
+cct --create-agent <agent-name>
+```
+
+## Managing Multiple Agents
+
+### Bulk Updates
+
+Update multiple agents with a script:
+
+```bash
+#!/bin/bash
+# update-all-agents.sh
+
+# List of agents to update
+AGENTS=("customer-support" "security-auditor" "frontend-developer")
+
+for agent in "${AGENTS[@]}"; do
+  echo "Updating $agent..."
+  cct --update-agent "$agent"
+  echo ""
+done
+
+echo "✅ All agents updated!"
+```
+
+### Bulk Removal
+
+Remove multiple agents:
+
+```bash
+#!/bin/bash
+# remove-agents.sh
+
+AGENTS=("old-agent" "deprecated-agent")
+
+for agent in "${AGENTS[@]}"; do
+  echo "Removing $agent..."
+  cct --remove-agent "$agent"
+  echo ""
+done
+```
+
+### Inventory Management
+
+Export installed agents list:
+
+```bash
+# List agents to file
+cct --list-agents > installed-agents.txt
+
+# Share with team
+cat installed-agents.txt
+```
+
+## Troubleshooting
+
+### Agent Shows as Not Executable (❌)
+
+**Fix permissions:**
+
+```bash
+# For user directory
+chmod +x ~/.claude-code-templates/bin/<agent-name>
+
+# For system directory (requires sudo)
+sudo chmod +x /usr/local/bin/<agent-name>
+```
+
+### Agent Not Appearing in List
+
+**Verify installation:**
+
+```bash
+# Check user directory
+ls -la ~/.claude-code-templates/bin/
+
+# Check system directory
+ls -la /usr/local/bin/ | grep claude
+```
+
+**Check agent file exists:**
+
+```bash
+ls -la ~/.claude-code-templates/agents/
+```
+
+### Update Fails
+
+**Check network connectivity:**
+
+```bash
+ping raw.githubusercontent.com
+```
+
+**Verify agent exists on GitHub:**
+
+Visit: https://aitmpl.com/ and search for the agent.
+
+**Try manual update:**
+
+```bash
+# Remove and recreate
+cct --remove-agent <agent-name>
+cct --create-agent <agent-name>
+```
+
+### Cannot Remove Agent
+
+**Check permissions:**
+
+```bash
+# For system directory removal
+sudo cct --remove-agent <agent-name>
+```
+
+**Manual removal:**
+
+```bash
+# Remove executable
+rm ~/.claude-code-templates/bin/<agent-name>
+sudo rm /usr/local/bin/<agent-name>
+
+# Remove agent file
+rm ~/.claude-code-templates/agents/<agent-name>.md
+```
+
+### Duplicate Agents
+
+If agent exists in both system and user directories:
+
+```bash
+# Remove from both locations
+sudo rm /usr/local/bin/<agent-name>
+rm ~/.claude-code-templates/bin/<agent-name>
+
+# Recreate in preferred location
+cct --create-agent <agent-name>
+```
+
+## Best Practices
+
+### Regular Updates
+
+Update agents monthly or when new features are announced:
+
+```bash
+# Create update script
+echo '#!/bin/bash' > update-agents.sh
+echo 'cct --list-agents | grep -oP "(?<=✅ )\w+(?= )" | xargs -I {} cct --update-agent {}' >> update-agents.sh
+chmod +x update-agents.sh
+
+# Run updates
+./update-agents.sh
+```
+
+### Documentation
+
+Document your installed agents:
+
+```bash
+# Create agents inventory
+cat > AGENTS.md << EOF
+# Installed Global Agents
+
+## Customer Support
+- **Command**: customer-support
+- **Purpose**: Handle customer inquiries
+- **Usage**: \`customer-support "how to handle refunds?"\`
+
+## Security Auditor
+- **Command**: security-auditor
+- **Purpose**: Code security reviews
+- **Usage**: \`security-auditor --file auth.js "review"\`
+EOF
+```
+
+### Team Synchronization
+
+Share agent configurations across teams:
+
+```bash
+# Export agent list
+cct --list-agents > team-agents.txt
+
+# Team members install same agents
+while read agent; do
+  cct --create-agent "$agent"
+done < team-agents.txt
+```
+
+### Cleanup Unused Agents
+
+Regularly review and remove unused agents:
+
+```bash
+# List agents
+cct --list-agents
+
+# Remove unused
+cct --remove-agent old-agent
+cct --remove-agent deprecated-agent
+```
+
+### Backup Agent Files
+
+Backup agent configurations:
+
+```bash
+# Backup agents directory
+tar -czf agents-backup.tar.gz ~/.claude-code-templates/agents/
+
+# Restore if needed
+tar -xzf agents-backup.tar.gz -C ~/
+```
+
+## Advanced Management
+
+### Custom Agent Registry
+
+Maintain a custom registry:
+
+```bash
+# Create registry file
+cat > agent-registry.json << EOF
+{
+  "agents": [
+    {
+      "name": "customer-support",
+      "category": "business",
+      "version": "latest",
+      "required": true
+    },
+    {
+      "name": "security-auditor",
+      "category": "security",
+      "version": "latest",
+      "required": true
+    }
+  ]
+}
+EOF
+```
+
+### Automated Updates
+
+Schedule automatic updates with cron:
+
+```bash
+# Edit crontab
+crontab -e
+
+# Add weekly update (Sundays at 2 AM)
+0 2 * * 0 /usr/local/bin/update-agents.sh >> /var/log/agent-updates.log 2>&1
+```
+
+### Health Check
+
+Verify all agents are functional:
+
+```bash
+#!/bin/bash
+# check-agents.sh
+
+AGENTS=$(cct --list-agents | grep -oP '(?<=✅ )\w+(?= )')
+
+for agent in $AGENTS; do
+  echo "Testing $agent..."
+  $agent --help > /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    echo "✅ $agent is working"
+  else
+    echo "❌ $agent is broken"
+  fi
+done
+```
+
+## Migration
+
+### Moving Between Machines
+
+**Export agents:**
+
+```bash
+# On source machine
+tar -czf agents-export.tar.gz ~/.claude-code-templates/
+scp agents-export.tar.gz user@target:/tmp/
+```
+
+**Import agents:**
+
+```bash
+# On target machine
+tar -xzf /tmp/agents-export.tar.gz -C ~/
+
+# Fix permissions
+chmod +x ~/.claude-code-templates/bin/*
+
+# Add to PATH if needed
+echo 'export PATH="$HOME/.claude-code-templates/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+### System to User Migration
+
+Move from system to user directory:
+
+```bash
+# List system agents
+ls /usr/local/bin/ | grep -v '.'
+
+# Recreate as user agents
+for agent in $(ls /usr/local/bin/ | grep -v '.'); do
+  if [ -f ~/.claude-code-templates/agents/$agent.md ]; then
+    echo "Migrating $agent to user directory"
+    cp /usr/local/bin/$agent ~/.claude-code-templates/bin/
+    sudo rm /usr/local/bin/$agent
+  fi
+done
+```
+
+## Next Steps
+
+- [Create Global Agents](/cli/create-agent) - Create new global agents
+- [Install Components](/cli/install-component) - Install project agents
+- [CLI Flags Reference](/cli/flags) - All CLI flags
+- [Configuration Guide](/cli/configuration) - Configuration files

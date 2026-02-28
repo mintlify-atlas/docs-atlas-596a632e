@@ -1,0 +1,398 @@
+---
+title: Adding Components
+description: How to create and add new components to Claude Code Templates
+---
+
+This guide covers how to create and add individual components like agents, commands, MCPs, settings, hooks, and skills to the Claude Code Templates project.
+
+## Component Types Overview
+
+| Type | Count | Format | Description |
+|------|-------|--------|-------------|
+| **Agents** | 600+ | Markdown | AI specialists for specific domains |
+| **Commands** | 200+ | Markdown | Custom slash commands for workflows |
+| **MCPs** | 55+ | JSON | External service integrations |
+| **Settings** | 60+ | JSON | Claude Code configuration files |
+| **Hooks** | 39+ | JSON + Scripts | Automation triggers for events |
+| **Skills** | Growing | Markdown | Modular capabilities (Anthropic format) |
+
+## Adding Agents
+
+Agents are AI specialists for specific domains like security, performance, frameworks, etc.
+
+### 1. Create Agent File
+
+```bash
+# Navigate to appropriate category
+cd cli-tool/components/agents/[category]/
+
+# Create your agent file
+touch your-agent-name.md
+```
+
+### 2. Agent File Structure
+
+Agents use Markdown with YAML frontmatter:
+
+```markdown
+---
+name: frontend-developer
+description: Frontend development specialist for React applications and responsive design
+tools: Read, Write, Edit, Bash, Glob, Grep
+model: sonnet
+---
+
+You are a senior frontend developer specializing in modern web applications...
+
+## Communication Protocol
+
+Always begin by requesting project context from the context-manager...
+
+## Execution Flow
+
+### 1. Context Discovery
+...
+```
+
+### 3. Available Categories
+
+- `development-team/` - Full-stack developers, architects
+- `domain-experts/` - Security, performance, accessibility specialists
+- `creative-team/` - Content creators, designers  
+- `business-team/` - Product managers, analysts
+- `development-tools/` - Tool specialists, DevOps experts
+
+### 4. Real Example: Frontend Developer
+
+Location: `cli-tool/components/agents/development-team/frontend-developer.md`
+
+```markdown
+---
+name: frontend-developer
+description: "Use when building complete frontend applications across React, Vue, and Angular frameworks..."
+tools: Read, Write, Edit, Bash, Glob, Grep
+model: sonnet
+---
+
+You are a senior frontend developer specializing in modern web applications with deep expertise in React 18+, Vue 3+, and Angular 15+.
+
+## Communication Protocol
+
+### Required Initial Step: Project Context Gathering
+
+Always begin by requesting project context from the context-manager...
+```
+
+<Info>
+  See the full example at `~/workspace/source/cli-tool/components/agents/development-team/frontend-developer.md`
+</Info>
+
+## Adding Commands
+
+Commands are custom slash commands that extend Claude Code functionality.
+
+### 1. Create Command File
+
+```bash
+cd cli-tool/components/commands/[category]/
+touch your-command-name.md
+```
+
+### 2. Command File Structure
+
+Commands use Markdown with YAML frontmatter:
+
+```markdown
+---
+allowed-tools: Read, Write, Edit, Bash
+argument-hint: [file-path] | [component-name]
+description: Generate comprehensive test suite with unit, integration, and edge case coverage
+---
+
+# Generate Tests
+
+Generate comprehensive test suite for: $ARGUMENTS
+
+## Current Testing Setup
+
+- Test framework: @package.json or @jest.config.js
+- Existing tests: !`find . -name "*.test.*" | head -5`
+- Target file: @$ARGUMENTS
+
+## Task
+
+I'll analyze the target code and create complete test coverage...
+```
+
+### 3. Command Categories
+
+- `testing/` - Test generation, validation, coverage
+- `utilities/` - Code analysis, optimization, debugging
+- `setup/` - Environment setup, configuration
+- `team/` - Collaboration, planning, documentation
+- `sync/` - Integration with external tools
+- `simulation/` - Scenario modeling and analysis
+
+### 4. Real Example: Generate Tests
+
+Location: `cli-tool/components/commands/testing/generate-tests.md`
+
+```markdown
+---
+allowed-tools: Read, Write, Edit, Bash
+argument-hint: [file-path] | [component-name]
+description: Generate comprehensive test suite with unit, integration, and edge case coverage
+---
+
+# Generate Tests
+
+Generate comprehensive test suite for: $ARGUMENTS
+
+## Process
+
+1. Analyze the target file/component structure
+2. Identify all testable functions, methods, and behaviors
+3. Examine existing test patterns in the project
+4. Create test files following project naming conventions
+5. Implement comprehensive test cases with proper setup/teardown
+```
+
+## Adding MCPs
+
+MCPs provide external service integrations for Claude Code.
+
+### 1. Create MCP File
+
+```bash
+cd cli-tool/components/mcps/[category]/
+touch your-service-mcp.json
+```
+
+### 2. MCP File Structure
+
+```json
+{
+  "mcpServers": {
+    "service-name": {
+      "command": "npx",
+      "args": ["-y", "@your-org/mcp-server"],
+      "description": "What this MCP provides",
+      "env": {
+        "API_KEY": "<YOUR_API_KEY>",
+        "BASE_URL": "https://api.service.com"
+      }
+    }
+  }
+}
+```
+
+### 3. MCP Categories
+
+- `audio/` - Audio processing, text-to-speech, transcription
+- `integration/` - GitHub, GitLab, Jira  
+- `database/` - PostgreSQL, MySQL, MongoDB
+- `cloud/` - AWS, Azure, GCP services
+- `devtools/` - Build tools, testing frameworks
+- `ai-services/` - OpenAI, Anthropic, other AI APIs
+
+<Warning>
+  Never hardcode actual API keys in MCP files. Use placeholder format: `<YOUR_API_KEY>`
+</Warning>
+
+## Adding Settings
+
+Settings configure Claude Code behavior and performance.
+
+### 1. Create Settings File
+
+```bash
+cd cli-tool/components/settings/[category]/
+touch your-setting-name.json
+```
+
+### 2. Settings File Structure
+
+```json
+{
+  "setting-category": {
+    "parameter": "value",
+    "description": "What this setting controls"
+  }
+}
+```
+
+### 3. Settings Categories
+
+- `performance/` - Memory, timeout, cache settings
+- `ui/` - Interface customization, themes
+- `mcp/` - MCP server configurations  
+- `security/` - Access control, permissions
+
+## Adding Hooks
+
+Hooks provide automation triggers for different development events.
+
+### 1. Create Hook File
+
+```bash
+cd cli-tool/components/hooks/[category]/
+touch your-hook-name.json
+```
+
+### 2. Hook File Structure
+
+```json
+{
+  "description": "Send simple desktop notifications when operations complete",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if command -v osascript >/dev/null 2>&1; then osascript -e 'display notification \"Tool completed\" with title \"Claude Code\"'; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### 3. Hook Categories
+
+- `git/` - Pre-commit, post-commit, pre-push
+- `development-tools/` - File changes, formatting, linting
+- `testing/` - Test execution, coverage checks
+- `automation/` - Notifications, deployments, monitoring
+- `security/` - Security scanning, secret detection
+- `performance/` - Performance monitoring, budget guards
+
+### 4. Real Example: Simple Notifications
+
+Location: `cli-tool/components/hooks/automation/simple-notifications.json`
+
+```json
+{
+  "description": "Send simple desktop notifications when Claude Code operations complete. Works on macOS and Linux systems.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if command -v osascript >/dev/null 2>&1; then osascript -e 'display notification \"Tool: $CLAUDE_TOOL_NAME completed\" with title \"Claude Code\"'; elif command -v notify-send >/dev/null 2>&1; then notify-send 'Claude Code' \"Tool: $CLAUDE_TOOL_NAME completed\"; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### 5. Hook Types
+
+- **PreToolUse** - Runs before a tool is executed
+- **PostToolUse** - Runs after a tool completes
+- **OnError** - Runs when an error occurs
+- **OnSessionStart** - Runs when Claude Code session starts
+- **OnSessionEnd** - Runs when Claude Code session ends
+
+## Adding Skills
+
+Skills are modular capabilities using Anthropic's progressive disclosure pattern.
+
+### 1. Create Skill Directory
+
+```bash
+cd cli-tool/components/skills/[category]/
+mkdir your-skill-name
+cd your-skill-name
+```
+
+### 2. Skill Structure
+
+```
+your-skill-name/
+├── SKILL.md          # Main skill instructions
+├── references/       # Reference files (loaded on demand)
+└── scripts/         # Executable scripts (not loaded in context)
+```
+
+### 3. SKILL.md Format
+
+```markdown
+# Skill Name
+
+## Overview
+
+Brief description of what this skill does.
+
+## When to Use
+
+When the user requests...
+
+## Instructions
+
+Detailed instructions for Claude...
+
+## References
+
+Files in the references/ directory that can be loaded on demand.
+```
+
+## Creating New Categories
+
+If your component doesn't fit existing categories, create a new one:
+
+```bash
+# Example: Create new agent category
+cd cli-tool/components/agents/
+mkdir your-new-category
+
+# Add your component
+cd your-new-category/
+touch your-component-name.md
+```
+
+<Info>
+  New categories are automatically detected when the component catalog is regenerated.
+</Info>
+
+## Next Steps
+
+After creating your component:
+
+<Steps>
+  <Step title="Review with component-reviewer">
+    ```bash
+    # CRITICAL: Use the component-reviewer agent
+    # See Component Guidelines for details
+    ```
+  </Step>
+  
+  <Step title="Test Installation">
+    ```bash
+    npx claude-code-templates@latest --agent your-agent --dry-run
+    ```
+  </Step>
+  
+  <Step title="Update Component Catalog">
+    ```bash
+    python scripts/generate_components_json.py
+    ```
+  </Step>
+  
+  <Step title="Submit Pull Request">
+    See [Publishing Workflow](/contributing/publishing) for details
+  </Step>
+</Steps>
+
+## Resources
+
+- [Component Guidelines](/contributing/component-guidelines) - Best practices and quality standards
+- [Testing Workflow](/contributing/testing) - How to test your components
+- [Code Standards](/contributing/code-standards) - Coding conventions and style guide
+- [Browse existing components](https://aitmpl.com) - See examples and patterns

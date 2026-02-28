@@ -1,0 +1,342 @@
+---
+title: Template Components
+description: 14+ complete project templates with pre-installed components for rapid development
+---
+
+# Template Components
+
+Templates are complete project configurations with pre-installed agents, commands, MCPs, hooks, and settings. They provide ready-to-use setups for specific project types.
+
+<Card title="Browse All Templates" icon="globe" href="https://aitmpl.com/?type=templates">
+  Explore 14+ templates at **aitmpl.com**
+</Card>
+
+## Installation
+
+```bash
+# Install a template
+npx claude-code-templates@latest --template fullstack-web
+
+# Templates install all included components automatically
+```
+
+## Available Templates
+
+<CardGroup cols={2}>
+  <Card title="Fullstack Web" icon="layer-group">
+    Complete fullstack web development setup
+    ```bash
+    npx claude-code-templates@latest --template fullstack-web
+    ```
+    **Includes:**
+    - Frontend developer agent
+    - Backend developer agent
+    - Database architect agent
+    - Testing commands
+    - Git workflow hooks
+    - Security scanning
+  </Card>
+  
+  <Card title="API Development" icon="server">
+    RESTful and GraphQL API development
+    ```bash
+    npx claude-code-templates@latest --template api-development
+    ```
+    **Includes:**
+    - API architect agent
+    - Backend developer agent
+    - Database integration MCPs
+    - API documentation commands
+    - Security audit commands
+  </Card>
+  
+  <Card title="Security Hardened" icon="shield">
+    Maximum security configuration
+    ```bash
+    npx claude-code-templates@latest --template security-hardened
+    ```
+    **Includes:**
+    - Security auditor agent
+    - Secret scanner hooks
+    - Dependency audit commands
+    - Read-only mode setting
+    - Branch protection
+  </Card>
+  
+  <Card title="Database Project" icon="database">
+    Database-intensive application setup
+    ```bash
+    npx claude-code-templates@latest --template database-project
+    ```
+    **Includes:**
+    - Database architect agent
+    - Database optimizer agent
+    - Neon/Supabase MCPs
+    - Migration commands
+    - Performance monitoring
+  </Card>
+  
+  <Card title="DevOps Pipeline" icon="rocket">
+    CI/CD and infrastructure automation
+    ```bash
+    npx claude-code-templates@latest --template devops-pipeline
+    ```
+    **Includes:**
+    - DevOps engineer agent
+    - Cloud architect agent
+    - Terraform specialist agent
+    - Deployment commands
+    - Infrastructure monitoring
+  </Card>
+  
+  <Card title="Testing Suite" icon="vial">
+    Comprehensive testing infrastructure
+    ```bash
+    npx claude-code-templates@latest --template testing-suite
+    ```
+    **Includes:**
+    - Test generator agent
+    - E2E testing setup
+    - Test runner hooks
+    - Coverage commands
+    - Performance testing
+  </Card>
+  
+  <Card title="Mobile Development" icon="mobile">
+    iOS, Android, and cross-platform mobile
+    ```bash
+    npx claude-code-templates@latest --template mobile-development
+    ```
+    **Includes:**
+    - Mobile developer agent
+    - iOS developer agent
+    - Flutter developer agent
+    - Mobile testing commands
+    - App deployment automation
+  </Card>
+  
+  <Card title="AI/ML Project" icon="brain">
+    Machine learning and AI development
+    ```bash
+    npx claude-code-templates@latest --template ai-ml-project
+    ```
+    **Includes:**
+    - LLM architect agent
+    - Prompt engineer agent
+    - Model evaluator agent
+    - Data processing commands
+    - Experiment tracking
+  </Card>
+  
+  <Card title="Microservices" icon="cubes">
+    Microservices architecture setup
+    ```bash
+    npx claude-code-templates@latest --template microservices
+    ```
+    **Includes:**
+    - Microservices architect agent
+    - Backend developer agent
+    - Docker/K8s specialists
+    - Service mesh configuration
+    - Distributed tracing
+  </Card>
+  
+  <Card title="Monorepo" icon="folder-tree">
+    Monorepo management and tooling
+    ```bash
+    npx claude-code-templates@latest --template monorepo
+    ```
+    **Includes:**
+    - Fullstack developer agent
+    - Monorepo management commands
+    - Workspace configuration
+    - Cross-package testing
+    - Dependency management
+  </Card>
+  
+  <Card title="Documentation Site" icon="book">
+    Documentation website creation
+    ```bash
+    npx claude-code-templates@latest --template documentation-site
+    ```
+    **Includes:**
+    - Documentation expert agent
+    - Doc generation commands
+    - Mintlify/Docusaurus setup
+    - Search integration
+    - Versioning automation
+  </Card>
+  
+  <Card title="E-commerce" icon="shopping-cart">
+    E-commerce application setup
+    ```bash
+    npx claude-code-templates@latest --template ecommerce
+    ```
+    **Includes:**
+    - Fullstack developer agent
+    - Payment integration MCPs
+    - Database architect agent
+    - Security hardening
+    - Performance optimization
+  </Card>
+  
+  <Card title="SaaS Starter" icon="rocket">
+    SaaS application boilerplate
+    ```bash
+    npx claude-code-templates@latest --template saas-starter
+    ```
+    **Includes:**
+    - Fullstack developer agent
+    - Authentication setup
+    - Subscription management
+    - Multi-tenancy architecture
+    - Analytics integration
+  </Card>
+  
+  <Card title="Minimal Setup" icon="minimize">
+    Lightweight configuration with essentials
+    ```bash
+    npx claude-code-templates@latest --template minimal
+    ```
+    **Includes:**
+    - Code architect agent
+    - Basic git hooks
+    - Essential commands
+    - Minimal dependencies
+  </Card>
+</CardGroup>
+
+## Template Structure
+
+Templates define components to install:
+
+```json
+{
+  "name": "fullstack-web",
+  "description": "Complete fullstack web development setup",
+  "components": {
+    "agents": [
+      "frontend-developer",
+      "backend-developer",
+      "database-architect"
+    ],
+    "commands": [
+      "setup-testing",
+      "security-audit",
+      "generate-docs"
+    ],
+    "mcps": [
+      "neon",
+      "github"
+    ],
+    "hooks": [
+      "git/conventional-commits",
+      "security/secret-scanner"
+    ],
+    "settings": [
+      "git/auto-commit"
+    ]
+  }
+}
+```
+
+## How Templates Work
+
+1. **Installation**: Template definition is read
+2. **Component Resolution**: All listed components are identified
+3. **Batch Install**: Components are installed in order
+4. **Configuration**: Template-specific configs are applied
+5. **Verification**: Installation is verified
+
+## Customizing Templates
+
+After installing a template, customize it:
+
+```bash
+# Install template
+npx claude-code-templates@latest --template fullstack-web
+
+# Add additional components
+npx claude-code-templates@latest --agent mobile-developer
+
+# Remove unwanted components
+rm .claude/agents/frontend-developer.md
+```
+
+## Template Benefits
+
+### Consistency
+- Standardized setups across projects
+- Team alignment on tools and workflows
+- Best practices baked in
+
+### Speed
+- Get started in seconds
+- Pre-configured integrations
+- No manual setup required
+
+### Completeness
+- All necessary components included
+- Compatible component combinations
+- Tested configurations
+
+## Creating Custom Templates
+
+Create your own templates:
+
+1. Define component list
+2. Test component combinations
+3. Document template purpose
+4. Share with your team
+
+```json
+{
+  "name": "my-custom-template",
+  "description": "Custom setup for our team",
+  "components": {
+    "agents": ["..."],
+    "commands": ["..."],
+    "mcps": ["..."],
+    "hooks": ["..."],
+    "settings": ["..."]
+  }
+}
+```
+
+## Template Use Cases
+
+### New Projects
+Start new projects with complete setup:
+```bash
+npx claude-code-templates@latest --template saas-starter
+```
+
+### Team Onboarding
+Get new team members set up quickly:
+```bash
+npx claude-code-templates@latest --template team-standard
+```
+
+### Project Migration
+Standardize existing projects:
+```bash
+npx claude-code-templates@latest --template security-hardened
+```
+
+## Popular Templates
+
+### Fullstack Web
+Most comprehensive setup for web applications with frontend, backend, and database.
+
+### Security Hardened
+Maximum security for sensitive applications with audit trails and restrictions.
+
+### Minimal Setup
+Lightweight starter for simple projects or learning.
+
+## Next Steps
+
+- [Browse all templates at aitmpl.com](https://aitmpl.com/?type=templates)
+- [View component library](/components/overview)
+- [Learn about agents](/components/agents)
+- [Explore commands](/components/commands)

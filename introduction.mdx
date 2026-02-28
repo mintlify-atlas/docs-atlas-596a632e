@@ -1,0 +1,259 @@
+---
+title: Claude Code Templates
+description: Ready-to-use configurations for Anthropic's Claude Code. Install AI agents, custom commands, settings, hooks, and MCPs to enhance your development workflow.
+---
+
+# Transform Your Development Workflow
+
+Claude Code Templates is a comprehensive collection of ready-to-use configurations for Anthropic's Claude Code. Install AI specialists, automate workflows, and integrate external services with a single command.
+
+<CardGroup cols={2}>
+  <Card
+    title="Quick Start"
+    icon="rocket"
+    href="/quickstart"
+  >
+    Get up and running in under 2 minutes. Install your first component and start building.
+  </Card>
+  <Card
+    title="Browse Components"
+    icon="grid"
+    href="https://aitmpl.com"
+  >
+    Explore 900+ agents, commands, MCPs, hooks, and settings in our interactive catalog.
+  </Card>
+  <Card
+    title="Installation Guide"
+    icon="download"
+    href="/installation"
+  >
+    Detailed installation instructions, component types, and configuration options.
+  </Card>
+  <Card
+    title="CLI Reference"
+    icon="code"
+    href="/cli/overview"
+  >
+    Complete CLI reference with all commands, flags, and usage examples.
+  </Card>
+</CardGroup>
+
+## What's Included
+
+Claude Code Templates provides six types of components to supercharge your AI-powered development:
+
+### 🤖 Agents (600+)
+AI specialists for specific domains and tasks:
+- **Development Team**: Frontend, backend, fullstack developers
+- **Security**: Security auditors, penetration testers
+- **DevOps**: Infrastructure architects, deployment specialists
+- **Data & AI**: Machine learning engineers, data scientists
+- **Documentation**: Technical writers, API documentation experts
+
+### ⚡ Commands (200+)
+Custom slash commands for common workflows:
+- `/generate-tests` - Generate unit tests for your code
+- `/optimize-bundle` - Analyze and optimize bundle size
+- `/check-security` - Run security audits on dependencies
+- `/setup-ci` - Configure CI/CD pipelines
+
+### 🔌 MCPs (55+)
+External service integrations:
+- GitHub, GitLab, Bitbucket
+- PostgreSQL, MySQL, MongoDB
+- Stripe, AWS, OpenAI
+- Docker, Kubernetes, Terraform
+
+### ⚙️ Settings (60+)
+Claude Code configuration presets:
+- Performance optimization
+- Memory management
+- Timeout configurations
+- Output formatting
+
+### 🪝 Hooks (39+)
+Automation triggers for development workflows:
+- Pre-commit validation
+- Post-completion actions
+- Error handling
+- Custom notifications
+
+### 🎨 Skills (300+)
+Reusable capabilities with progressive disclosure:
+- PDF processing and generation
+- Excel automation
+- Scientific computing
+- Custom workflow templates
+
+## Installation
+
+Install components directly from npm without any setup:
+
+```bash
+# Install a complete development stack
+npx claude-code-templates@latest --agent frontend-developer --command generate-tests --mcp github-integration --yes
+
+# Browse and install interactively
+npx claude-code-templates@latest
+
+# Quick shortcuts
+npx cct@latest  # Short alias
+```
+
+<Note>
+  The `@latest` flag ensures you always get the newest components. The package is updated frequently with new agents and improvements.
+</Note>
+
+## Key Features
+
+<CardGroup cols={3}>
+  <Card title="Zero Config" icon="bolt">
+    Install components instantly without configuration files or setup steps.
+  </Card>
+  <Card title="Interactive Mode" icon="terminal">
+    Browse and select components with an intuitive CLI interface.
+  </Card>
+  <Card title="Batch Install" icon="layer-group">
+    Install multiple components in a single command for complete workflows.
+  </Card>
+  <Card title="Real-time Analytics" icon="chart-line">
+    Monitor Claude Code sessions with live dashboards and metrics.
+  </Card>
+  <Card title="Health Checks" icon="heartbeat">
+    Verify your Claude Code setup with comprehensive diagnostics.
+  </Card>
+  <Card title="Mobile Optimized" icon="mobile">
+    View conversations on mobile devices with responsive interfaces.
+  </Card>
+</CardGroup>
+
+## Real-World Example
+
+Set up a complete React development environment:
+
+<CodeGroup>
+```bash Interactive Mode
+# Launch interactive selector
+npx claude-code-templates@latest
+
+# Select components:
+# ✓ Agent: development-team/frontend-developer
+# ✓ Agent: development-team/react-expert
+# ✓ Command: testing/generate-tests
+# ✓ MCP: development/github-integration
+# ✓ Hook: git/pre-commit-validation
+```
+
+```bash One-Line Install
+# Install entire stack at once
+npx claude-code-templates@latest \
+  --agent development-team/frontend-developer \
+  --agent development-team/react-expert \
+  --command testing/generate-tests \
+  --mcp development/github-integration \
+  --hook git/pre-commit-validation \
+  --yes
+```
+</CodeGroup>
+
+<Tip>
+  Use the `--yes` flag to skip confirmation prompts and install immediately. Perfect for automated setups and CI/CD pipelines.
+</Tip>
+
+## Additional Tools
+
+Beyond the component catalog, Claude Code Templates includes powerful development utilities:
+
+### 📊 Analytics Dashboard
+Monitor AI-powered development sessions in real-time:
+```bash
+npx claude-code-templates@latest --analytics
+```
+- Live state detection and performance metrics
+- Token usage tracking
+- Conversation analysis
+
+### 💬 Conversation Monitor
+Mobile-optimized interface for viewing Claude responses:
+```bash
+# Local access
+npx claude-code-templates@latest --chats
+
+# Remote access via Cloudflare Tunnel
+npx claude-code-templates@latest --chats --tunnel
+```
+
+### 🔍 Health Check
+Comprehensive diagnostics for Claude Code installations:
+```bash
+npx claude-code-templates@latest --health-check
+```
+- Validates configuration files
+- Checks for common issues
+- Provides optimization recommendations
+
+### 🔌 Plugin Dashboard
+Manage plugins and permissions:
+```bash
+npx claude-code-templates@latest --plugins
+```
+
+## Community & Support
+
+<CardGroup cols={2}>
+  <Card
+    title="GitHub Discussions"
+    icon="github"
+    href="https://github.com/davila7/claude-code-templates/discussions"
+  >
+    Ask questions, share tips, and connect with the community.
+  </Card>
+  <Card
+    title="Report Issues"
+    icon="bug"
+    href="https://github.com/davila7/claude-code-templates/issues"
+  >
+    Found a bug? Let us know and we'll fix it.
+  </Card>
+  <Card
+    title="Contributing"
+    icon="code-pull-request"
+    href="/contributing/getting-started"
+  >
+    Add your own agents, commands, and MCPs to the collection.
+  </Card>
+  <Card
+    title="Dashboard Beta"
+    icon="browser"
+    href="https://app.aitmpl.com"
+  >
+    Try our new web dashboard for managing collections and components.
+  </Card>
+</CardGroup>
+
+## What's Next?
+
+<Steps>
+  <Step title="Get Started">
+    Follow the [quickstart guide](/quickstart) to install your first component in under 2 minutes.
+  </Step>
+  <Step title="Explore Components">
+    Browse the [full catalog](https://aitmpl.com) to discover 900+ ready-to-use configurations.
+  </Step>
+  <Step title="Deep Dive">
+    Read the [installation guide](/installation) for advanced configuration and batch installation.
+  </Step>
+  <Step title="Build Something">
+    Use Claude Code with your new components and start building amazing projects.
+  </Step>
+</Steps>
+
+---
+
+<Card
+  title="Star us on GitHub"
+  icon="star"
+  href="https://github.com/davila7/claude-code-templates"
+>
+  If you find Claude Code Templates useful, give us a star to support the project!
+</Card>

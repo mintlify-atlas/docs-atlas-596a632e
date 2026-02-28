@@ -1,0 +1,495 @@
+---
+title: Session Sharing
+description: Export, share, and clone Claude Code conversation sessions with team members
+---
+
+# Session Sharing
+
+Share your Claude Code conversation history with teammates, collaborators, or across machines.
+
+## Overview
+
+The session sharing system allows you to:
+- **Export** conversations as portable JSON files
+- **Upload** sessions to cloud storage (x0.at)
+- **Clone** shared sessions to continue conversations
+- **Download** session context as markdown files
+
+Implemented in `src/session-sharing.js`, this feature enables seamless collaboration.
+
+## Exporting Sessions
+
+### Export as Markdown
+
+Download a conversation as a markdown file optimized for Claude Code:
+
+```javascript
+const SessionSharing = require('./session-sharing');
+
+const sessionSharing = new SessionSharing(conversationAnalyzer);
+
+const result = await sessionSharing.exportSessionAsMarkdown(
+  conversationId,
+  conversationData,
+  { messageLimit: 100 }
+);
+
+console.log(result.filename); // claude-context-project-2026-02-28.md
+console.log(result.messageCount); // 87
+```
+
+**Markdown format:**
+```markdown
+# Previous Conversation Context
+
+> **Note to Claude Code**: This file contains the complete conversation 
+> history from a previous session. Read and understand this context to 
+> continue helping the user with their task.
+
+**Project:** my-project
+**Date:** 2026-02-28
+**Messages in this export:** 87
+
+---
+
+## 💬 Conversation History
+
+### Message 1: 👤 User
+*2026-02-28, 10:30:15*
+
+Create a React component for user authentication
+
+---
+
+### Message 2: 🤖 Assistant
+*2026-02-28, 10:30:45*
+
+I'll create an authentication component with login and signup forms...
+
+[Tool use and results...]
+```
+
+<Info>
+  Markdown exports are perfect for providing context to new Claude Code sessions or sharing read-only conversation history.
+</Info>
+
+### Export as JSON
+
+Export the full session data for cloning:
+
+```javascript
+const exportData = await sessionSharing.exportSessionData(
+  conversationId,
+  conversationData,
+  { messageLimit: 100 }
+);
+
+// Export format
+{
+  "version": "1.0.0",
+  "exported_at": "2026-02-28T14:30:00.000Z",
+  "conversation": {
+    "id": "conv_abc123",
+    "project": "my-app",
+    "messageCount": 87,
+    "totalMessageCount": 150,
+    "wasLimited": true,
+    "tokens": { "input": 45000, "output": 32000 },
+    "model": "claude-sonnet-4-5-20250929"
+  },
+  "messages": [
+    {
+      "uuid": "msg_123",
+      "type": "user",
+      "timestamp": "2026-02-28T10:30:15.000Z",
+      "message": {
+        "id": "msg_123",
+        "role": "user",
+        "content": [{ "type": "text", "text": "Create a React component..." }]
+      }
+    },
+    // More messages...
+  ],
+  "metadata": {
+    "exportTool": "claude-code-templates",
+    "exportVersion": "1.0.0",
+    "messageLimit": 100
+  }
+}
+```
+
+## Sharing Sessions
+
+### Upload to x0.at
+
+Share sessions via the x0.at file hosting service:
+
+```javascript
+const sessionData = await sessionSharing.exportSessionData(
+  conversationId,
+  conversationData
+);
+
+const shareUrl = await sessionSharing.uploadToX0(
+  sessionData,
+  conversationId
+);
+
+console.log('Share URL:', shareUrl);
+// https://x0.at/abc123.json
+```
+
+**Sharing workflow:**
+
+<Steps>
+  <Step title="Export Session Data">
+    Convert conversation to portable JSON format
+  </Step>
+  
+  <Step title="Upload to x0.at">
+    ```bash
+    curl -s -F "file=@session-conv_abc123.json" https://x0.at
+    ```
+  </Step>
+  
+  <Step title="Share URL">
+    Send the returned URL to collaborators:
+    ```
+    https://x0.at/xyz789.json
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+  **x0.at retention policy:**
+  - Files are kept for 3-100 days based on size
+  - Files are **not encrypted** by default
+  - Don't share sessions containing sensitive data (API keys, passwords, credentials)
+</Warning>
+
+### Generate Share QR Code
+
+Create QR codes for mobile sharing:
+
+```javascript
+const qrCode = await sessionSharing.generateQRCode(
+  `npx claude-code-templates@latest --clone-session ${shareUrl}`
+);
+
+console.log(qrCode.dataUrl); // Data URL for image display
+```
+
+Display the QR code in a web interface or terminal for easy mobile scanning.
+
+## Cloning Sessions
+
+### Clone from URL
+
+Download and import a shared session:
+
+```bash
+npx claude-code-templates@latest \
+  --clone-session https://x0.at/abc123.json
+```
+
+**Clone process:**
+
+```
+📥 Downloading session from https://x0.at/abc123.json...
+✅ Session downloaded successfully
+📊 Project: my-app
+💬 Messages: 87
+🤖 Model: claude-sonnet-4-5-20250929
+
+✅ Session installed successfully!
+📂 Location: ~/.claude/projects/my-app/conv_abc123.jsonl
+
+💡 To continue this conversation, run:
+
+   claude --resume conv_abc123
+
+   Or open Claude Code to see it in your sessions list
+```
+
+### Clone Implementation
+
+The cloning process (`cloneSession` method):
+
+1. **Download** - Fetch JSON from URL using curl
+2. **Validate** - Check session structure and required fields
+3. **Install** - Place in `~/.claude/projects/{project}/` directory
+4. **Settings** - Create `settings.json` with metadata
+5. **Ready** - Session appears in Claude Code session list
+
+```javascript
+async cloneSession(url, options = {}) {
+  // 1. Download
+  const sessionData = await this.downloadSession(url);
+  
+  // 2. Validate
+  this.validateSessionData(sessionData);
+  
+  // 3. Install
+  const result = await this.installSession(sessionData, options);
+  
+  return result;
+}
+```
+
+### Session Installation
+
+Cloned sessions are installed to the standard Claude Code directory:
+
+```
+~/.claude/projects/my-app/
+├── conv_abc123.jsonl          # Conversation messages (JSONL format)
+└── settings.json              # Project metadata
+```
+
+**settings.json structure:**
+```json
+{
+  "projectName": "my-app",
+  "projectPath": "/path/to/project",
+  "sharedSession": true,
+  "originalExport": {
+    "exportedAt": "2026-02-28T14:30:00.000Z",
+    "exportTool": "claude-code-templates",
+    "exportVersion": "1.0.0"
+  },
+  "importedAt": "2026-02-28T15:45:00.000Z"
+}
+```
+
+<Info>
+  Cloned sessions integrate seamlessly with Claude Code. Use `claude --resume {id}` or select them from the sessions list in the UI.
+</Info>
+
+## Message Limits
+
+Large conversations are truncated to avoid excessive file sizes:
+
+```javascript
+// Default: Last 100 messages
+const result = await sessionSharing.exportSessionData(
+  conversationId,
+  conversationData,
+  { messageLimit: 100 }
+);
+
+// Custom limit
+const fullExport = await sessionSharing.exportSessionData(
+  conversationId,
+  conversationData,
+  { messageLimit: 500 }
+);
+```
+
+**Limit indicators:**
+```javascript
+if (result.wasLimited) {
+  console.log(`Exported ${result.messageCount} of ${result.totalMessageCount} messages`);
+  // Exported 100 of 237 messages
+}
+```
+
+## JSONL Format
+
+Sessions use JSONL (JSON Lines) format - one JSON object per line:
+
+```jsonl
+{"uuid":"msg_1","type":"user","timestamp":"2026-02-28T10:30:00.000Z","message":{"role":"user","content":[{"type":"text","text":"Hello"}]}}
+{"uuid":"msg_2","type":"assistant","timestamp":"2026-02-28T10:30:15.000Z","message":{"role":"assistant","content":[{"type":"text","text":"Hi there!"}]}}
+```
+
+This format allows:
+- **Streaming** - Append messages without parsing entire file
+- **Partial reads** - Read specific lines without loading all messages
+- **Efficient parsing** - Process one message at a time
+
+## Security & Privacy
+
+<Warning>
+  **Before sharing sessions:**
+  - Remove API keys and credentials from conversation history
+  - Redact sensitive business logic or proprietary code
+  - Check for hardcoded passwords or tokens
+  - Verify no customer data is included
+</Warning>
+
+### Sanitizing Sessions
+
+Before export, review messages for:
+
+```javascript
+// Check for API keys
+const sensitivePatterns = [
+  /sk-[a-zA-Z0-9]{32,}/,           // Anthropic keys
+  /ghp_[a-zA-Z0-9]{36}/,           // GitHub tokens
+  /AIza[a-zA-Z0-9_-]{35}/,         // Google API keys
+  /[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}/  // Credit cards
+];
+
+// Redact sensitive content before sharing
+```
+
+### Private Sharing
+
+For sensitive projects, use private file sharing:
+
+1. **Export locally** - Save JSON to disk
+2. **Encrypt** - Use GPG or similar encryption
+3. **Share privately** - Use secure channels (Slack, email, private cloud)
+4. **Decrypt** - Recipient decrypts before cloning
+
+```bash
+# Encrypt export
+gpg --encrypt --recipient teammate@example.com session.json
+
+# Decrypt before cloning
+gpg --decrypt session.json.gpg > session.json
+npx claude-code-templates@latest --clone-session file://./session.json
+```
+
+## Use Cases
+
+### Team Collaboration
+
+Share context when handing off work:
+
+```bash
+# Developer A exports session
+cct --export-session conv_123 --upload
+# Shares URL with Developer B
+
+# Developer B clones session
+cct --clone-session https://x0.at/abc.json
+# Continues conversation where Developer A left off
+```
+
+### Cross-Machine Sync
+
+Continue work on different machines:
+
+```bash
+# On laptop
+cct --export-session current --upload
+# Note URL: https://x0.at/xyz.json
+
+# On desktop
+cct --clone-session https://x0.at/xyz.json
+```
+
+### Code Review Context
+
+Provide full context for code reviews:
+
+```bash
+# Export conversation that led to the PR
+cct --export-session conv_pr_123 --markdown
+# Attach claude-context-feature-2026-02-28.md to PR
+```
+
+### Onboarding
+
+Share project setup sessions with new team members:
+
+```bash
+# Export onboarding conversation
+cct --export-session onboarding --upload
+# Share with new hires
+```
+
+## API Reference
+
+### SessionSharing Class
+
+```javascript
+class SessionSharing {
+  constructor(conversationAnalyzer)
+  
+  // Export as markdown
+  async exportSessionAsMarkdown(conversationId, conversationData, options)
+  
+  // Export as JSON
+  async exportSessionData(conversationId, conversationData, options)
+  
+  // Upload to x0.at
+  async uploadToX0(sessionData, conversationId)
+  
+  // Clone from URL
+  async cloneSession(url, options)
+  
+  // Generate QR code
+  async generateQRCode(command)
+}
+```
+
+### Export Options
+
+```javascript
+{
+  messageLimit: 100,  // Max messages to export (default: 100)
+}
+```
+
+### Clone Options
+
+```javascript
+{
+  projectPath: '/path/to/project'  // Override project path
+}
+```
+
+## Troubleshooting
+
+### Clone Fails with "Invalid session file"
+
+```
+❌ Failed to clone session: Invalid session file - missing version
+```
+
+**Causes:**
+- Corrupted download
+- Not a valid Claude Code session export
+- Outdated export format
+
+**Solutions:**
+- Re-download the file
+- Verify URL is correct
+- Check export was created with recent version
+
+### Upload to x0.at Fails
+
+```
+❌ Error: Invalid response from x0.at
+```
+
+**Solutions:**
+- Check internet connection
+- Verify x0.at service is available
+- Try again in a few minutes
+
+### Session Not Appearing in Claude Code
+
+```bash
+# Verify installation
+ls ~/.claude/projects/
+
+# Check specific session
+ls ~/.claude/projects/my-app/conv_*.jsonl
+
+# Validate JSONL format
+cat ~/.claude/projects/my-app/conv_abc123.jsonl | head -1 | jq
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Sandbox Execution" icon="box" href="/advanced/sandbox-execution">
+    Run Claude Code in isolated environments
+  </Card>
+  <Card title="Remote Access" icon="globe" href="/advanced/remote-access">
+    Access analytics dashboards remotely
+  </Card>
+</CardGroup>

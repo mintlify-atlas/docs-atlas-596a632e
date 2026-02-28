@@ -1,0 +1,446 @@
+---
+title: Sandbox Execution
+description: Execute Claude Code in isolated cloud and local sandboxes with E2B, Docker, and Cloudflare Workers
+---
+
+# Sandbox Execution
+
+Run Claude Code in completely isolated environments for safe experimentation, testing, or executing untrusted code.
+
+## Overview
+
+Claude Code Templates supports three sandbox providers:
+
+- **E2B** - Cloud-based sandboxes with automatic cleanup
+- **Docker** - Local containerized environments
+- **Cloudflare Workers** - Serverless edge computing
+
+## E2B Cloud Sandboxes
+
+E2B provides isolated cloud environments perfect for safe code execution without affecting your local machine.
+
+### Setup
+
+<Steps>
+  <Step title="Get E2B API Key">
+    Sign up at [e2b.dev](https://e2b.dev) and get your API key from the dashboard.
+  </Step>
+  
+  <Step title="Set Environment Variable">
+    ```bash
+    export E2B_API_KEY=your_api_key_here
+    export ANTHROPIC_API_KEY=your_anthropic_key
+    ```
+  </Step>
+  
+  <Step title="Run Sandbox">
+    ```bash
+    npx claude-code-templates@latest --sandbox e2b --prompt "Create a React todo app"
+    ```
+  </Step>
+</Steps>
+
+### Using E2B with Components
+
+Install specific components before execution:
+
+```bash
+npx claude-code-templates@latest \
+  --sandbox e2b \
+  --agent react-expert,frontend-developer \
+  --prompt "Build a responsive dashboard with charts"
+```
+
+The sandbox will:
+1. Create an isolated E2B cloud environment
+2. Install specified agents/commands/MCPs
+3. Execute your prompt with Claude Code
+4. Download all generated files to your local machine
+5. Automatically clean up the sandbox
+
+### How It Works
+
+The E2B launcher (`e2b-launcher.py`) handles the entire lifecycle:
+
+```python
+# Executed automatically when you use --sandbox e2b
+python e2b-launcher.py \
+  "your prompt" \
+  "--agent react-expert" \
+  $E2B_API_KEY \
+  $ANTHROPIC_API_KEY
+```
+
+**Key Features:**
+- **Automatic timeout management** - Extends sandbox lifetime during operations
+- **Real-time streaming** - See Claude Code output as it happens
+- **File download** - All generated files copied to `sandbox-{id}/` directory
+- **WebSocket retry logic** - Handles connection issues gracefully
+- **Progress indicators** - Visual feedback during execution
+
+<Info>
+  Files are downloaded to a project directory named `sandbox-{id}` in your current working directory, preserving the full directory structure.
+</Info>
+
+### Environment Variables
+
+Pass additional environment variables to the sandbox:
+
+```bash
+export E2B_API_KEY=your_key
+export ANTHROPIC_API_KEY=your_key
+export DATABASE_URL=postgres://...
+
+npx claude-code-templates@latest \
+  --sandbox e2b \
+  --prompt "Set up database migrations"
+```
+
+The sandbox environment inherits:
+- `ANTHROPIC_API_KEY` (required)
+- `E2B_API_KEY` (required)
+- Custom environment variables you set
+
+<Warning>
+  E2B sandboxes have a 10-15 minute timeout. The launcher automatically extends this to 15 minutes for long-running operations.
+</Warning>
+
+### Monitoring Sandbox Execution
+
+The E2B launcher provides real-time feedback:
+
+```
+☁️  EXECUTING CLAUDE CODE IN SECURE CLOUD SANDBOX
+════════════════════════════════════════════════
+
+    ⏳ Starting execution...
+    🔒 Isolated E2B environment active
+    📡 Streaming real-time output below:
+
+────────────────────────────────────────────────
+📝 LIVE OUTPUT:
+────────────────────────────────────────────────
+
+🎯 Claude Code started responding:
+
+[Real-time output from Claude Code...]
+```
+
+### Troubleshooting E2B
+
+**WebSocket Connection Failed**
+
+```
+⚠️  WebSocket connection failed, retrying in 3 seconds...
+```
+
+This is usually caused by:
+- Network/firewall blocking WebSocket connections
+- Corporate proxy restrictions
+- Temporary E2B service issues
+
+**Solutions:**
+- Try from a different network
+- Check firewall/proxy settings
+- Wait a few minutes and retry
+
+**No Files Generated**
+
+If the sandbox completes but no files appear:
+
+```bash
+# The launcher searches for common file extensions
+# Check the sandbox output for file paths
+# Files are saved to: sandbox-{id}/
+```
+
+## Docker Local Sandboxes
+
+Run Claude Code in isolated Docker containers on your local machine.
+
+### Prerequisites
+
+<Steps>
+  <Step title="Install Docker">
+    Download from [docker.com](https://docs.docker.com/get-docker/)
+  </Step>
+  
+  <Step title="Start Docker Daemon">
+    Ensure Docker Desktop is running or start the daemon:
+    ```bash
+    # macOS/Windows: Launch Docker Desktop
+    # Linux:
+    sudo systemctl start docker
+    ```
+  </Step>
+  
+  <Step title="Set API Key">
+    ```bash
+    export ANTHROPIC_API_KEY=your_api_key
+    ```
+  </Step>
+</Steps>
+
+### Running Docker Sandboxes
+
+```bash
+npx claude-code-templates@latest \
+  --sandbox docker \
+  --prompt "Create a Python FastAPI server"
+```
+
+**First run:**
+```
+🔨 Checking Docker image...
+   📦 Building Docker image (this may take a few minutes)...
+```
+
+**Subsequent runs:**
+```
+🔨 Checking Docker image...
+   ✅ Image already exists
+```
+
+### Docker Architecture
+
+The Docker launcher (`docker-launcher.js`) orchestrates:
+
+1. **Image build** - Creates `claude-sandbox` image with Node.js and dependencies
+2. **Volume mounting** - Maps `./output/` for file persistence
+3. **Environment injection** - Passes `ANTHROPIC_API_KEY` securely
+4. **Container execution** - Runs `execute.js` with your prompt
+5. **Cleanup** - Removes container with `--rm` flag
+
+```javascript
+// Executed automatically
+node docker-launcher.js \
+  "your prompt" \
+  "--agent python-expert"
+```
+
+### Output Directory
+
+All files are saved to `./output/` in your current directory:
+
+```bash
+output/
+├── main.py
+├── requirements.txt
+├── Dockerfile
+└── README.md
+```
+
+<Info>
+  The Docker container runs with `--rm` flag, so it's automatically removed after execution. Only files in the mounted `output/` directory persist.
+</Info>
+
+### Custom Docker Configuration
+
+Modify the Dockerfile in `components/sandbox/docker/Dockerfile`:
+
+```dockerfile
+FROM node:18-alpine
+
+# Add system dependencies
+RUN apk add --no-cache python3 py3-pip git
+
+# Install Claude Code
+RUN npm install -g claude-code
+
+# Set working directory
+WORKDIR /app
+
+# Copy execution script
+COPY execute.js /app/
+
+CMD ["node", "execute.js"]
+```
+
+## Cloudflare Workers Sandbox
+
+Run Claude Code in serverless edge environments.
+
+### Setup Cloudflare Sandbox
+
+```bash
+npx claude-code-templates@latest \
+  --sandbox cloudflare \
+  --prompt "Create a serverless API"
+```
+
+This installs the Cloudflare sandbox components to `.claude/sandbox/cloudflare/`:
+
+```
+.claude/sandbox/cloudflare/
+├── src/index.ts      # Main worker entry point
+├── launcher.ts       # Local development launcher
+├── monitor.ts        # Execution monitoring
+├── wrangler.toml     # Cloudflare configuration
+└── package.json      # Dependencies
+```
+
+### Deploying to Cloudflare
+
+<Steps>
+  <Step title="Install Wrangler">
+    ```bash
+    npm install -g wrangler
+    ```
+  </Step>
+  
+  <Step title="Authenticate">
+    ```bash
+    wrangler login
+    ```
+  </Step>
+  
+  <Step title="Deploy Worker">
+    ```bash
+    cd .claude/sandbox/cloudflare
+    wrangler deploy
+    ```
+  </Step>
+</Steps>
+
+### Local Development
+
+```bash
+cd .claude/sandbox/cloudflare
+npm run dev
+```
+
+Access the worker at `http://localhost:8787`
+
+## Sandbox Comparison
+
+| Feature | E2B | Docker | Cloudflare |
+|---------|-----|--------|------------|
+| **Environment** | Cloud | Local | Edge |
+| **Setup Time** | Instant | 2-5 min (first build) | Moderate |
+| **Isolation** | Complete | Complete | Sandboxed |
+| **File Access** | Downloaded | Mounted volume | Limited |
+| **Internet** | ✅ Yes | ✅ Yes | ✅ Yes |
+| **Cleanup** | Automatic | Automatic (container) | Manual |
+| **Cost** | Pay per use | Free (local resources) | Free tier available |
+| **Best For** | Quick experiments | Offline work | Serverless APIs |
+
+## Security Considerations
+
+<Warning>
+  **Never run untrusted code outside a sandbox.** Always use sandbox execution when:
+  - Testing code from unknown sources
+  - Experimenting with system-level operations
+  - Running potentially destructive commands
+  - Working with sensitive data in isolated environments
+</Warning>
+
+### Sandbox Isolation
+
+All sandbox providers offer:
+- **Process isolation** - Code runs in separate processes
+- **Filesystem isolation** - Limited access to host files
+- **Network isolation** - Controlled outbound connections
+- **Resource limits** - CPU, memory, and time constraints
+
+### API Key Security
+
+API keys are passed securely:
+
+```bash
+# ✅ Good - Environment variables
+export ANTHROPIC_API_KEY=sk-ant-...
+export E2B_API_KEY=...
+
+# ❌ Bad - Never hardcode keys
+npx claude-code-templates --anthropic-api-key sk-ant-...  # Visible in process list
+```
+
+## Advanced Usage
+
+### Batch Sandbox Execution
+
+Run multiple prompts in sequence:
+
+```bash
+#!/bin/bash
+
+prompts=(
+  "Create a REST API with Express"
+  "Add authentication middleware"
+  "Write integration tests"
+)
+
+for prompt in "${prompts[@]}"; do
+  npx claude-code-templates@latest \
+    --sandbox e2b \
+    --agent backend-developer \
+    --prompt "$prompt"
+done
+```
+
+### Custom Sandbox Templates
+
+Create your own E2B templates:
+
+```yaml
+# e2b.toml
+from = "ubuntu:22.04"
+
+[exec]
+cmd = "npm install -g claude-code"
+```
+
+### Monitoring Long-Running Tasks
+
+The E2B monitor provides progress updates:
+
+```python
+# From e2b-launcher.py
+def show_progress():
+    progress_messages = [
+        "⏳ Still processing...",
+        "🔄 Claude Code is working on your request...",
+        "⚙️  Analyzing requirements...",
+        "🛠️  Building solution...",
+    ]
+```
+
+## Examples
+
+### Safe Code Experimentation
+
+```bash
+npx claude-code-templates@latest \
+  --sandbox e2b \
+  --prompt "Experiment with different sorting algorithms and benchmark them"
+```
+
+### Multi-Component Project
+
+```bash
+npx claude-code-templates@latest \
+  --sandbox e2b \
+  --agent fullstack-developer,database-expert \
+  --mcp postgresql \
+  --prompt "Create a blog platform with user authentication"
+```
+
+### Testing Framework
+
+```bash
+npx claude-code-templates@latest \
+  --sandbox docker \
+  --agent testing-specialist \
+  --prompt "Set up Jest with React Testing Library and write component tests"
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Session Sharing" icon="share" href="/advanced/session-sharing">
+    Share your Claude Code sessions with team members
+  </Card>
+  <Card title="Remote Access" icon="globe" href="/advanced/remote-access">
+    Access Claude Code dashboards remotely
+  </Card>
+</CardGroup>

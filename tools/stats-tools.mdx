@@ -1,0 +1,472 @@
+---
+title: Stats Tools
+description: Command-line tools for analyzing Claude Code commands, hooks, and MCP server configurations
+---
+
+The Stats Tools provide command-line analysis utilities for your Claude Code components. Get detailed statistics on custom commands, automation hooks, and MCP server configurations with token estimates and optimization suggestions.
+
+## Command Stats
+
+Analyze custom slash commands in your project.
+
+### Run Analysis
+
+```bash
+claudedev command-stats
+```
+
+**Example Output:**
+```
+📊 Claude Code Command Analysis
+═════════════════════════════════════════
+✅ Found 5 command file(s) (12.3 KB, ~3,456 tokens total)
+
+Command                  │ Size   │ Lines │ Words │ Tokens (aprox) │ Last Modified
+─────────────────────────────────────────────────────────────────────────────────
+api-docs                 │ 2.1KB  │ 45    │ 312   │ 678           │ 1/15/2025
+run-tests                │ 3.4KB  │ 78    │ 542   │ 1234          │ 1/14/2025
+code-review              │ 1.8KB  │ 32    │ 198   │ 456           │ 1/13/2025
+fix-lint                 │ 2.5KB  │ 52    │ 387   │ 789           │ 1/12/2025
+deploy                   │ 2.5KB  │ 48    │ 389   │ 299           │ 1/10/2025
+─────────────────────────────────────────────────────────────────────────────────
+Total: 5 commands, 12.3 KB, ~3,456 tokens
+```
+
+### Features
+
+**Metrics calculated:**:lines/command-stats.js:63
+- File size (KB)
+- Line count
+- Word count
+- Token estimate
+- Last modified date
+- Command title/description
+
+**Token estimation:**:lines/command-stats.js:12
+- Base: ~4 characters per token
+- Code blocks: +5 tokens each
+- Inline code: +2 tokens each
+- Markdown elements: +0.5 tokens each
+
+### Optimization Prompt
+
+After displaying statistics, you're prompted:lines/command-stats.js:234
+
+```
+🔧 Command Optimization
+Claude Code can analyze your commands and suggest improvements.
+
+Would you like Claude Code to review and optimize your commands? (Y/n)
+```
+
+Accepting launches Claude with a detailed prompt:lines/command-stats.js:302
+
+**Optimization prompt includes:**
+1. Project structure review
+2. Technology stack detection
+3. Command relevance analysis
+4. Improvement suggestions
+5. Missing command recommendations
+6. Project-specific customization
+
+### No Commands Found
+
+If no `.claude/commands/` directory exists:lines/command-stats.js:194
+
+```
+⚠️  No .claude/commands directory found in current project
+
+💡 Run the setup first: npx claude-code-templates
+
+🚀 Claude Code Templates Setup
+No Claude Code commands found in this project.
+
+Would you like to start the Claude Code Templates setup now? (Y/n)
+```
+
+### API Usage
+
+```javascript
+const { analyzeCommands, displayCommandStats } = require('./command-stats');
+
+// Analyze commands
+const analysis = await analyzeCommands('/path/to/project');
+
+// Display results
+displayCommandStats(analysis);
+
+// Access data
+console.log(`Total commands: ${analysis.total}`);
+console.log(`Total tokens: ${analysis.totalTokens}`);
+analysis.commands.forEach(cmd => {
+  console.log(`${cmd.name}: ${cmd.tokens} tokens`);
+});
+```
+
+## Hook Stats
+
+Analyze automation hooks configured in `settings.json`.
+
+### Run Analysis
+
+```bash
+claudedev hook-stats
+```
+
+**Example Output:**
+```
+🔧 Claude Code Hook Analysis
+Target directory: /Users/user/projects/my-project
+
+🔍 Analyzing automation hooks...
+Scanning: /Users/user/projects/my-project/.claude/settings.json
+
+📊 Hook Analysis Results
+File: .claude/settings.json (2048 bytes)
+Last Modified: 1/15/2025
+Total Hooks: 7
+
+Hook Name                      │ Type         │ Status  │ Description
+────────────────────────────────────────────────────────────────────
+pre-commit-lint                │ PreToolUse   │ Enabled │ Run linter before commits
+post-test-notify               │ PostToolUse  │ Enabled │ Send notification after tests
+error-logger                   │ Stop         │ Enabled │ Log errors to file
+success-webhook                │ PostToolUse  │ Enabled │ Call webhook on success
+test-runner                    │ PreToolUse   │ Disabled│ Run tests before execution
+cleanup-temp                   │ Stop         │ Enabled │ Clean temporary files
+backup-data                    │ PreToolUse   │ Enabled │ Backup important data
+
+📈 Hook Summary by Type:
+  PreToolUse: 3 hooks (2 enabled, 1 disabled)
+  PostToolUse: 2 hooks (2 enabled)
+  Stop: 2 hooks (2 enabled)
+
+🔧 Hook Types Found:
+  • PreToolUse
+  • PostToolUse
+  • Stop
+```
+
+### Features
+
+**Hook data extracted:**:lines/hook-stats.js:59
+- Hook name
+- Hook type (PreToolUse, PostToolUse, Stop, Notification)
+- Description
+- Enabled/disabled status
+- Script/command content
+- Configuration size
+- Token estimate
+
+**Hook types supported:**:line/hook-stats.js:50
+- `PreToolUse`: Runs before tool execution
+- `PostToolUse`: Runs after tool execution
+- `Stop`: Runs when conversation stops
+- `Notification`: Sends notifications
+
+### Optimization Prompt
+
+After analysis:lines/hook-stats.js:197
+
+```
+🤖 Optimization Opportunity
+Claude Code can analyze your automation hooks and suggest optimizations.
+
+Would you like Claude Code to review and optimize your automation hooks? (Y/n)
+```
+
+**Optimization areas:**:lines/hook-stats.js:222
+1. Hook efficiency and performance
+2. Missing hooks for workflow
+3. Redundant or conflicting hooks
+4. Hook organization best practices
+5. Security considerations
+6. Condition and trigger optimization
+
+### No Hooks Found
+
+If no hooks configured:lines/hook-stats.js:173
+
+```
+💡 No automation hooks found.
+Would you like to set up Claude Code Templates to add automation hooks?
+
+Set up automation hooks with Claude Code Templates? (Y/n)
+```
+
+### API Usage
+
+```javascript
+const { analyzeHooks, displayHookStats } = require('./hook-stats');
+
+// Analyze hooks
+const analysis = await analyzeHooks('/path/to/project');
+
+// Display results
+displayHookStats(analysis);
+
+// Access data
+analysis.hooks.forEach(hook => {
+  console.log(`${hook.name}: ${hook.type}, enabled=${hook.enabled}`);
+});
+
+// Filter by type
+const preHooks = analysis.byType['PreToolUse'].hooks;
+```
+
+## MCP Stats
+
+Analyze MCP server configurations in `.mcp.json`.
+
+### Run Analysis
+
+```bash
+claudedev mcp-stats
+```
+
+**Example Output:**
+```
+🔌 Claude Code MCP Server Analysis
+Target directory: /Users/user/projects/my-project
+
+🔍 Analyzing MCP server configurations...
+Scanning: /Users/user/projects/my-project/.mcp.json
+
+📊 MCP Server Analysis Results
+File: .mcp.json (3584 bytes)
+Last Modified: 1/15/2025
+Total MCP Servers: 6
+
+Server Name              │ Category        │ Status  │ Command     │ Complexity │ Description
+────────────────────────────────────────────────────────────────────────────────────────────
+postgres-mcp            │ Database        │ Enabled │ npx         │ ★★★☆☆     │ PostgreSQL database access
+vscode-mcp              │ IDE & Dev       │ Enabled │ node        │ ★★★★☆     │ VSCode integration
+web-search              │ Web & API       │ Enabled │ python      │ ★★☆☆☆     │ Web search capabilities
+filesystem-mcp          │ Filesystem      │ Disabled│ npx         │ ★★☆☆☆     │ File operations
+github-mcp              │ DevOps          │ Enabled │ npx         │ ★★★☆☆     │ GitHub API access
+jupyter-mcp             │ IDE & Dev       │ Enabled │ python      │ ★★★★★     │ Jupyter notebook support
+
+📈 MCP Server Summary by Category:
+  Database: 1 servers (1 enabled)
+  IDE & Development: 2 servers (2 enabled)
+  Web & API: 1 servers (1 enabled)
+  Filesystem: 1 servers (0 enabled, 1 disabled)
+  DevOps: 1 servers (1 enabled)
+
+🔧 Complexity Distribution:
+  ★★☆☆☆ (2/5): 2 servers
+  ★★★☆☆ (3/5): 2 servers
+  ★★★★☆ (4/5): 1 servers
+  ★★★★★ (5/5): 1 servers
+```
+
+### Features
+
+**Server data extracted:**:lines/mcp-stats.js:34
+- Server name and key
+- Command and arguments
+- Environment variables
+- Enabled/disabled status
+- Category (auto-detected)
+- Configuration complexity
+
+**Category detection:**:lines/mcp-stats.js:71
+Based on server name, command, and description:
+- IDE & Development
+- Database
+- Web & API
+- Filesystem
+- DevOps
+- AI & ML
+- Other
+
+**Complexity calculation:**:lines/mcp-stats.js:115
+Factors:
+- Arguments present (+1)
+- Environment variables (+1)
+- Settings object (+1)
+- High env var count (+1-2)
+- Capped at 5 stars
+
+### Optimization Prompt
+
+After analysis:lines/mcp-stats.js:258
+
+```
+🤖 Optimization Opportunity
+Claude Code can analyze your MCP server configuration and suggest optimizations.
+
+Would you like Claude Code to review and optimize your MCP server configuration? (Y/n)
+```
+
+**Optimization areas:**:lines/mcp-stats.js:284
+1. Server selection and workflow relevance
+2. Missing MCP servers for productivity
+3. Configuration optimization (command, args, env)
+4. Performance and resource usage
+5. Security best practices
+6. Redundant or conflicting servers
+7. Integration opportunities
+
+### No MCPs Found
+
+If no `.mcp.json` file:lines/mcp-stats.js:233
+
+```
+💡 No MCP servers found.
+Would you like to set up Claude Code Templates to add MCP servers?
+
+Set up MCP servers with Claude Code Templates? (Y/n)
+```
+
+### API Usage
+
+```javascript
+const { analyzeMCPServers, displayMCPStats } = require('./mcp-stats');
+
+// Analyze MCP servers
+const analysis = await analyzeMCPServers('/path/to/project');
+
+// Display results
+displayMCPStats(analysis);
+
+// Access data
+analysis.servers.forEach(server => {
+  console.log(`${server.name}: ${server.category}, complexity=${server.complexity}`);
+});
+
+// Filter by category
+const databases = analysis.byCategory['Database'];
+```
+
+## Common Patterns
+
+### Audit All Components
+
+```bash
+claudedev command-stats
+claudedev hook-stats
+claudedev mcp-stats
+```
+
+### Generate Component Report
+
+```bash
+#!/bin/bash
+# component-report.sh
+
+echo "# Component Analysis Report" > report.md
+echo "Generated: $(date)" >> report.md
+echo "" >> report.md
+
+echo "## Commands" >> report.md
+claudedev command-stats >> report.md
+
+echo "" >> report.md
+echo "## Hooks" >> report.md
+claudedev hook-stats >> report.md
+
+echo "" >> report.md
+echo "## MCP Servers" >> report.md
+claudedev mcp-stats >> report.md
+
+echo "Report saved to report.md"
+```
+
+### Pre-commit Hook
+
+Add to `.git/hooks/pre-commit`:
+
+```bash
+#!/bin/bash
+# Check component stats before commit
+
+claudedev command-stats --no-prompt > /dev/null
+if [ $? -ne 0 ]; then
+  echo "Command stats check failed"
+  exit 1
+fi
+
+claudedev hook-stats --no-prompt > /dev/null
+if [ $? -ne 0 ]; then
+  echo "Hook stats check failed"
+  exit 1
+fi
+
+exit 0
+```
+
+## Token Estimation
+
+All stats tools include token estimation:lines/command-stats.js:12
+
+**Algorithm:**
+```javascript
+function estimateTokens(text) {
+  // Base: ~4 chars per token
+  const baseTokens = Math.ceil(text.length / 4);
+  
+  // Adjustments
+  const codeBlocks = (text.match(/```[\s\S]*?```/g) || []).length;
+  const inlineCode = (text.match(/`[^`]*`/g) || []).length;
+  const markdownElements = (text.match(/[#*_\[\]()]/g) || []).length;
+  
+  return baseTokens + (codeBlocks * 5) + (inlineCode * 2) + (markdownElements / 2);
+}
+```
+
+**Use cases:**
+- Estimate prompt size
+- Optimize command length
+- Track token consumption trends
+
+## Troubleshooting
+
+### Command Not Found
+
+**Error:** `No .claude/commands directory found`
+
+Create directory:
+
+```bash
+mkdir -p .claude/commands
+```
+
+### Invalid JSON
+
+**Error:** `Error reading settings.json`
+
+Validate JSON:
+
+```bash
+jq . .claude/settings.json
+```
+
+### Hook Command Validation
+
+Hooks validated with `command -v`:lines/hook-stats.js:1089
+
+```bash
+command -v my-script
+# If not found, ensure it's in PATH or use absolute path
+```
+
+### MCP Category Detection
+
+If category is "Other", improve detection:lines/mcp-stats.js:71
+
+```json
+{
+  "name": "my-database-mcp",
+  "description": "Database access",
+  "command": "npx"
+}
+```
+
+Include keywords: database, postgres, mysql, sqlite
+
+## See Also
+
+- [Health Check](/tools/health-check) - Comprehensive system validation
+- [Plugin Dashboard](/tools/plugin-dashboard) - Visual component management
+- [Analytics Dashboard](/tools/analytics-dashboard) - Runtime usage analytics

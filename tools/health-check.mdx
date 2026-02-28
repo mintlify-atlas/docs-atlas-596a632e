@@ -1,0 +1,409 @@
+---
+title: Health Check
+description: Comprehensive system validation tool for Claude Code setup, configuration, and project structure
+---
+
+The Health Check tool performs a comprehensive validation of your Claude Code installation, system requirements, project configuration, and component setup. It identifies issues and provides actionable recommendations.
+
+## Run Health Check
+
+Execute full system health check:
+
+```bash
+claudedev health-check
+```
+
+**Example Output:**
+```
+🔍 Running Health Check...
+
+┌───────────────────────┐
+│  SYSTEM REQUIREMENTS  │
+└───────────────────────┘
+✅ Operating System     │ macOS 14.2.1 (compatible)
+✅ Node.js Version      │ v20.10.0 (compatible)
+✅ Memory Available     │ 16.0GB total, 8.5GB free (sufficient)
+✅ Network Connection   │ Connected to Anthropic API
+✅ Shell Environment    │ zsh (excellent autocompletion support)
+
+┌─────────────────────┐
+│  CLAUDE CODE SETUP  │
+└─────────────────────┘
+✅ Installation         │ v2.1.0 (globally installed)
+✅ Authentication       │ Authenticated via OAuth (user@example.com)
+✅ Auto-updates         │ Auto-updates assumed enabled
+✅ Permissions          │ Claude directory permissions OK
+
+┌─────────────────┐
+│  PROJECT SETUP  │
+└─────────────────┘
+✅ Project Structure    │ Valid project detected (package.json, .git)
+✅ Configuration Files  │ Found .claude/ directory with 12 files
+✅ User Settings        │ Valid user settings (5 hooks, MCP auto-approve: true)
+✅ Project Settings     │ Valid project settings (3 agents, 2 commands)
+⚠️  Local Settings       │ No local settings found (.claude/settings.local.json)
+
+📊 Health Score: 23/24 checks passed (96%)
+
+💡 Recommendations:
+   • Consider creating .claude/settings.local.json for machine-specific settings
+```
+
+## Check Categories
+
+The health check validates seven categories:
+
+### 1. System Requirements:lines/health-check.js:70
+
+**Operating System**:lines/health-check.js:295
+- Validates platform (macOS, Linux, Windows)
+- Checks OS version compatibility
+- Supported: macOS 10.15+, Linux 20.04+, Windows 10+
+
+**Node.js Version**:lines/health-check.js:319
+- Requires Node.js 18 or higher
+- Displays current version
+- Warns if outdated
+
+**Memory Available**:lines/health-check.js:343
+- Checks total and free memory
+- Recommends 4GB+ RAM
+- Shows current usage
+
+**Network Connection**:lines/health-check.js:362
+- Tests connection to `api.anthropic.com`
+- 5-second timeout
+- Detects slow connections
+
+**Shell Environment**:lines/health-check.js:395
+- Identifies current shell (bash, zsh, fish)
+- Recommends zsh for autocompletion
+- Checks `$SHELL` environment variable
+
+### 2. Claude Code Setup:lines/health-check.js:109
+
+**Installation**:lines/health-check.js:421
+- Checks local `node_modules/@anthropic-ai/claude-code`
+- Checks global `claude` command
+- Displays version
+
+**Authentication**:lines/health-check.js:454
+- Reads `~/.claude.json`
+- Checks OAuth account (email)
+- Checks API key
+- Validates `ANTHROPIC_API_KEY` env var
+
+**Auto-updates**:lines/health-check.js:531
+- Placeholder check
+- Assumes enabled by default
+
+**Permissions**:lines/health-check.js:539
+- Validates `~/.claude` directory access
+- Checks write permissions
+- Ensures directory exists
+
+### 3. Project Setup:lines/health-check.js:142
+
+**Project Structure**:lines/health-check.js:565
+- Looks for project indicators:
+  - `package.json` (Node.js)
+  - `requirements.txt` (Python)
+  - `Cargo.toml` (Rust)
+  - `go.mod` (Go)
+  - `.git` (Git repository)
+  - `README.md`
+
+**Configuration Files**:lines/health-check.js:595
+- Checks `.claude/` directory exists
+- Counts files in directory
+- Lists configuration files
+
+**User Settings**:lines/health-check.js:1110
+- Reads `~/.claude/settings.json`
+- Validates JSON syntax
+- Analyzes structure:lines/health-check.js:1197
+  - Permissions (allow/deny rules)
+  - Hooks configuration
+  - Environment variables
+  - Model settings
+  - MCP auto-approval
+
+**Project Settings**:lines/health-check.js:1139
+- Reads `.claude/settings.json`
+- Validates JSON syntax
+- Same structure analysis as user settings
+
+**Local Settings**:lines/health-check.js:1168
+- Reads `.claude/settings.local.json`
+- Optional file for machine-specific config
+- Validates JSON syntax
+
+### 4. Agents:lines/health-check.js:181
+
+**Project Agents**:lines/health-check.js:803
+- Scans `.claude/agents/` directory
+- Recursively counts `.md` files
+- Reports total agent count
+
+**Personal Agents**:lines/health-check.js:821
+- Scans `~/.claude/agents/` directory
+- Recursively counts `.md` files
+- Reports total agent count
+
+**Agent Syntax**:lines/health-check.js:858
+- Validates frontmatter presence
+- Checks for `name:` field
+- Checks for `description:` field
+- Reports malformed agents
+
+### 5. Custom Commands:lines/health-check.js:229
+
+**Project Commands**:lines/health-check.js:730
+- Scans `.claude/commands/` directory
+- Counts `.md` files
+- Reports total command count
+
+**Personal Commands**:lines/health-check.js:748
+- Scans `~/.claude/commands/` directory
+- Counts `.md` files
+- Reports total command count
+
+**Command Syntax**:lines/health-check.js:766
+- Checks for `$ARGUMENTS` placeholder
+- Reports commands missing placeholder
+- Essential for parameter handling
+
+### 6. MCP Servers:lines/health-check.js:208
+
+**Project MCP Config**:lines/health-check.js:613
+- Reads `.mcp.json` in project
+- Counts configured servers
+- Validates `mcpServers` object
+
+**MCP Config Syntax**:lines/health-check.js:647
+- Validates each server configuration
+- Required fields:
+  - `command`: Executable path
+- Optional fields:
+  - `args`: Array of arguments
+  - `env`: Object of environment variables
+- Reports invalid configurations
+
+### 7. Hooks:lines/health-check.js:256
+
+**User Hooks**:lines/health-check.js:926
+- Reads `~/.claude/settings.json`
+- Extracts `hooks` array
+- Counts configured hooks
+
+**Project Hooks**:lines/health-check.js:952
+- Reads `.claude/settings.json`
+- Extracts `hooks` array
+- Counts configured hooks
+
+**Local Hooks**:lines/health-check.js:978
+- Reads `.claude/settings.local.json`
+- Extracts `hooks` array
+- Counts configured hooks
+
+**Hook Commands**:lines/health-check.js:1004
+- Validates each hook command exists
+- Checks if command is executable
+- Validates shell builtins:lines/health-check.js:1080
+  - `echo`, `cd`, `pwd`, `test`, etc.
+- Uses `command -v` to check existence:lines/health-check.js:1089
+
+**MCP Hooks**:lines/health-check.js:1102
+- Placeholder for future validation
+- Currently returns warning
+
+## Status Indicators
+
+Each check returns one of three statuses:
+
+- ✅ **Pass**: Check completed successfully
+- ⚠️ **Warn**: Non-critical issue found
+- ❌ **Fail**: Critical issue requiring attention
+
+## Health Score
+
+Calculated as:lines/health-check.js:1310
+
+```javascript
+const percentage = Math.round((passedChecks / totalChecks) * 100);
+```
+
+**Score ranges:**
+- 90-100%: Excellent
+- 80-89%: Good
+- 70-79%: Fair
+- Below 70%: Needs attention
+
+## Recommendations
+
+Automatically generated based on findings:lines/health-check.js:1333
+
+**Example recommendations:**
+- "Consider switching to Zsh for better autocompletion"
+- "Add $ARGUMENTS placeholder to command files"
+- "Add proper frontmatter to agent files"
+- "Create .claude/agents/ directory"
+- "Create .mcp.json for MCP servers"
+- "Fix JSON syntax errors in configuration"
+
+## Post-Check Setup
+
+After the health check, you're prompted to run project setup:lines/health-check.js:1383
+
+```
+Would you like to run the Project Setup? (Y/n)
+```
+
+Setup runs automatically if score is below 80%.
+
+## Usage Patterns
+
+### New Project Setup
+
+```bash
+cd my-new-project
+claudedev health-check
+# Review results
+# Accept setup prompt
+```
+
+### Pre-deployment Check
+
+```bash
+claudedev health-check
+# Ensure 100% pass rate
+# Fix any warnings
+# Commit configuration
+```
+
+### Troubleshooting
+
+```bash
+claudedev health-check > health-report.txt
+# Share report with team
+# Review specific failures
+```
+
+## API Usage
+
+Import and use programmatically:
+
+```javascript
+const { HealthChecker, runHealthCheck } = require('./health-check');
+
+// Create checker instance
+const checker = new HealthChecker();
+
+// Run specific checks
+const osInfo = checker.checkOperatingSystem();
+const nodeInfo = checker.checkNodeVersion();
+
+// Run full health check
+const results = await runHealthCheck();
+console.log(`Health Score: ${results.percentage}%`);
+```
+
+## Configuration Validation
+
+Settings structure analysis:lines/health-check.js:1197
+
+**Permissions checked:**
+- `allow` rules (array)
+- `deny` rules (array)
+- `additionalDirectories` (array)
+
+**Hooks checked:**
+- Valid hook types: `PreToolUse`, `PostToolUse`, `Stop`, `Notification`
+- Hook structure validation
+
+**Environment variables:**
+- Lists env vars
+- Warns on sensitive vars in project settings:
+  - `ANTHROPIC_API_KEY`
+  - `ANTHROPIC_AUTH_TOKEN`
+
+**MCP configuration:**
+- `enableAllProjectMcpServers` setting
+- `enabledMcpjsonServers` array
+- `disabledMcpjsonServers` array
+
+**Other settings:**
+- `model`: Model selection
+- `cleanupPeriodDays`: Conversation cleanup (must be ≥ 1)
+- `apiKeyHelper`: API key management
+
+## Example: Automated CI Check
+
+```bash
+#!/bin/bash
+# ci-health-check.sh
+
+claudedev health-check > health-check.txt
+
+# Extract health score
+SCORE=$(grep "Health Score" health-check.txt | \
+  grep -oE '[0-9]+%' | \
+  sed 's/%//')
+
+if [ "$SCORE" -lt 80 ]; then
+  echo "Health check failed: $SCORE%"
+  cat health-check.txt
+  exit 1
+fi
+
+echo "Health check passed: $SCORE%"
+exit 0
+```
+
+## Troubleshooting
+
+### Authentication Fails
+
+**Error:** `Claude CLI not available or not authenticated`
+
+Solutions:
+1. Run `claude login` to authenticate
+2. Set `ANTHROPIC_API_KEY` environment variable
+3. Create `~/.claude.json` with OAuth credentials
+
+### Permission Denied
+
+**Error:** `Permission check failed`
+
+Fix permissions:
+
+```bash
+chmod 755 ~/.claude
+chmod 644 ~/.claude/settings.json
+```
+
+### Invalid JSON Syntax
+
+**Error:** `Invalid JSON in .claude/settings.json`
+
+Validate JSON:
+
+```bash
+jq . .claude/settings.json
+# Fix reported syntax errors
+```
+
+### Hook Command Not Found
+
+**Error:** `Command not found: my-script`
+
+Ensure script is:
+1. Executable: `chmod +x my-script`
+2. In PATH or use absolute path
+3. Shell builtin or installed command
+
+## See Also
+
+- [Stats Tools](/tools/stats-tools) - Analyze commands, hooks, and MCPs
+- [Analytics Dashboard](/tools/analytics-dashboard) - Runtime analytics
+- [Plugin Dashboard](/tools/plugin-dashboard) - Plugin management

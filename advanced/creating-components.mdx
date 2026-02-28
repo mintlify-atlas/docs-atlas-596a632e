@@ -1,0 +1,617 @@
+---
+title: Creating Components
+description: Build custom agents, commands, MCPs, hooks, and settings for Claude Code
+---
+
+# Creating Components
+
+Extend Claude Code with custom components tailored to your workflow.
+
+## Component Types
+
+Claude Code supports five component types:
+
+| Type | Format | Purpose | Examples |
+|------|--------|---------|----------|
+| **Agents** | `.md` | AI specialists for specific domains | `react-expert`, `security-auditor` |
+| **Commands** | `.md` | Custom slash commands | `/deploy`, `/test-coverage` |
+| **MCPs** | `.json` | External service integrations | GitHub, PostgreSQL, AWS |
+| **Hooks** | `.json` | Automation triggers | Pre-commit checks, notifications |
+| **Settings** | `.json` | Claude Code configuration | Performance tuning, UI customization |
+
+## Agent Components
+
+Agents are AI specialists with focused expertise.
+
+### Agent File Structure
+
+Agents use Markdown with YAML frontmatter:
+
+```markdown
+---
+name: react-performance-expert
+description: React performance optimization specialist. Expert in React.memo, useMemo, useCallback, code splitting, and bundle optimization.
+tools: Read, Write, Grep, Bash
+model: opus
+---
+
+You are a React Performance Expert specializing in optimizing React applications for speed and efficiency.
+
+## Core Expertise
+
+### Performance Optimization Techniques
+- **Memoization**: React.memo, useMemo, useCallback
+- **Code Splitting**: Dynamic imports, lazy loading
+- **Bundle Optimization**: Tree shaking, chunk splitting
+- **Rendering Optimization**: Virtual scrolling, windowing
+
+### Analysis Process
+
+1. **Identify Bottlenecks**
+   - Profile component render times
+   - Analyze bundle size
+   - Check for unnecessary re-renders
+
+2. **Apply Optimizations**
+   ```jsx
+   // Memoize expensive computations
+   const sortedItems = useMemo(
+     () => items.sort((a, b) => a.value - b.value),
+     [items]
+   );
+   ```
+
+3. **Measure Impact**
+   - Before/after benchmarks
+   - Bundle size reduction
+   - Lighthouse scores
+
+## Guidelines
+
+When optimizing React applications:
+- Profile first, optimize second
+- Focus on measurable improvements
+- Balance performance with code readability
+- Document optimization decisions
+```
+
+### YAML Frontmatter Fields
+
+```yaml
+---
+name: agent-name              # Hyphenated identifier
+description: Brief description of agent expertise and use cases
+tools: Read, Write, Grep      # Available tools (optional)
+model: opus                   # Preferred model: opus, sonnet, haiku (optional)
+---
+```
+
+**Required fields:**
+- `name` - Unique identifier (kebab-case)
+- `description` - Clear, concise expertise description
+
+**Optional fields:**
+- `tools` - Comma-separated list of allowed tools
+- `model` - Preferred Claude model variant
+
+<Info>
+  Use `model: opus` for complex reasoning tasks, `model: sonnet` for balanced performance, or `model: haiku` for speed.
+</Info>
+
+### Agent Categories
+
+Organize agents by domain:
+
+```
+components/agents/
+├── development-team/       # Full-stack developers, architects
+├── domain-experts/         # Security, performance, accessibility
+├── creative-team/          # Content, design, UX specialists
+├── business-team/          # Product managers, analysts
+└── development-tools/      # Tool specialists, DevOps
+```
+
+Create new categories as needed:
+
+```bash
+mkdir -p components/agents/data-science
+touch components/agents/data-science/ml-engineer.md
+```
+
+### Example: Security Auditor Agent
+
+```markdown
+---
+name: security-auditor
+description: Security specialist for vulnerability detection, code review, and compliance. Expert in OWASP Top 10, secure coding practices, and penetration testing.
+tools: Read, Grep, Bash, WebSearch
+model: opus
+---
+
+You are a Security Auditor specializing in application security, vulnerability assessment, and secure development practices.
+
+## Security Framework
+
+### OWASP Top 10 Coverage
+1. **Injection Flaws**
+   - SQL injection detection
+   - Command injection prevention
+   - XSS vulnerability scanning
+
+2. **Authentication Issues**
+   - Weak password policies
+   - Session management flaws
+   - Multi-factor authentication gaps
+
+3. **Sensitive Data Exposure**
+   - Hardcoded secrets detection
+   - Encryption at rest/transit
+   - API key exposure
+
+### Audit Process
+
+<Steps>
+  <Step>**Reconnaissance** - Map attack surface</Step>
+  <Step>**Static Analysis** - Scan code for vulnerabilities</Step>
+  <Step>**Dynamic Testing** - Runtime security testing</Step>
+  <Step>**Reporting** - Document findings with severity ratings</Step>
+</Steps>
+
+### Code Review Checklist
+
+```javascript
+// ❌ Bad: SQL Injection vulnerability
+const query = `SELECT * FROM users WHERE id = ${userId}`;
+
+// ✅ Good: Parameterized query
+const query = 'SELECT * FROM users WHERE id = ?';
+db.query(query, [userId]);
+```
+
+## Security Tools
+
+- **Static Analysis**: ESLint security plugins, Semgrep
+- **Dependency Scanning**: npm audit, Snyk
+- **Secret Detection**: git-secrets, TruffleHog
+- **Penetration Testing**: Burp Suite, OWASP ZAP
+
+Provide actionable security recommendations with code examples and remediation steps.
+```
+
+## Command Components
+
+Commands add custom slash commands to Claude Code.
+
+### Command File Structure
+
+Commands also use Markdown format:
+
+```markdown
+# /performance-audit
+
+Run comprehensive performance audit on the current project.
+
+## Purpose
+
+Analyzes application performance across multiple dimensions:
+- Bundle size and composition
+- Runtime performance metrics
+- Network waterfall analysis
+- Core Web Vitals assessment
+
+## Usage
+
+```bash
+/performance-audit
+/performance-audit --target build/
+/performance-audit --format json
+```
+
+## Implementation
+
+1. **Bundle Analysis**
+   ```bash
+   npx webpack-bundle-analyzer build/stats.json
+   ```
+
+2. **Lighthouse Audit**
+   ```bash
+   npx lighthouse https://localhost:3000 --output=json
+   ```
+
+3. **Generate Report**
+   - Bundle size breakdown
+   - Performance score
+   - Optimization recommendations
+
+## Output Format
+
+```json
+{
+  "performance": {
+    "score": 87,
+    "metrics": {
+      "fcp": 1.2,
+      "lcp": 2.1,
+      "cls": 0.05
+    }
+  },
+  "bundle": {
+    "size": "245KB",
+    "gzipped": "89KB"
+  }
+}
+```
+
+## Recommendations
+
+Based on audit results, suggest:
+- Code splitting opportunities
+- Lazy loading strategies
+- Image optimization
+- Caching improvements
+```
+
+### Command Categories
+
+```
+components/commands/
+├── code-generation/    # Generate code, tests, docs
+├── analysis/           # Code analysis, optimization
+├── project-management/ # File operations, structure
+├── testing/            # Test generation, validation
+└── deployment/         # Build, deploy, CI/CD
+```
+
+## MCP Components
+
+MCPs (Model Context Protocol) integrate external services.
+
+### MCP File Structure
+
+MCPs use JSON format:
+
+```json
+{
+  "description": "PostgreSQL database integration for Claude Code",
+  "mcpServers": {
+    "postgresql": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "DATABASE_URL": "postgresql://user:password@localhost:5432/dbname"
+      }
+    }
+  }
+}
+```
+
+### Required Fields
+
+```json
+{
+  "description": "Clear description of MCP functionality",
+  "mcpServers": {
+    "server-name": {
+      "command": "executable-path",
+      "args": ["array", "of", "arguments"],
+      "env": {
+        "ENV_VAR": "<PLACEHOLDER_VALUE>"
+      }
+    }
+  }
+}
+```
+
+<Warning>
+  **Never hardcode secrets in MCP files.** Always use placeholder values like `<YOUR_API_KEY>` or `<DATABASE_URL>`.
+</Warning>
+
+### Environment Variables
+
+Use placeholders for sensitive data:
+
+```json
+{
+  "env": {
+    "API_KEY": "<YOUR_API_KEY>",
+    "API_SECRET": "<YOUR_API_SECRET>",
+    "DATABASE_URL": "<DATABASE_CONNECTION_STRING>"
+  }
+}
+```
+
+Users replace placeholders after installation:
+
+```bash
+# After installing MCP
+export API_KEY=actual_key_value
+export DATABASE_URL=postgresql://localhost:5432/mydb
+```
+
+### Example: GitHub MCP
+
+```json
+{
+  "description": "GitHub integration for repository management, issue tracking, and PR operations",
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "<YOUR_GITHUB_PERSONAL_ACCESS_TOKEN>",
+        "GITHUB_OWNER": "<REPOSITORY_OWNER>",
+        "GITHUB_REPO": "<REPOSITORY_NAME>"
+      }
+    }
+  }
+}
+```
+
+### MCP Categories
+
+```
+components/mcps/
+├── integration/      # GitHub, GitLab, Jira
+├── database/         # PostgreSQL, MySQL, MongoDB
+├── cloud/            # AWS, Azure, GCP
+├── devtools/         # Build tools, testing frameworks
+└── ai-services/      # OpenAI, Anthropic, other AI APIs
+```
+
+## Hook Components
+
+Hooks automate actions based on events.
+
+### Hook File Structure
+
+```json
+{
+  "description": "Send desktop notifications when Claude Code operations complete",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if command -v osascript >/dev/null 2>&1; then osascript -e 'display notification \"Tool: $CLAUDE_TOOL_NAME completed\" with title \"Claude Code\"'; elif command -v notify-send >/dev/null 2>&1; then notify-send 'Claude Code' \"Tool: $CLAUDE_TOOL_NAME completed\"; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Hook Types
+
+- **PreToolUse** - Before tool execution
+- **PostToolUse** - After tool execution
+- **PreConversation** - Before conversation starts
+- **PostConversation** - After conversation ends
+
+### Example: Git Auto-Add Hook
+
+```json
+{
+  "description": "Automatically stage modified files after Claude Code edits them",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git add $CLAUDE_EDITED_FILE"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Available Variables
+
+- `$CLAUDE_TOOL_NAME` - Name of tool executed
+- `$CLAUDE_EDITED_FILE` - Path to edited file
+- `$CLAUDE_PROJECT_PATH` - Current project directory
+- `$CLAUDE_CONVERSATION_ID` - Active conversation ID
+
+### Hook Categories
+
+```
+components/hooks/
+├── automation/         # Deployment, notifications
+├── git-workflow/       # Git operations, commits
+├── development-tools/  # Linting, formatting
+├── testing/            # Test runners, coverage
+└── monitoring/         # Logging, analytics
+```
+
+## Settings Components
+
+Settings configure Claude Code behavior.
+
+### Settings File Structure
+
+```json
+{
+  "description": "Enable read-only mode to prevent file modifications",
+  "allowedTools": ["Read", "Grep", "Glob", "Bash"],
+  "deniedTools": ["Write", "Edit"],
+  "showDenialMessage": true,
+  "denialMessage": "Read-only mode is active. File modifications are disabled."
+}
+```
+
+### Common Settings
+
+**Performance:**
+```json
+{
+  "description": "High-performance configuration for large codebases",
+  "cacheSize": 1024,
+  "maxConcurrentTools": 5,
+  "timeout": 120000
+}
+```
+
+**UI Customization:**
+```json
+{
+  "description": "Dark theme with custom syntax highlighting",
+  "theme": "dark",
+  "syntaxHighlighting": true,
+  "fontFamily": "JetBrains Mono",
+  "fontSize": 14
+}
+```
+
+## Component Review Process
+
+<Warning>
+  **CRITICAL: Use the component-reviewer agent for ALL component changes**
+  
+  Before submitting any component, use:
+  ```bash
+  Use the component-reviewer agent to review [component-path]
+  ```
+</Warning>
+
+### Validation Checklist
+
+The `component-reviewer` agent checks:
+
+- ✅ Valid YAML frontmatter (for agents/commands)
+- ✅ Valid JSON structure (for MCPs/hooks/settings)
+- ✅ Required fields present
+- ✅ Kebab-case naming conventions
+- ✅ No hardcoded secrets or API keys
+- ✅ Relative paths only (no absolute paths)
+- ✅ Clear, specific descriptions
+- ✅ Correct category placement
+
+### Example Review
+
+```bash
+# After creating an agent
+Use the component-reviewer agent to review cli-tool/components/agents/development-team/react-expert.md
+```
+
+**Reviewer output:**
+```
+✅ PASSED: Valid YAML frontmatter
+✅ PASSED: Required fields present (name, description)
+✅ PASSED: Kebab-case naming convention
+⚠️  WARNING: Consider adding specific use cases to description
+📋 SUGGESTION: Add code examples for common patterns
+
+✅ Component is ready for submission
+```
+
+## Publishing Components
+
+<Steps>
+  <Step title="Create Component">
+    Write component file in appropriate category directory
+  </Step>
+  
+  <Step title="Review with Agent">
+    ```bash
+    Use the component-reviewer agent to review [path]
+    ```
+  </Step>
+  
+  <Step title="Fix Issues">
+    Address critical issues and warnings
+  </Step>
+  
+  <Step title="Update Catalog">
+    ```bash
+    python scripts/generate_components_json.py
+    ```
+  </Step>
+  
+  <Step title="Test Installation">
+    ```bash
+    npx claude-code-templates@latest --agent your-agent --dry-run
+    ```
+  </Step>
+  
+  <Step title="Submit PR">
+    Open pull request with clear description and examples
+  </Step>
+</Steps>
+
+### Catalog Generation
+
+After creating/modifying components:
+
+```bash
+python scripts/generate_components_json.py
+```
+
+This updates `docs/components.json` with:
+- Component metadata
+- File contents
+- Installation instructions
+- Search indexes
+
+## Best Practices
+
+### Naming Conventions
+
+**DO:**
+- ✅ `react-performance-expert` (kebab-case)
+- ✅ `security-auditor` (descriptive)
+- ✅ `github-integration` (clear purpose)
+
+**DON'T:**
+- ❌ `ReactExpert` (PascalCase)
+- ❌ `expert_agent` (snake_case)
+- ❌ `myagent` (vague)
+
+### Descriptions
+
+**Good descriptions:**
+```yaml
+description: React performance optimization specialist. Expert in React.memo, useMemo, useCallback, code splitting, and bundle optimization.
+```
+
+**Poor descriptions:**
+```yaml
+description: Helps with React  # Too vague
+```
+
+### Security
+
+<Warning>
+  **Never include:**
+  - API keys or tokens
+  - Passwords or credentials
+  - Absolute file paths (`/Users/you/...`)
+  - Personal information
+  - Proprietary code or business logic
+</Warning>
+
+**Use placeholders:**
+```json
+{
+  "env": {
+    "API_KEY": "<YOUR_API_KEY_HERE>"
+  }
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Contributing Guide" icon="code-branch" href="https://github.com/davila7/claude-code-templates/blob/main/CONTRIBUTING.md">
+    Full contribution guidelines and workflow
+  </Card>
+  <Card title="Component Examples" icon="folder-open" href="https://aitmpl.com">
+    Browse 900+ existing components for inspiration
+  </Card>
+</CardGroup>

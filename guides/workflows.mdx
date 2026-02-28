@@ -1,0 +1,688 @@
+---
+title: Workflows
+description: Create, share, and execute reusable component installation workflows using hashes and YAML configurations
+---
+
+# Workflows
+
+Workflows allow you to save and share component installation configurations. Instead of typing long commands with many flags, you can create a workflow once and share it as a short hash or YAML file.
+
+## What are Workflows?
+
+A workflow is a saved configuration that includes:
+
+- **Components** - Agents, commands, MCPs, settings, hooks
+- **Properties** - Name, description, tags
+- **Metadata** - Author, version, installation instructions
+
+Workflows can be:
+- Shared via short hash URLs (`#abc123def456`)
+- Saved as YAML files for version control
+- Generated from the workflow builder UI
+- Created manually in any text editor
+
+## Why Use Workflows?
+
+<CardGroup cols={2}>
+  <Card title="Shareable" icon="share-nodes">
+    Share entire component setups with a single hash
+  </Card>
+  <Card title="Reproducible" icon="rotate">
+    Ensure consistent installations across environments
+  </Card>
+  <Card title="Documentable" icon="file-lines">
+    Version control your Claude Code configurations
+  </Card>
+  <Card title="Discoverable" icon="magnifying-glass">
+    Browse community workflows for common setups
+  </Card>
+</CardGroup>
+
+## Workflow Hash Installation
+
+Workflow hashes are short identifiers (12 characters) that reference saved workflows.
+
+<Steps>
+
+### Create a Workflow
+
+Visit [aitmpl.com/workflows](https://aitmpl.com/workflows) and use the visual workflow builder:
+
+1. Drag components from the sidebar
+2. Arrange them in desired order
+3. Click "Generate Workflow"
+4. Fill in workflow properties (name, description)
+5. Get your workflow hash
+
+### Use the Workflow Hash
+
+```bash
+npx claude-code-templates@latest --workflow:#abc123def456
+```
+
+The CLI:
+1. Fetches the workflow from localStorage (browser-cached workflows)
+2. Parses the component list
+3. Installs all components in order
+4. Shows installation summary
+
+### Share the Hash
+
+Share the workflow URL with teammates:
+
+```
+https://aitmpl.com/workflows#abc123def456
+```
+
+They can view the workflow details and install it.
+
+</Steps>
+
+<Note>
+**Hash Storage**: Workflow hashes are stored in your browser's localStorage when created on aitmpl.com. The CLI can only install workflows you've created on your machine or workflows shared via YAML.
+</Note>
+
+## YAML Workflow Format
+
+YAML workflows are more flexible and can be version-controlled.
+
+### Basic YAML Structure
+
+```yaml workflow.yaml
+name: "Full-Stack Development Setup"
+description: "Complete setup for full-stack web development"
+tags:
+  - development
+  - full-stack
+  - web
+
+steps:
+  - step: 1
+    type: agent
+    name: "frontend-developer"
+  
+  - step: 2
+    type: agent
+    name: "backend-developer"
+  
+  - step: 3
+    type: command
+    name: "docker-setup"
+  
+  - step: 4
+    type: command
+    name: "setup-testing"
+  
+  - step: 5
+    type: mcp
+    name: "filesystem"
+  
+  - step: 6
+    type: mcp
+    name: "web-fetch"
+  
+  - step: 7
+    type: setting
+    name: "enable-telemetry"
+  
+  - step: 8
+    type: hook
+    name: "git/pre-commit-lint"
+```
+
+### YAML Field Reference
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | Yes | Workflow display name |
+| `description` | No | Detailed workflow description |
+| `tags` | No | Array of searchable tags |
+| `steps` | Yes | Array of installation steps |
+| `steps[].step` | Yes | Step number (for ordering) |
+| `steps[].type` | Yes | Component type: `agent`, `command`, `mcp`, `setting`, `hook`, `skill` |
+| `steps[].name` | Yes | Component name (kebab-case) |
+
+## Installing from YAML
+
+### Method 1: File Path
+
+Save your workflow as a YAML file and reference it:
+
+```bash
+npx claude-code-templates@latest --workflow workflow.yaml
+```
+
+<Warning>
+**Current Directory**: The CLI looks for the YAML file relative to your current directory. Use absolute paths if needed:
+
+```bash
+npx claude-code-templates@latest --workflow /path/to/workflow.yaml
+```
+</Warning>
+
+### Method 2: Base64 Encoded
+
+For remote installations or CI/CD:
+
+```bash
+# Encode workflow
+YAML_CONTENT=$(cat workflow.yaml | base64)
+
+# Install from base64
+npx claude-code-templates@latest --workflow "$YAML_CONTENT"
+```
+
+### Method 3: Inline YAML
+
+For short workflows:
+
+```bash
+npx claude-code-templates@latest --workflow 'name: Quick Setup
+steps:
+  - step: 1
+    type: agent
+    name: security-auditor
+  - step: 2
+    type: command
+    name: security-scan'
+```
+
+## Workflow Examples
+
+### Security-Focused Workflow
+
+<CodeGroup>
+
+```yaml security-workflow.yaml
+name: "Security-First Development"
+description: "Comprehensive security setup for sensitive projects"
+tags:
+  - security
+  - compliance
+  - audit
+
+steps:
+  - step: 1
+    type: agent
+    name: "security-auditor"
+  
+  - step: 2
+    type: agent
+    name: "penetration-tester"
+  
+  - step: 3
+    type: command
+    name: "security-scan"
+  
+  - step: 4
+    type: command
+    name: "vulnerability-check"
+  
+  - step: 5
+    type: setting
+    name: "read-only-mode"
+  
+  - step: 6
+    type: hook
+    name: "security/secrets-detection"
+  
+  - step: 7
+    type: hook
+    name: "git/prevent-force-push"
+```
+
+```bash Installation
+npx claude-code-templates@latest --workflow security-workflow.yaml --yes
+```
+
+</CodeGroup>
+
+### Data Science Workflow
+
+```yaml data-science-workflow.yaml
+name: "Data Science Toolkit"
+description: "ML, data analysis, and visualization setup"
+tags:
+  - data-science
+  - machine-learning
+  - python
+
+steps:
+  - step: 1
+    type: agent
+    name: "data-scientist"
+  
+  - step: 2
+    type: agent
+    name: "ml-engineer"
+  
+  - step: 3
+    type: agent
+    name: "data-analyst"
+  
+  - step: 4
+    type: command
+    name: "notebook-setup"
+  
+  - step: 5
+    type: mcp
+    name: "database"
+  
+  - step: 6
+    type: setting
+    name: "retention-90-days"
+```
+
+### DevOps Workflow
+
+```yaml devops-workflow.yaml
+name: "DevOps Automation Suite"
+description: "CI/CD, infrastructure, and monitoring setup"
+tags:
+  - devops
+  - automation
+  - infrastructure
+
+steps:
+  - step: 1
+    type: agent
+    name: "devops-engineer"
+  
+  - step: 2
+    type: agent
+    name: "cloud-architect"
+  
+  - step: 3
+    type: command
+    name: "docker-setup"
+  
+  - step: 4
+    type: command
+    name: "ci-pipeline"
+  
+  - step: 5
+    type: command
+    name: "deploy-vercel"
+  
+  - step: 6
+    type: mcp
+    name: "github-integration"
+  
+  - step: 7
+    type: hook
+    name: "automation/build-on-change"
+```
+
+## Creating Workflows
+
+### Visual Workflow Builder
+
+The easiest way to create workflows:
+
+<Steps>
+
+### Open the Builder
+
+Visit [aitmpl.com/workflows](https://aitmpl.com/workflows)
+
+### Browse Components
+
+The left sidebar shows:
+- **Agents** (grouped by category)
+- **Commands** (grouped by category)
+- **MCPs** (alphabetical)
+
+Use the search bar to filter components.
+
+### Add Components
+
+Two methods:
+
+1. **Drag and Drop**: Drag components from sidebar to canvas
+2. **Click to Add**: Click the ➕ button next to component name
+
+Components appear in the center canvas as workflow steps.
+
+### Reorder Steps
+
+Drag steps to reorder them. The step numbers update automatically.
+
+### Set Properties
+
+Click "Generate Workflow" and fill in:
+- **Name** - Workflow display name
+- **Description** - What the workflow does
+- **Tags** - Comma-separated tags for discovery
+
+### Generate Hash and YAML
+
+The builder shows:
+
+```bash
+# Workflow Hash (for quick sharing)
+npx claude-code-templates@latest --workflow:#abc123def456
+
+# YAML (for version control)
+name: "My Workflow"
+steps:
+  - step: 1
+    type: agent
+    name: "security-auditor"
+  ...
+```
+
+Copy either format.
+
+</Steps>
+
+### Manual YAML Creation
+
+Create workflows directly in your editor:
+
+```bash
+# Create workflow file
+touch .claude/workflows/my-workflow.yaml
+
+# Edit with your favorite editor
+code .claude/workflows/my-workflow.yaml
+```
+
+Add your workflow structure following the YAML format above.
+
+## Workflow Best Practices
+
+### 1. Name Workflows Descriptively
+
+✅ Good:
+```yaml
+name: "React Frontend with TypeScript and Testing"
+```
+
+❌ Bad:
+```yaml
+name: "My Setup"
+```
+
+### 2. Add Comprehensive Descriptions
+
+```yaml
+name: "E-commerce Backend API"
+description: |
+  Complete backend setup for e-commerce API including:
+  - Database integration (PostgreSQL)
+  - Authentication and security
+  - Payment processing setup
+  - API documentation generation
+  - Automated testing suite
+```
+
+### 3. Use Meaningful Tags
+
+```yaml
+tags:
+  - ecommerce
+  - backend
+  - api
+  - postgresql
+  - stripe
+  - authentication
+```
+
+Tags help others discover your workflow.
+
+### 4. Order Components Logically
+
+```yaml
+steps:
+  # 1. Install agents first
+  - step: 1
+    type: agent
+    name: "backend-developer"
+  
+  # 2. Then commands
+  - step: 2
+    type: command
+    name: "docker-setup"
+  
+  # 3. Then MCPs
+  - step: 3
+    type: mcp
+    name: "database"
+  
+  # 4. Finally settings and hooks
+  - step: 4
+    type: setting
+    name: "enable-telemetry"
+```
+
+### 5. Version Control Workflows
+
+Store workflows in your repo:
+
+```bash
+.claude/
+├── workflows/
+│   ├── development.yaml
+│   ├── production.yaml
+│   └── testing.yaml
+└── README.md
+```
+
+Document in README:
+
+```markdown
+## Development Setup
+
+\`\`\`bash
+npx claude-code-templates@latest --workflow .claude/workflows/development.yaml
+\`\`\`
+```
+
+## Combining Workflows with Other Flags
+
+Workflows can be combined with additional flags:
+
+### Add Extra Components
+
+```bash
+npx claude-code-templates@latest \
+  --workflow development.yaml \
+  --agent extra-agent \
+  --command extra-command
+```
+
+The workflow installs first, then additional components.
+
+### Set Installation Directory
+
+```bash
+npx claude-code-templates@latest \
+  --workflow development.yaml \
+  --directory ./my-project
+```
+
+### Auto-Confirm
+
+```bash
+npx claude-code-templates@latest \
+  --workflow development.yaml \
+  --yes
+```
+
+Skips all confirmation prompts.
+
+## Sharing Workflows
+
+### Share Hash URLs
+
+After creating a workflow on aitmpl.com:
+
+```
+https://aitmpl.com/workflows#abc123def456
+```
+
+Share this URL. Others can:
+1. View workflow details
+2. Copy the installation command
+3. Install with one command
+
+### Share YAML Files
+
+#### Via GitHub Gist
+
+```bash
+# Create a gist
+gh gist create workflow.yaml --public
+
+# Share the gist URL
+# Others can:
+curl https://gist.githubusercontent.com/.../workflow.yaml | \
+  npx claude-code-templates@latest --workflow -
+```
+
+#### Via Git Repository
+
+```bash
+# In your repo
+git add .claude/workflows/setup.yaml
+git commit -m "Add Claude Code workflow"
+git push
+
+# Others can:
+git clone <repo>
+npx claude-code-templates@latest --workflow .claude/workflows/setup.yaml
+```
+
+#### Via Package Registry
+
+Publish workflows as npm packages:
+
+```json package.json
+{
+  "name": "@yourorg/claude-workflows",
+  "version": "1.0.0",
+  "files": ["workflows/"]
+}
+```
+
+```bash
+npm publish
+
+# Others can:
+npx @yourorg/claude-workflows/workflows/setup.yaml
+```
+
+## Workflow Collections
+
+Create multiple related workflows:
+
+```
+.claude/workflows/
+├── base.yaml           # Core components for all projects
+├── frontend.yaml       # Frontend-specific additions
+├── backend.yaml        # Backend-specific additions
+└── full-stack.yaml     # Combined frontend + backend
+```
+
+Install progressively:
+
+```bash
+# Start with base
+npx claude-code-templates@latest --workflow .claude/workflows/base.yaml --yes
+
+# Add frontend
+npx claude-code-templates@latest --workflow .claude/workflows/frontend.yaml --yes
+```
+
+## Troubleshooting Workflows
+
+### Workflow Hash Not Found
+
+```bash
+❌ Workflow hash "abc123def456" not found in localStorage
+```
+
+**Solution**: Workflow hashes are browser-specific. Use YAML format for sharing:
+
+```bash
+# Convert to YAML
+# 1. Open aitmpl.com/workflows#abc123def456
+# 2. Copy the YAML output
+# 3. Save to file and share
+```
+
+### Invalid YAML Syntax
+
+```bash
+❌ Error parsing workflow YAML: Unexpected token
+```
+
+**Solution**: Validate YAML syntax:
+
+```bash
+# Use a YAML validator
+npx js-yaml workflow.yaml
+
+# Or online: https://www.yamllint.com/
+```
+
+Common issues:
+- Incorrect indentation (use 2 spaces)
+- Missing quotes around names with special characters
+- Trailing whitespace
+
+### Component Not Found
+
+```bash
+✅ Agent "security-auditor" installed
+❌ Command "non-existent-cmd" not found
+✅ MCP "filesystem" installed
+```
+
+**Solution**: Check component names:
+
+1. Visit [aitmpl.com](https://aitmpl.com)
+2. Search for the component
+3. Use exact name from search results
+4. Update workflow YAML
+
+### Step Order Matters
+
+Some components depend on others:
+
+```yaml
+# ❌ Bad: Settings before agents
+steps:
+  - step: 1
+    type: setting
+    name: "enable-telemetry"
+  - step: 2
+    type: agent
+    name: "security-auditor"
+
+# ✅ Good: Logical order
+steps:
+  - step: 1
+    type: agent
+    name: "security-auditor"
+  - step: 2
+    type: setting
+    name: "enable-telemetry"
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Global Agents" icon="globe" href="/guides/global-agents">
+    Create globally accessible agents
+  </Card>
+  <Card title="Batch Installation" icon="layer-group" href="/guides/batch-installation">
+    Install multiple components at once
+  </Card>
+  <Card title="Workflow Builder" icon="diagram-project" href="https://aitmpl.com/workflows">
+    Visual workflow creation tool
+  </Card>
+  <Card title="Component Browser" icon="grid" href="https://aitmpl.com">
+    Browse all available components
+  </Card>
+</CardGroup>

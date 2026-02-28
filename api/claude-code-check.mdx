@@ -1,0 +1,413 @@
+---
+title: 'Claude Code Check'
+description: 'Automated monitoring of Claude Code releases with Discord notifications'
+---
+
+## Endpoint
+
+**POST/GET** `/api/claude-code-check`
+
+Monitors the `@anthropic-ai/claude-code` npm package for new releases and sends formatted Discord notifications. Runs automatically via Vercel Cron every 30 minutes.
+
+## Trigger Methods
+
+### Vercel Cron (Automatic)
+
+Configured in `vercel.json`:
+
+```json
+{
+  "crons": [{
+    "path": "/api/claude-code-check",
+    "schedule": "*/30 * * * *"
+  }]
+}
+```
+
+Runs every 30 minutes.
+
+### Manual Trigger
+
+```bash
+curl -X POST https://www.aitmpl.com/api/claude-code-check
+```
+
+## Process Flow
+
+1. **Fetch latest npm version** from `https://registry.npmjs.org/@anthropic-ai/claude-code/latest`
+2. **Check database** if version already notified
+3. **Fetch changelog** from GitHub (`CHANGELOG.md`)
+4. **Parse changes** using Claude AI (via `_parser-claude.js`)
+5. **Save to database** (Neon PostgreSQL)
+6. **Send Discord notification** with formatted embed
+7. **Update metadata** tracking
+
+## Response
+
+### Success - New Version Detected
+
+<ResponseField name="status" type="string">
+  `success`
+</ResponseField>
+
+<ResponseField name="version" type="string">
+  Version number detected (e.g., `1.2.3`)
+</ResponseField>
+
+<ResponseField name="versionId" type="number">
+  Database ID of the version record
+</ResponseField>
+
+<ResponseField name="changes" type="object">
+  Summary of changes
+  
+  <ResponseField name="changes.total" type="number">
+    Total number of changes
+  </ResponseField>
+  
+  <ResponseField name="changes.byType" type="object">
+    Change counts by type (features, fixes, improvements, breaking)
+  </ResponseField>
+</ResponseField>
+
+<ResponseField name="discord" type="object">
+  Discord notification status
+  
+  <ResponseField name="discord.sent" type="boolean">
+    Whether notification was sent
+  </ResponseField>
+  
+  <ResponseField name="discord.status" type="number">
+    HTTP status code from Discord webhook
+  </ResponseField>
+</ResponseField>
+
+#### Example Success Response
+
+```json
+{
+  "status": "success",
+  "version": "1.2.3",
+  "versionId": 42,
+  "changes": {
+    "total": 12,
+    "byType": {
+      "features": 5,
+      "fixes": 4,
+      "improvements": 3,
+      "breaking": 0
+    }
+  },
+  "discord": {
+    "sent": true,
+    "status": 200
+  }
+}
+```
+
+### Success - Already Processed
+
+<ResponseField name="status" type="string">
+  `already_processed`
+</ResponseField>
+
+<ResponseField name="version" type="string">
+  Version number
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Explanation message
+</ResponseField>
+
+#### Example Already Processed Response
+
+```json
+{
+  "status": "already_processed",
+  "version": "1.2.3",
+  "message": "Version already notified to Discord"
+}
+```
+
+### Error Response (500)
+
+<ResponseField name="error" type="string">
+  Error type
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Error message
+</ResponseField>
+
+<ResponseField name="details" type="string" optional>
+  Stack trace (development mode only)
+</ResponseField>
+
+#### Example Error Response
+
+```json
+{
+  "error": "Internal server error",
+  "message": "Could not find version 1.2.3 in changelog",
+  "details": "Error: Could not find version 1.2.3 in changelog\n    at parseVersionChangelog..."
+}
+```
+
+## Discord Notification Format
+
+The endpoint sends a rich embed to Discord:
+
+```json
+{
+  "username": "Claude Code Monitor",
+  "avatar_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/assets/icon.png",
+  "embeds": [{
+    "title": "🚀 Claude Code 1.2.3 Released",
+    "description": "A new version of Claude Code is available with **12 changes**!",
+    "url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#123",
+    "color": 9067510,
+    "fields": [
+      {
+        "name": "⚠️ Breaking Changes",
+        "value": "• Removed deprecated API\n• Changed config format",
+        "inline": false
+      },
+      {
+        "name": "✨ New Features",
+        "value": "• Added feature X\n• Added feature Y",
+        "inline": false
+      },
+      {
+        "name": "⚡ Improvements",
+        "value": "• Improved performance\n• Better error messages",
+        "inline": false
+      },
+      {
+        "name": "🐛 Bug Fixes",
+        "value": "• Fixed crash on startup\n• Fixed memory leak",
+        "inline": false
+      },
+      {
+        "name": "📦 Installation",
+        "value": "```bash\nnpm install -g @anthropic-ai/claude-code@1.2.3\n```",
+        "inline": false
+      },
+      {
+        "name": "🔗 Links",
+        "value": "[NPM Package](https://www.npmjs.com/package/@anthropic-ai/claude-code/v/1.2.3) • [Full Changelog](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#123)",
+        "inline": false
+      }
+    ],
+    "footer": {
+      "text": "Claude Code Changelog Monitor",
+      "icon_url": "https://avatars.githubusercontent.com/u/100788936?s=200&v=4"
+    },
+    "timestamp": "2026-02-28T12:34:56.789Z"
+  }]
+}
+```
+
+### Change Categories
+
+- **⚠️ Breaking Changes**: Changes that break backwards compatibility
+- **✨ New Features**: New functionality added
+- **⚡ Improvements**: Enhancements to existing features
+- **🐛 Bug Fixes**: Bug fixes and corrections
+
+Only non-empty categories are included in the embed.
+
+## Database Schema
+
+### claude_code_versions
+
+Stores version metadata:
+
+```sql
+CREATE TABLE claude_code_versions (
+  id SERIAL PRIMARY KEY,
+  version VARCHAR(20) NOT NULL UNIQUE,
+  published_at TIMESTAMP NOT NULL,
+  changelog_content TEXT,
+  npm_url TEXT,
+  github_url TEXT,
+  discord_notified BOOLEAN DEFAULT false,
+  discord_notification_sent_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+### claude_code_changes
+
+Stores individual changes:
+
+```sql
+CREATE TABLE claude_code_changes (
+  id SERIAL PRIMARY KEY,
+  version_id INTEGER REFERENCES claude_code_versions(id),
+  change_type VARCHAR(50),
+  description TEXT,
+  category VARCHAR(100),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+### discord_notifications_log
+
+Logs Discord webhook calls:
+
+```sql
+CREATE TABLE discord_notifications_log (
+  id SERIAL PRIMARY KEY,
+  version_id INTEGER REFERENCES claude_code_versions(id),
+  webhook_url TEXT,
+  payload JSONB,
+  response_status INTEGER,
+  response_body TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+### monitoring_metadata
+
+Tracks monitoring statistics:
+
+```sql
+CREATE TABLE monitoring_metadata (
+  id INTEGER PRIMARY KEY,
+  last_check_at TIMESTAMP,
+  last_version_found VARCHAR(20),
+  check_count INTEGER DEFAULT 0,
+  error_count INTEGER DEFAULT 0,
+  last_error TEXT
+);
+```
+
+## External Dependencies
+
+### NPM Registry API
+
+```bash
+GET https://registry.npmjs.org/@anthropic-ai/claude-code/latest
+```
+
+Returns package metadata including:
+- `version` - Latest version number
+- `time.modified` - Publication timestamp
+
+### GitHub Changelog
+
+```bash
+GET https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md
+```
+
+Markdown changelog with version sections.
+
+### Discord Webhook
+
+```bash
+POST $DISCORD_WEBHOOK_URL_CHANGELOG
+```
+
+Sends formatted embeds to Discord channel.
+
+## Environment Variables
+
+<ParamField query="NEON_DATABASE_URL" type="string" required>
+  PostgreSQL connection string for Neon database
+  
+  Format: `postgresql://user:pass@host/db?sslmode=require`
+</ParamField>
+
+<ParamField query="DISCORD_WEBHOOK_URL_CHANGELOG" type="string" required>
+  Discord webhook URL for changelog notifications
+  
+  Fallback: `DISCORD_WEBHOOK_URL`
+</ParamField>
+
+<ParamField query="NODE_ENV" type="string">
+  Environment mode (`development` or `production`)
+  
+  Controls error detail visibility
+</ParamField>
+
+## CORS Support
+
+```http
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: POST, GET, OPTIONS
+Access-Control-Allow-Headers: Content-Type
+```
+
+Preflight `OPTIONS` requests return `200 OK`.
+
+## Error Handling
+
+Errors are logged and tracked:
+
+1. **Console logging**: All errors logged with context
+2. **Database tracking**: `monitoring_metadata` table updated with error count and message
+3. **Graceful degradation**: Metadata update failures don't crash the endpoint
+
+## Example Manual Trigger
+
+```bash
+# Trigger check
+curl -X POST https://www.aitmpl.com/api/claude-code-check
+
+# Response
+{
+  "status": "success",
+  "version": "1.2.3",
+  "versionId": 42,
+  "changes": {
+    "total": 12,
+    "byType": {
+      "features": 5,
+      "fixes": 4,
+      "improvements": 3,
+      "breaking": 0
+    }
+  },
+  "discord": {
+    "sent": true,
+    "status": 200
+  }
+}
+```
+
+## Monitoring
+
+Check monitoring health:
+
+```sql
+SELECT 
+  last_check_at,
+  last_version_found,
+  check_count,
+  error_count,
+  last_error
+FROM monitoring_metadata
+WHERE id = 1;
+```
+
+View recent notifications:
+
+```sql
+SELECT 
+  v.version,
+  v.discord_notification_sent_at,
+  l.response_status
+FROM claude_code_versions v
+LEFT JOIN discord_notifications_log l ON v.id = l.version_id
+ORDER BY v.created_at DESC
+LIMIT 10;
+```
+
+## Notes
+
+- The endpoint is idempotent: duplicate checks for the same version return `already_processed`
+- Changelog content is truncated to 50,000 characters before storage
+- GitHub URL uses version without dots (e.g., `#123` for version `1.2.3`)
+- Parser uses Claude AI (via `_parser-claude.js`) for intelligent changelog parsing
+- All timestamps stored in ISO 8601 format with timezone
+- Webhook URL can be overridden with `DISCORD_WEBHOOK_URL_CHANGELOG` environment variable

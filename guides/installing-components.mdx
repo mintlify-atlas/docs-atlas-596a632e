@@ -1,0 +1,449 @@
+---
+title: Installing Individual Components
+description: Learn how to install individual agents, commands, MCPs, settings, hooks, and skills from the Claude Code Templates library
+---
+
+# Installing Individual Components
+
+Claude Code Templates provides over 600 individual components that you can install one at a time. Each component type serves a specific purpose in your development workflow.
+
+## Component Types
+
+Before installing, understand what each component type does:
+
+- **Agents** (162+) - AI specialists for specific tasks (e.g., `security-auditor`, `frontend-developer`)
+- **Commands** (210+) - Custom slash commands for workflows (e.g., `/setup-testing`, `/docker-setup`)
+- **MCPs** (55+) - Model Context Protocol integrations for external services
+- **Settings** (60+) - Configuration files for Claude Code behavior
+- **Hooks** (39+) - Automation triggers for events (e.g., before bash, after file edit)
+- **Skills** - Specialized knowledge domains for Claude to reference
+
+## Installation Syntax
+
+All components follow the same installation pattern:
+
+<CodeGroup>
+
+```bash Individual Component
+npx claude-code-templates@latest --{type} {component-name}
+```
+
+```bash With Directory
+npx claude-code-templates@latest --{type} {component-name} --directory ./my-project
+```
+
+```bash Skip Prompts
+npx claude-code-templates@latest --{type} {component-name} --yes
+```
+
+</CodeGroup>
+
+## Installing Agents
+
+Agents are AI specialists stored in `.claude/agents/`.
+
+<Steps>
+
+### Browse Available Agents
+
+Visit [aitmpl.com](https://aitmpl.com) and filter by "Agents" to explore 162+ available agents organized by category:
+
+- **Development Team** - Full-stack, frontend, backend developers
+- **Security** - Security auditors, penetration testers
+- **Data/AI** - ML engineers, data scientists
+- **DevOps** - Cloud architects, infrastructure specialists
+- **Business** - Product managers, project managers
+
+### Install an Agent
+
+```bash
+npx claude-code-templates@latest --agent frontend-developer
+```
+
+You can use either the component name or the full category path:
+
+```bash
+# Both work
+npx claude-code-templates@latest --agent frontend-developer
+npx claude-code-templates@latest --agent development-team/frontend-developer
+```
+
+### Verify Installation
+
+```bash
+ls .claude/agents/
+# Should show: frontend-developer.md
+```
+
+### Use the Agent
+
+In Claude Code, reference the agent:
+
+```
+Use the frontend-developer agent to review this React component for performance issues
+```
+
+</Steps>
+
+<Note>
+**Agent Discovery**: Can't find an agent? Use the search on [aitmpl.com](https://aitmpl.com) to search by description, category, or use case.
+</Note>
+
+## Installing Commands
+
+Commands are custom slash commands stored in `.claude/commands/`.
+
+<Steps>
+
+### Find a Command
+
+Browse commands by category at [aitmpl.com/commands](https://aitmpl.com):
+
+- **Automation** - CI/CD, workflow automation
+- **Development** - Git, testing, project setup
+- **DevOps** - Docker, deployment, infrastructure
+- **Security** - Vulnerability scanning, audit tools
+
+### Install a Command
+
+```bash
+npx claude-code-templates@latest --command setup-testing
+```
+
+### View Command Details
+
+```bash
+cat .claude/commands/setup-testing.md
+```
+
+### Execute the Command
+
+In Claude Code:
+
+```
+/setup-testing jest
+```
+
+</Steps>
+
+## Installing MCPs
+
+MCPs (Model Context Protocols) enable external service integrations. They merge into `.mcp.json`.
+
+<Steps>
+
+### Install an MCP
+
+```bash
+npx claude-code-templates@latest --mcp filesystem
+```
+
+<Note>
+**Automatic Merging**: MCP configurations are automatically merged with your existing `.mcp.json`. The CLI will prompt if conflicts are detected.
+</Note>
+
+### Verify MCP Configuration
+
+```bash
+cat .mcp.json
+```
+
+Expected output:
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/allowed/files"]
+    }
+  }
+}
+```
+
+### Restart Claude Code
+
+MCP changes require a restart to take effect.
+
+</Steps>
+
+## Installing Settings
+
+Settings configure Claude Code behavior. You can install them at multiple levels.
+
+<Steps>
+
+### Install a Setting
+
+```bash
+npx claude-code-templates@latest --setting enable-telemetry
+```
+
+### Choose Installation Location
+
+The CLI will prompt you to select one or more locations:
+
+- **User settings** (`~/.claude/settings.json`) - Applies to all projects
+- **Project settings** (`.claude/settings.json`) - Shared with team via git
+- **Local settings** (`.claude/settings.local.json`) - Personal, gitignored
+- **Enterprise settings** - System-wide policy (requires admin)
+
+<Accordion title="Understanding Settings Hierarchy">
+Settings are loaded in this order (later overrides earlier):
+
+1. Enterprise managed settings
+2. User settings (`~/.claude/settings.json`)
+3. Project settings (`.claude/settings.json`)
+4. Local settings (`.claude/settings.local.json`)
+
+This allows personal preferences to override team settings.
+</Accordion>
+
+### Verify Settings
+
+```bash
+cat .claude/settings.local.json
+```
+
+</Steps>
+
+<Warning>
+**Conflict Detection**: The CLI checks for conflicts when merging settings. If a setting already exists with a different value, you'll be prompted to confirm overwrite.
+</Warning>
+
+## Installing Hooks
+
+Hooks enable event-driven automation. They're stored in settings files.
+
+<Steps>
+
+### Install a Hook
+
+```bash
+npx claude-code-templates@latest --hook automation/simple-notifications
+```
+
+### Choose Hook Location
+
+Same as settings, you'll choose where to install:
+
+```bash
+? Where would you like to install this hook?
+  ◯ User settings - Applies to all projects
+  ◯ Project settings - Shared with team
+  ◉ Local settings - Personal only
+```
+
+### View Hook Configuration
+
+```bash
+cat .claude/settings.local.json
+```
+
+Expected structure:
+
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Session started!'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Test the Hook
+
+Restart Claude Code or trigger the hook event to see it in action.
+
+</Steps>
+
+## Installing Skills
+
+Skills provide specialized knowledge domains for Claude to reference.
+
+<Steps>
+
+### Install a Skill
+
+```bash
+npx claude-code-templates@latest --skill typescript-expert
+```
+
+### Verify Installation
+
+```bash
+ls .claude/skills/
+# Should show skill directory with SKILL.md and references/
+```
+
+### Use the Skill
+
+In Claude Code:
+
+```
+Use the typescript-expert skill to help me configure strict TypeScript
+```
+
+</Steps>
+
+## Component Naming Conventions
+
+All components follow **kebab-case** naming:
+
+✅ **Correct**:
+```bash
+--agent frontend-developer
+--command setup-testing
+--mcp web-fetch
+```
+
+❌ **Incorrect**:
+```bash
+--agent frontendDeveloper
+--agent Frontend-Developer
+--agent frontend_developer
+```
+
+## Common Installation Flags
+
+### Directory Target
+
+Install to a specific directory:
+
+```bash
+npx claude-code-templates@latest --agent security-auditor --directory /path/to/project
+```
+
+### Skip Prompts
+
+Use defaults without confirmation:
+
+```bash
+npx claude-code-templates@latest --agent security-auditor --yes
+```
+
+### Dry Run
+
+Preview what would be installed without making changes:
+
+```bash
+npx claude-code-templates@latest --agent security-auditor --dry-run
+```
+
+### Verbose Logging
+
+Enable detailed installation logs:
+
+```bash
+npx claude-code-templates@latest --agent security-auditor --verbose
+```
+
+## Viewing Component Details
+
+Before installing, you can view component details on the web:
+
+<Steps>
+
+### Visit the Component Browser
+
+Go to [aitmpl.com](https://aitmpl.com)
+
+### Search or Filter
+
+- Use the search bar for keywords
+- Filter by type (agents, commands, etc.)
+- Filter by category (development, security, etc.)
+
+### Click a Component
+
+View:
+- Full description
+- Installation command
+- Source code preview
+- Download statistics
+- GitHub link
+
+### Copy Installation Command
+
+Click "Copy" next to the installation command and run in your terminal.
+
+</Steps>
+
+## Troubleshooting
+
+### Component Not Found
+
+If you get a 404 error:
+
+```bash
+❌ Agent "frontend-dev" not found
+```
+
+**Solutions**:
+1. Check spelling - component names are exact
+2. Search on [aitmpl.com](https://aitmpl.com) for the correct name
+3. Verify the component exists in the catalog
+
+### Permission Errors
+
+If installation fails with permission errors:
+
+```bash
+# Run with sudo (Linux/Mac)
+sudo npx claude-code-templates@latest --agent security-auditor
+
+# Or install to user directory
+npx claude-code-templates@latest --agent security-auditor --directory ~/projects/my-app
+```
+
+### Merge Conflicts
+
+If settings/hooks conflict with existing config:
+
+```bash
+⚠️ Conflicts detected:
+  • Setting "telemetry" (current: false, new: true)
+
+Do you want to overwrite? (y/N)
+```
+
+Choose:
+- `y` - Replace existing value with new value
+- `N` - Keep existing value, skip installation
+
+## File Locations Reference
+
+| Component Type | Installation Path | Format |
+|----------------|-------------------|--------|
+| Agents | `.claude/agents/{name}.md` | Markdown |
+| Commands | `.claude/commands/{name}.md` | Markdown |
+| MCPs | `.mcp.json` (merged) | JSON |
+| Settings | `.claude/settings*.json` | JSON |
+| Hooks | `.claude/settings*.json` | JSON |
+| Skills | `.claude/skills/{name}/` | Directory |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Batch Installation" icon="layer-group" href="/guides/batch-installation">
+    Install multiple components at once
+  </Card>
+  <Card title="Interactive Mode" icon="terminal" href="/guides/interactive-mode">
+    Use the visual component selector
+  </Card>
+  <Card title="Workflows" icon="diagram-project" href="/guides/workflows">
+    Create reusable installation workflows
+  </Card>
+  <Card title="Global Agents" icon="globe" href="/guides/global-agents">
+    Create agents you can run from anywhere
+  </Card>
+</CardGroup>

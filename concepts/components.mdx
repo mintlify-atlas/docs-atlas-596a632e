@@ -1,0 +1,206 @@
+---
+title: Component System
+description: Understanding the Claude Code Templates component architecture
+---
+
+Claude Code Templates provides a powerful component-based system that extends Claude Code with specialized capabilities. Components are modular, reusable building blocks that you can install individually or in batches to enhance your development workflow.
+
+## What Are Components?
+
+Components are pre-built configurations, scripts, and AI specialists that integrate seamlessly with Claude Code. Think of them as plugins that add new capabilities to your AI coding assistant.
+
+<CardGroup cols={2}>
+  <Card title="600+ Agents" icon="robot" href="/concepts/agents">
+    AI specialists for every development task
+  </Card>
+  <Card title="200+ Commands" icon="terminal" href="/concepts/commands">
+    Custom slash commands for workflows
+  </Card>
+  <Card title="55+ MCPs" icon="plug" href="/concepts/mcps">
+    Model Context Protocol integrations
+  </Card>
+  <Card title="60+ Settings" icon="gear" href="/concepts/settings">
+    Configuration files for Claude Code
+  </Card>
+  <Card title="39+ Hooks" icon="webhook" href="/concepts/hooks">
+    Event-driven automation triggers
+  </Card>
+  <Card title="14+ Templates" icon="layer-group" href="/concepts/templates">
+    Complete project configurations
+  </Card>
+</CardGroup>
+
+## Component Architecture
+
+All components live in the `.claude` directory within your project:
+
+```bash
+.claude/
+├── agents/          # AI specialist agents
+├── commands/        # Slash command definitions
+├── hooks/           # Automation scripts
+├── scripts/         # Supporting files for hooks/statuslines
+├── settings.json    # Project-wide configuration (committed to git)
+├── settings.local.json  # Personal settings (not committed)
+└── .mcp.json        # MCP server configurations (project root)
+```
+
+<Info>
+The `.claude` directory structure is automatically created when you install your first component.
+</Info>
+
+## Installation Methods
+
+Claude Code Templates supports multiple installation approaches:
+
+<Tabs>
+  <Tab title="Single Component">
+    Install one component at a time:
+    
+    ```bash
+    npx claude-code-templates@latest --agent frontend-developer
+    npx claude-code-templates@latest --command ci-pipeline
+    npx claude-code-templates@latest --mcp web-fetch
+    ```
+  </Tab>
+  
+  <Tab title="Batch Installation">
+    Install multiple components in one command:
+    
+    ```bash
+    npx claude-code-templates@latest \
+      --agent security-auditor \
+      --command security-audit \
+      --setting read-only-mode
+    ```
+  </Tab>
+  
+  <Tab title="Interactive Mode">
+    Use the interactive menu for guided installation:
+    
+    ```bash
+    npx claude-code-templates@latest
+    ```
+    
+    Navigate through categories and select components visually.
+  </Tab>
+</Tabs>
+
+## Component Categories
+
+Components are organized by type and purpose:
+
+### Agents
+
+AI specialists with domain expertise. Examples:
+- **development-team/frontend-developer** - React, Vue, Angular expert
+- **security/api-security-audit** - API security specialist
+- **database/postgresql-optimizer** - Database performance tuning
+
+### Commands
+
+Slash commands for common workflows. Examples:
+- **setup/ci-pipeline** - GitHub Actions automation
+- **security/vulnerability-scan** - Security analysis
+- **git-workflow/conventional-commits** - Commit message formatting
+
+### MCPs
+
+Model Context Protocol integrations for external services:
+- **web/web-fetch** - HTTP requests and web scraping
+- **database/postgresql-integration** - Direct database access
+- **browser_automation/playwright** - Browser automation
+
+### Hooks
+
+Event-driven automation that runs before/after tool use:
+- **git/git-commit-formatter** - Format commits automatically
+- **automation/build-on-change** - Auto-build on file edits
+- **security/prevent-force-push** - Block dangerous git operations
+
+### Settings
+
+Configuration files for permissions, models, and behavior:
+- **permissions/allow-npm-commands** - Enable npm command execution
+- **model/use-sonnet** - Default to Claude Sonnet model
+- **statusline/context-monitor** - Real-time context usage tracking
+
+### Templates
+
+Complete project configurations with multiple components:
+- **development/react-typescript** - React + TypeScript stack
+- **security/security-first** - Security-hardened configuration
+- **workflow-automation/git-excellence** - Git workflow automation
+
+## Component Lifecycle
+
+<Steps>
+  <Step title="Discovery">
+    Browse components at [aitmpl.com](https://aitmpl.com) or use the CLI's interactive mode.
+  </Step>
+  
+  <Step title="Installation">
+    Components are downloaded from GitHub and installed to `.claude/` directory.
+  </Step>
+  
+  <Step title="Configuration">
+    Settings merge with existing configurations. Choose installation location (user/project/local).
+  </Step>
+  
+  <Step title="Activation">
+    Components are immediately available in Claude Code. No restart required.
+  </Step>
+  
+  <Step title="Updates">
+    Re-run installation command to update components to latest version.
+  </Step>
+</Steps>
+
+## Component Naming Conventions
+
+All components follow consistent naming patterns:
+
+- **Kebab-case**: `frontend-developer`, `ci-pipeline`, `web-fetch`
+- **Category prefixes**: `category/component-name` (e.g., `security/api-security-audit`)
+- **Descriptive**: Names clearly indicate purpose and functionality
+
+<Note>
+When installing components with category prefixes (e.g., `development-team/frontend-developer`), the component is installed to the flat `.claude/agents/` directory without category subdirectories.
+</Note>
+
+## Component Configuration
+
+Components can be configured through three settings levels:
+
+1. **User settings** (`~/.claude/settings.json`) - Apply to all projects
+2. **Project settings** (`.claude/settings.json`) - Shared with team (committed)
+3. **Local settings** (`.claude/settings.local.json`) - Personal overrides (not committed)
+
+Settings cascade from user → project → local, with later settings overriding earlier ones.
+
+## Component Compatibility
+
+Components are designed to work together:
+
+- **Agents** can use **commands** to perform specialized workflows
+- **Hooks** can trigger **commands** automatically
+- **MCPs** provide data and services that **agents** leverage
+- **Settings** control behavior of all component types
+- **Templates** bundle multiple components for specific use cases
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Explore Agents" icon="robot" href="/concepts/agents">
+    Learn about AI specialist agents
+  </Card>
+  <Card title="Create Commands" icon="terminal" href="/concepts/commands">
+    Build custom slash commands
+  </Card>
+  <Card title="Configure MCPs" icon="plug" href="/concepts/mcps">
+    Integrate external services
+  </Card>
+  <Card title="Automate with Hooks" icon="webhook" href="/concepts/hooks">
+    Set up event-driven automation
+  </Card>
+</CardGroup>

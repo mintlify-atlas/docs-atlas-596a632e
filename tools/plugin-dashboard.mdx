@@ -1,0 +1,431 @@
+---
+title: Plugin Dashboard
+description: Visual interface for browsing Claude Code plugin marketplaces, installed plugins, and component permissions
+---
+
+The Plugin Dashboard provides a web interface for exploring Claude Code plugins, managing marketplace subscriptions, and reviewing component permissions (agents, commands, hooks, MCPs).
+
+## Launch Dashboard
+
+Start the plugin dashboard server:
+
+```bash
+claudedev plugin-dashboard
+```
+
+**Output:**
+```
+🔌 Starting Claude Code Plugin Dashboard...
+🔌 Plugin dashboard started at http://localhost:3336
+🌐 Opening browser to Plugin Dashboard...
+✅ Plugin dashboard is running!
+🌐 Access at: http://localhost:3336
+```
+
+The dashboard automatically opens at `http://localhost:3336`.
+
+## Features
+
+### Marketplace Management
+
+View and manage plugin marketplaces:lines/plugin-dashboard.js:78
+
+- **Marketplace sources**: GitHub, Git, Local, URL
+- **Plugin counts**: Number of plugins per marketplace
+- **Enabled status**: Active/inactive marketplaces
+- **Last updated**: Marketplace sync timestamps
+- **Repository URLs**: Direct links to marketplace repos
+
+**Data source:**
+- `~/.claude/plugins/known_marketplaces.json`:line/plugin-dashboard.js:83
+
+### Plugin Catalog
+
+Browse all installed plugins:lines/plugin-dashboard.js:161
+
+**Plugin information:**
+- Name and version
+- Description
+- Marketplace source
+- Component counts (agents, commands, hooks, MCPs)
+- Author and homepage
+- License
+- Keywords and category
+- Enabled/disabled status:line/plugin-dashboard.js:279
+
+### Component Permissions
+
+View all components with their sources:lines/plugin-dashboard.js:356
+
+**Agents:**
+- Project agents (`.claude/agents/`)
+- Personal agents (`~/.claude/agents/`)
+- Plugin-provided agents
+
+**Commands:**
+- Project commands (`.claude/commands/`)
+- Personal commands (`~/.claude/commands/`)
+- Plugin-provided commands
+
+**Hooks:**
+- User hooks (`~/.claude/settings.json`)
+- Project hooks (`.claude/settings.json`)
+- Plugin-provided hooks
+- Hook events (PreToolUse, PostToolUse, Stop, Notification)
+
+**MCP Servers:**
+- User MCPs (`~/.claude/.mcp.json`)
+- Project MCPs (`.mcp.json`)
+- Plugin-provided MCPs
+
+## API Reference
+
+### GET /api/marketplaces
+
+List all plugin marketplaces:lines/plugin-dashboard.js:558
+
+**Response:**
+```json
+{
+  "marketplaces": [
+    {
+      "name": "claude-code-plugins",
+      "source": {
+        "source": "github",
+        "repo": "user/claude-code-plugins"
+      },
+      "type": "GitHub",
+      "enabled": true,
+      "pluginCount": 15,
+      "lastUpdated": "2025-01-15T10:00:00Z",
+      "url": "https://github.com/user/claude-code-plugins"
+    }
+  ],
+  "count": 1,
+  "timestamp": "2025-01-15T12:00:00Z"
+}
+```
+
+### GET /api/plugins
+
+List all installed plugins:lines/plugin-dashboard.js:572
+
+**Response:**
+```json
+{
+  "plugins": [
+    {
+      "name": "example-plugin",
+      "version": "1.0.0",
+      "description": "Example plugin with useful components",
+      "marketplace": "claude-code-plugins",
+      "path": "~/.claude/plugins/marketplaces/claude-code-plugins/example-plugin",
+      "components": {
+        "agents": 2,
+        "commands": 3,
+        "hooks": 1,
+        "mcps": 1
+      },
+      "author": "Plugin Author",
+      "homepage": "https://github.com/user/example-plugin",
+      "license": "MIT",
+      "keywords": ["development", "productivity"],
+      "category": "Development",
+      "enabled": true
+    }
+  ],
+  "count": 1,
+  "timestamp": "2025-01-15T12:00:00Z"
+}
+```
+
+### GET /api/permissions
+
+List all components and their sources:lines/plugin-dashboard.js:586
+
+**Response:**
+```json
+{
+  "permissions": {
+    "agents": [
+      {
+        "name": "code-reviewer",
+        "source": "Plugin",
+        "plugin": "example-plugin",
+        "path": "~/.claude/plugins/.../agents/code-reviewer.md"
+      },
+      {
+        "name": "my-custom-agent",
+        "source": "User",
+        "plugin": null,
+        "path": "~/.claude/agents/my-custom-agent.md"
+      }
+    ],
+    "commands": [...],
+    "hooks": [...],
+    "mcps": [...]
+  },
+  "counts": {
+    "agents": 2,
+    "commands": 5,
+    "hooks": 3,
+    "mcps": 4
+  },
+  "timestamp": "2025-01-15T12:00:00Z"
+}
+```
+
+### GET /api/summary
+
+Get counts summary:lines/plugin-dashboard.js:605
+
+**Response:**
+```json
+{
+  "marketplaces": 2,
+  "plugins": 8,
+  "permissions": {
+    "agents": 12,
+    "commands": 15,
+    "hooks": 5,
+    "mcps": 7,
+    "total": 39
+  },
+  "timestamp": "2025-01-15T12:00:00Z"
+}
+```
+
+## Plugin Structure
+
+### Marketplace Configuration
+
+Format of `known_marketplaces.json`:
+
+```json
+{
+  "marketplace-name": {
+    "source": {
+      "source": "github",
+      "repo": "username/repo-name"
+    },
+    "lastUpdated": "2025-01-15T10:00:00Z"
+  }
+}
+```
+
+**Supported sources:**:line/plugin-dashboard.js:148
+- `github`: GitHub repository
+- `git`: Git repository URL
+- `local` or `directory`: Filesystem path
+- `url`: HTTP/HTTPS URL
+
+### Plugin Manifest
+
+Format of `.claude-plugin/plugin.json`:
+
+```json
+{
+  "name": "example-plugin",
+  "version": "1.0.0",
+  "description": "Plugin description",
+  "author": "Author Name",
+  "homepage": "https://example.com",
+  "license": "MIT"
+}
+```
+
+### Marketplace Manifest
+
+Format of `.claude-plugin/marketplace.json`:lines/plugin-dashboard.js:233
+
+```json
+{
+  "name": "Example Marketplace",
+  "description": "Collection of plugins",
+  "plugins": [
+    {
+      "name": "plugin-one",
+      "version": "1.0.0",
+      "description": "First plugin",
+      "source": "./plugins/plugin-one",
+      "author": "Author",
+      "homepage": "https://example.com/plugin-one",
+      "license": "MIT"
+    },
+    {
+      "name": "plugin-two",
+      "version": "2.1.0",
+      "description": "Second plugin",
+      "source": {
+        "source": "url",
+        "url": "https://example.com/plugin-two"
+      }
+    }
+  ]
+}
+```
+
+**Plugin sources:**:line/plugin-dashboard.js:260
+- String path: Relative to marketplace directory
+- Object with `source` and `url`: External reference
+
+### Component Counting
+
+Components counted from:lines/plugin-dashboard.js:313
+
+**Agents:**
+- `agents/*.md` files
+- Or inline `agents` array in manifest
+
+**Commands:**
+- `commands/*.md` files
+- Or inline `commands` array in manifest
+
+**Hooks:**
+- `hooks/hooks.json` file
+- Or inline `hooks` array/object in manifest
+
+**MCPs:**
+- `.mcp.json` file (`mcpServers` object)
+- Or inline `mcpServers` array in manifest
+
+## Plugin Enablement
+
+Plugins enabled via `~/.claude/settings.json`:lines/plugin-dashboard.js:306
+
+```json
+{
+  "enabledPlugins": {
+    "plugin-name@marketplace-name": true,
+    "another-plugin@marketplace-name": true
+  }
+}
+```
+
+**Key format:** `{pluginName}@{marketplaceName}`:line/plugin-dashboard.js:309
+
+## Architecture
+
+### PluginDashboard Class:line/plugin-dashboard.js:8
+
+**Properties:**
+- `port`: Server port (3336)
+- `claudeDir`: `~/.claude` directory
+- `settingsFile`: `~/.claude/settings.json`
+- `marketplaces`: Loaded marketplace data
+- `plugins`: Loaded plugin data
+- `permissions`: Component permissions
+- `enabledPlugins`: Set of enabled plugin keys
+
+**Methods:**
+- `initialize()`: Load all plugin data:line/plugin-dashboard.js:19
+- `loadPluginData()`: Load marketplaces and plugins:line/plugin-dashboard.js:30
+- `loadMarketplaces()`: Parse known marketplaces:line/plugin-dashboard.js:78
+- `loadInstalledPlugins()`: Scan plugin directories:line/plugin-dashboard.js:161
+- `loadPermissions()`: Load component permissions:line/plugin-dashboard.js:356
+- `countPluginComponents()`: Count components in plugin:line/plugin-dashboard.js:313
+- `isPluginEnabled()`: Check plugin enabled status:line/plugin-dashboard.js:306
+
+### Data Flow
+
+1. **Initialization**:line/plugin-dashboard.js:19
+   - Check `~/.claude` directory exists
+   - Load plugin data
+   - Setup Express server
+
+2. **Marketplace Loading**:line/plugin-dashboard.js:78
+   - Read `known_marketplaces.json`
+   - Load marketplace details
+   - Count plugins per marketplace
+   - Check enabled status
+
+3. **Plugin Loading**:line/plugin-dashboard.js:161
+   - Scan `~/.claude/plugins/marketplaces/`
+   - Find marketplace manifests
+   - Parse plugin definitions
+   - Count components
+   - Check enabled status
+
+4. **Permission Loading**:line/plugin-dashboard.js:356
+   - Load user-level components
+   - Load plugin components
+   - Combine into permission list
+
+## Example: Query Plugin Info
+
+```bash
+# Get all plugins
+curl -s http://localhost:3336/api/plugins | jq '.plugins[] | {name, version, enabled}'
+
+# Count components
+curl -s http://localhost:3336/api/summary | jq '.permissions'
+
+# List marketplaces
+curl -s http://localhost:3336/api/marketplaces | jq '.marketplaces[] | {name, type, pluginCount}'
+```
+
+## Example: Find Plugin Components
+
+```bash
+# Find all agents from plugins
+curl -s http://localhost:3336/api/permissions | \
+  jq '.permissions.agents[] | select(.source == "Plugin") | {name, plugin}'
+
+# Find all user commands
+curl -s http://localhost:3336/api/permissions | \
+  jq '.permissions.commands[] | select(.source == "User") | .name'
+```
+
+## Troubleshooting
+
+### Dashboard Won't Start
+
+**Error:** `Claude Code directory not found`
+
+Solution: Run Claude Code at least once to create `~/.claude/`
+
+### No Plugins Found
+
+Check marketplace configuration:
+
+```bash
+cat ~/.claude/plugins/known_marketplaces.json
+ls -la ~/.claude/plugins/marketplaces/
+```
+
+### Port Already in Use
+
+Dashboard uses port 3336. If occupied:line/plugin-dashboard.js:12
+
+```bash
+lsof -i :3336
+kill -9 <PID>
+```
+
+### Plugin Not Showing as Enabled
+
+Check settings file:lines/plugin-dashboard.js:57
+
+```bash
+cat ~/.claude/settings.json | jq '.enabledPlugins'
+```
+
+Format must be: `"plugin-name@marketplace-name": true`
+
+### Component Count Incorrect
+
+Verify plugin structure:
+
+```bash
+PLUGIN_PATH=~/.claude/plugins/marketplaces/example/plugin-name
+ls $PLUGIN_PATH/agents/*.md
+ls $PLUGIN_PATH/commands/*.md
+cat $PLUGIN_PATH/hooks/hooks.json
+cat $PLUGIN_PATH/.mcp.json
+```
+
+## See Also
+
+- [Health Check](/tools/health-check) - Validate plugin configuration
+- [Stats Tools](/tools/stats-tools) - Analyze installed components
+- [Analytics Dashboard](/tools/analytics-dashboard) - Monitor component usage

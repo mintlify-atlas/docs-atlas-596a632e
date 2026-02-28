@@ -1,0 +1,558 @@
+---
+title: Create Global Agents
+description: Create globally accessible AI agents that can be executed from anywhere
+---
+
+# Create Global Agents
+
+Global agents are AI assistants that can be executed from any directory on your system, like command-line tools. They provide instant access to specialized AI capabilities without navigating to specific projects.
+
+## Overview
+
+Global agents are:
+- **Accessible anywhere** - Run from any directory
+- **Self-contained** - Include their own system prompts
+- **Context-aware** - Auto-detect project types
+- **Shell-integrated** - Work in scripts, npm tasks, CI/CD
+
+## Creating a Global Agent
+
+### Basic Creation
+
+Create a global agent from any available agent:
+
+```bash
+cct --create-agent <agent-name>
+```
+
+### Examples
+
+```bash
+# Create a customer support agent
+cct --create-agent customer-support
+
+# Create from a category
+cct --create-agent development-team/frontend-developer
+
+# Create a security auditor
+cct --create-agent security-auditor
+```
+
+### Installation Locations
+
+Global agents install to:
+
+**System Directory** (preferred, immediately available):
+```
+/usr/local/bin/<agent-name>
+```
+
+**User Directory** (fallback, requires PATH setup):
+```
+~/.claude-code-templates/bin/<agent-name>
+```
+
+Agent files are stored at:
+```
+~/.claude-code-templates/agents/<agent-name>.md
+```
+
+## Using Global Agents
+
+### Basic Usage
+
+Once created, invoke global agents from anywhere:
+
+```bash
+<agent-name> "your prompt here"
+```
+
+### Examples
+
+```bash
+# Customer support queries
+customer-support "How do I handle refund requests?"
+
+# Security analysis
+security-auditor "Review this authentication code for vulnerabilities"
+
+# Frontend development
+frontend-developer "Optimize this React component for performance"
+
+# Documentation
+technical-writer "Create API documentation for this endpoint"
+```
+
+### Context Auto-Detection
+
+Global agents automatically detect your project context:
+
+```bash
+cd ~/projects/my-react-app
+frontend-developer "Review this component"
+# Auto-detects: React project, analyzes relevant files
+
+cd ~/projects/my-api
+backend-developer "Optimize database queries"
+# Auto-detects: Node.js/Python project, focuses on API files
+```
+
+### Project Type Detection
+
+Agents detect project types based on:
+
+| Indicator | Project Type |
+|-----------|-------------|
+| `package.json` with React | React |
+| `package.json` with Vue | Vue |
+| `package.json` with Next.js | Next.js |
+| `package.json` (generic) | JavaScript/Node.js |
+| `requirements.txt` or `pyproject.toml` | Python |
+| `Cargo.toml` | Rust |
+| `go.mod` | Go |
+
+### Relevant Files Auto-Selection
+
+Based on project type, agents focus on:
+
+**JavaScript/React/Vue/Next.js**:
+- `src/`
+- `lib/`
+- `components/`
+- `pages/`
+- `api/`
+- `routes/`
+
+**Python**:
+- `*.py`
+- `src/`
+- `app/`
+- `api/`
+
+**Rust**:
+- `src/`
+- `Cargo.toml`
+
+**Go**:
+- `*.go`
+- `cmd/`
+- `internal/`
+- `pkg/`
+
+## Advanced Usage
+
+### Explicit File Selection
+
+Specify files or directories explicitly:
+
+```bash
+<agent-name> --file <path> "your prompt"
+<agent-name> --dir <path> "your prompt"
+```
+
+### Examples
+
+```bash
+# Analyze a specific file
+security-auditor --file auth.js "Check for vulnerabilities"
+
+# Review a directory
+frontend-developer --dir components/ "Optimize these components"
+
+# Multiple files
+backend-developer --file routes.js --file controllers.js "Review routing logic"
+```
+
+### Disable Auto-Detection
+
+Disable project context auto-detection:
+
+```bash
+<agent-name> --no-auto "your prompt"
+```
+
+Useful for general questions without project context:
+
+```bash
+customer-support --no-auto "What are best practices for email support?"
+```
+
+### Verbose Mode
+
+Enable detailed debugging output:
+
+```bash
+<agent-name> --verbose "your prompt"
+<agent-name> -v "your prompt"
+```
+
+Shows:
+- User input
+- Project context detection
+- Final prompt length
+- System prompt preview
+- Claude command being executed
+
+### Help Command
+
+View agent-specific help:
+
+```bash
+<agent-name> --help
+<agent-name> -h
+```
+
+Displays:
+- Usage syntax
+- Context options
+- Examples
+
+## Global Agent Options
+
+<ParamField path="prompt" type="string" required>
+  The prompt to send to the agent
+</ParamField>
+
+<ParamField path="--file" type="string">
+  Include specific file in context (can be used multiple times)
+</ParamField>
+
+<ParamField path="--dir" type="string">
+  Include specific directory in context (can be used multiple times)
+</ParamField>
+
+<ParamField path="--no-auto" type="boolean">
+  Disable automatic project context detection
+</ParamField>
+
+<ParamField path="--verbose" type="boolean">
+  Enable verbose debugging output (alias: -v)
+</ParamField>
+
+<ParamField path="--help" type="boolean">
+  Display help information (alias: -h)
+</ParamField>
+
+## Managing Global Agents
+
+### List Installed Agents
+
+View all installed global agents:
+
+```bash
+cct --list-agents
+```
+
+Output includes:
+- Agent name
+- Installation location (system/user)
+- Executable status
+- Creation date
+- Usage examples
+
+### Update an Agent
+
+Update to the latest version:
+
+```bash
+cct --update-agent <agent-name>
+```
+
+This re-downloads the agent from GitHub and updates the executable.
+
+### Remove an Agent
+
+Delete a global agent:
+
+```bash
+cct --remove-agent <agent-name>
+```
+
+Removes:
+- Executable script from `/usr/local/bin/` or user bin
+- Agent file from `~/.claude-code-templates/agents/`
+
+## PATH Configuration
+
+### System Installation
+
+If installed to `/usr/local/bin/`, agents are immediately available with no setup required.
+
+### User Installation
+
+If installed to `~/.claude-code-templates/bin/`, add to PATH:
+
+**Bash** (`~/.bashrc` or `~/.bash_profile`):
+```bash
+export PATH="$HOME/.claude-code-templates/bin:$PATH"
+```
+
+**Zsh** (`~/.zshrc`):
+```bash
+export PATH="$HOME/.claude-code-templates/bin:$PATH"
+```
+
+**Fish** (`~/.config/fish/config.fish`):
+```fish
+set -gx PATH $HOME/.claude-code-templates/bin $PATH
+```
+
+### Apply Changes
+
+Reload your shell configuration:
+
+```bash
+# Bash
+source ~/.bashrc
+
+# Zsh
+source ~/.zshrc
+
+# Fish
+source ~/.config/fish/config.fish
+```
+
+Or restart your terminal.
+
+### Verify PATH
+
+Check if PATH is configured correctly:
+
+```bash
+echo $PATH | grep claude-code-templates
+```
+
+## Use Cases
+
+### 1. Customer Support
+
+```bash
+# Create agent
+cct --create-agent customer-support
+
+# Use from anywhere
+customer-support "How to handle billing disputes?"
+customer-support "Best practices for escalation?"
+```
+
+### 2. Code Review Automation
+
+```bash
+# Create security auditor
+cct --create-agent security-auditor
+
+# Review code before commits
+cd ~/projects/my-app
+security-auditor --file auth.js "Check for security issues"
+```
+
+### 3. Documentation Generation
+
+```bash
+# Create technical writer
+cct --create-agent technical-writer
+
+# Generate docs
+technical-writer --file api.js "Create API documentation"
+```
+
+### 4. npm Scripts Integration
+
+Add to `package.json`:
+
+```json
+{
+  "scripts": {
+    "review": "security-auditor --file $FILE 'Security review'",
+    "docs": "technical-writer --dir src/ 'Generate documentation'"
+  }
+}
+```
+
+Run with:
+```bash
+FILE=auth.js npm run review
+npm run docs
+```
+
+### 5. CI/CD Integration
+
+**GitHub Actions** (`.github/workflows/review.yml`):
+
+```yaml
+name: Code Review
+on: [pull_request]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Install CLI
+        run: npm install -g claude-code-templates
+      - name: Create Agent
+        run: cct --create-agent security-auditor
+      - name: Run Review
+        run: security-auditor --dir src/ "Security review"
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+```
+
+### 6. Shell Aliases
+
+Create convenient aliases:
+
+```bash
+# Add to ~/.bashrc or ~/.zshrc
+alias review='security-auditor'
+alias docs='technical-writer'
+alias optimize='frontend-developer'
+
+# Usage
+review --file auth.js "Check security"
+docs --dir api/ "Generate docs"
+optimize --file Component.jsx "Improve performance"
+```
+
+## Technical Details
+
+### Executable Script Structure
+
+Global agents are Node.js executable scripts that:
+
+1. **Read agent system prompt** from `~/.claude-code-templates/agents/<name>.md`
+2. **Parse command-line arguments** (prompt, files, options)
+3. **Detect project context** automatically
+4. **Build final prompt** combining user input and context
+5. **Execute Claude CLI** with agent's system prompt
+6. **Stream response** to terminal
+
+### Claude CLI Requirements
+
+Global agents require Claude CLI:
+
+```bash
+# Check if Claude CLI is installed
+claude --version
+
+# Install if needed
+npm install -g @anthropic-ai/claude-code
+```
+
+### Authentication
+
+Global agents use your existing Claude authentication:
+- OAuth authentication from Claude Desktop
+- `ANTHROPIC_API_KEY` environment variable
+- API key in `~/.claude.json`
+
+### System Prompt Handling
+
+Agents use the `--system-prompt` flag to provide their specialized instructions:
+
+```bash
+claude -p "user prompt" --system-prompt "agent system prompt"
+```
+
+This ensures the agent's expertise is applied to every request.
+
+## Troubleshooting
+
+### Agent Not Found After Creation
+
+**Check PATH configuration:**
+```bash
+echo $PATH | grep claude-code-templates
+```
+
+**Try full path:**
+```bash
+~/.claude-code-templates/bin/<agent-name> "test"
+```
+
+**Verify executable permissions:**
+```bash
+ls -l ~/.claude-code-templates/bin/<agent-name>
+# Should show: -rwxr-xr-x
+```
+
+### Claude CLI Not Found
+
+**Install Claude CLI:**
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+**Verify installation:**
+```bash
+which claude
+claude --version
+```
+
+### Permission Denied (macOS/Linux)
+
+**Make executable:**
+```bash
+chmod +x ~/.claude-code-templates/bin/<agent-name>
+```
+
+**For system directory:**
+```bash
+sudo chmod +x /usr/local/bin/<agent-name>
+```
+
+### Authentication Errors
+
+**Check Claude authentication:**
+```bash
+claude --version  # Should work without errors
+```
+
+**Set API key if needed:**
+```bash
+export ANTHROPIC_API_KEY=sk-ant-xxx
+```
+
+**Or configure in `~/.claude.json`:**
+```json
+{
+  "apiKey": "sk-ant-xxx"
+}
+```
+
+### Windows Issues
+
+**Use PowerShell or Command Prompt:**
+```powershell
+# PowerShell
+$env:PATH += ";$HOME\.claude-code-templates\bin"
+
+# Command Prompt
+set PATH=%PATH%;%USERPROFILE%\.claude-code-templates\bin
+```
+
+**Or add to System Environment Variables:**
+1. Open System Properties > Environment Variables
+2. Add `%USERPROFILE%\.claude-code-templates\bin` to PATH
+
+## Best Practices
+
+1. **Use descriptive names**: `customer-support`, not `cs`
+2. **Create specialized agents**: Focus on specific tasks
+3. **Test with `--verbose`**: Understand how agents work
+4. **Document for teams**: Share agent names and purposes
+5. **Use in scripts**: Automate repetitive tasks
+6. **Update regularly**: Keep agents current with `--update-agent`
+7. **Leverage context**: Let agents auto-detect project types
+8. **Combine with hooks**: Integrate into development workflow
+
+## Next Steps
+
+- [List and Manage Agents](/cli/list-agents) - Manage installed global agents
+- [Install Components](/cli/install-component) - Install project-specific agents
+- [CLI Flags Reference](/cli/flags) - Complete flags documentation
+- [Environment Variables](/cli/environment-variables) - Configure authentication

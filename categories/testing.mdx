@@ -1,0 +1,648 @@
+---
+title: Testing Components
+description: Testing agents, commands, and hooks for unit, integration, E2E, and performance testing
+---
+
+# Testing Components
+
+The Testing category includes specialists for test generation, test automation, quality assurance, and comprehensive testing strategies across unit, integration, E2E, and performance testing.
+
+<Card title="Browse Testing Components" icon="globe" href="https://aitmpl.com/?category=testing">
+  Explore all testing components at **aitmpl.com**
+</Card>
+
+## Quick Install
+
+```bash
+# Install testing essentials
+npx claude-code-templates@latest \
+  --agent test-generator \
+  --command setup-testing \
+  --command e2e-setup \
+  --hook testing/test-runner
+
+# Or install the testing template
+npx claude-code-templates@latest --template testing-suite
+```
+
+## Testing Agents
+
+<CardGroup cols={2}>
+  <Card title="Test Generator" icon="vial">
+    Automated test generation with comprehensive coverage
+    
+    **Expertise:**
+    - Unit test generation
+    - Integration test design
+    - E2E test scenarios
+    - Test data factories
+    - Mocking and stubbing strategies
+    - Coverage analysis
+    - Edge case identification
+    
+    **Technologies:**
+    - Jest, Vitest, Mocha
+    - React Testing Library, Vue Test Utils
+    - Playwright, Cypress, Puppeteer
+    - Supertest for API testing
+    - MSW (Mock Service Worker)
+    
+    ```bash
+    npx claude-code-templates@latest --agent test-generator
+    ```
+    
+    **Example Usage:**
+    ```
+    @test-generator Generate comprehensive tests for the user
+    authentication service with 80%+ coverage. Include:
+    - Unit tests for password hashing
+    - Integration tests for login/logout
+    - E2E tests for complete auth flow
+    - Edge cases (expired tokens, invalid credentials)
+    ```
+  </Card>
+  
+  <Card title="Test Runner" icon="play">
+    Test execution automation and orchestration
+    
+    **Expertise:**
+    - Test suite execution
+    - Parallel test running
+    - Test result reporting
+    - Flaky test detection
+    - Test prioritization
+    
+    ```bash
+    npx claude-code-templates@latest --agent test-runner
+    ```
+  </Card>
+</CardGroup>
+
+## Testing Commands
+
+<Tabs>
+  <Tab title="Setup">
+    ### Test Infrastructure Setup
+    
+    <CardGroup cols={2}>
+      <Card title="Setup Testing" icon="screwdriver-wrench">
+        Configure comprehensive testing infrastructure
+        
+        **Sets up:**
+        - Test framework (Jest/Vitest/Mocha)
+        - Test runners and reporters
+        - Coverage tools
+        - Mocking libraries
+        - CI/CD integration
+        - Test utilities
+        
+        ```bash
+        npx claude-code-templates@latest --command setup-testing
+        ```
+        
+        **Usage:**
+        ```bash
+        /setup-testing
+        ```
+        
+        **Creates:**
+        - `jest.config.js` or `vitest.config.js`
+        - Test setup files
+        - Example test files
+        - Coverage configuration
+        - CI/CD test workflow
+      </Card>
+      
+      <Card title="E2E Setup" icon="robot">
+        Set up end-to-end testing with Playwright or Cypress
+        
+        **Options:**
+        - Playwright (recommended)
+        - Cypress
+        - TestCafe
+        - Puppeteer
+        
+        ```bash
+        npx claude-code-templates@latest --command e2e-setup
+        ```
+        
+        **Features:**
+        - Browser automation setup
+        - Page object models
+        - Test fixtures
+        - Screenshot/video recording
+        - CI/CD integration
+      </Card>
+      
+      <Card title="Setup Comprehensive Testing" icon="list-check">
+        Complete testing setup with all test types
+        
+        ```bash
+        npx claude-code-templates@latest --command setup-comprehensive-testing
+        ```
+      </Card>
+      
+      <Card title="Setup Load Testing" icon="gauge">
+        Configure load and performance testing
+        
+        **Tools:**
+        - k6
+        - Artillery
+        - Apache JMeter
+        
+        ```bash
+        npx claude-code-templates@latest --command setup-load-testing
+        ```
+      </Card>
+      
+      <Card title="Setup Visual Testing" icon="eye">
+        Set up visual regression testing
+        
+        ```bash
+        npx claude-code-templates@latest --command setup-visual-testing
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Generation">
+    ### Test Generation Commands
+    
+    <CardGroup cols={2}>
+      <Card title="Generate Tests" icon="wand-magic-sparkles">
+        Auto-generate unit and integration tests
+        
+        **Generates:**
+        - Unit tests for functions and classes
+        - Integration tests for modules
+        - Mock implementations
+        - Test data factories
+        - Edge case tests
+        
+        ```bash
+        npx claude-code-templates@latest --command generate-tests
+        ```
+        
+        **Usage:**
+        ```bash
+        # Generate tests for specific file
+        /generate-tests src/services/user.service.ts
+        
+        # Generate tests for directory
+        /generate-tests src/api
+        
+        # Generate with specific coverage target
+        /generate-tests src/utils --coverage 90
+        ```
+      </Card>
+      
+      <Card title="Generate Test Cases" icon="clipboard-list">
+        Generate comprehensive test case documentation
+        
+        ```bash
+        npx claude-code-templates@latest --command generate-test-cases
+        ```
+      </Card>
+      
+      <Card title="Write Tests" icon="pen">
+        Interactive test writing assistant
+        
+        ```bash
+        npx claude-code-templates@latest --command write-tests
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Analysis">
+    ### Test Analysis Commands
+    
+    <CardGroup cols={2}>
+      <Card title="Test Coverage" icon="chart-pie">
+        Analyze and improve test coverage
+        
+        **Analyzes:**
+        - Line coverage
+        - Branch coverage
+        - Function coverage
+        - Statement coverage
+        - Uncovered code paths
+        
+        **Reports:**
+        - Coverage summary
+        - Files with low coverage
+        - Specific uncovered lines
+        - Coverage trends
+        
+        ```bash
+        npx claude-code-templates@latest --command test-coverage
+        ```
+        
+        **Usage:**
+        ```bash
+        # Check coverage
+        /test-coverage
+        
+        # Set minimum threshold
+        /test-coverage --threshold 80
+        
+        # Generate HTML report
+        /test-coverage --report html
+        ```
+      </Card>
+      
+      <Card title="Test Quality Analyzer" icon="magnifying-glass-chart">
+        Analyze test quality and effectiveness
+        
+        **Checks:**
+        - Test naming conventions
+        - Test independence
+        - Assertion quality
+        - Test duplication
+        - Flaky test detection
+        
+        ```bash
+        npx claude-code-templates@latest --command test-quality-analyzer
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Specialized">
+    ### Specialized Testing Commands
+    
+    <CardGroup cols={2}>
+      <Card title="Add Mutation Testing" icon="dna">
+        Set up mutation testing for test effectiveness
+        
+        **What is mutation testing:**
+        Introduces small changes (mutations) to code and verifies tests catch them.
+        
+        ```bash
+        npx claude-code-templates@latest --command add-mutation-testing
+        ```
+      </Card>
+      
+      <Card title="Add Property-Based Testing" icon="cube">
+        Set up property-based testing with fast-check
+        
+        ```bash
+        npx claude-code-templates@latest --command add-property-based-testing
+        ```
+      </Card>
+      
+      <Card title="Test Automation Orchestrator" icon="diagram-project">
+        Orchestrate complex test automation workflows
+        
+        ```bash
+        npx claude-code-templates@latest --command test-automation-orchestrator
+        ```
+      </Card>
+      
+      <Card title="Test Changelog Automation" icon="list">
+        Automate test changelog generation
+        
+        ```bash
+        npx claude-code-templates@latest --command test-changelog-automation
+        ```
+      </Card>
+      
+      <Card title="WebApp Testing" icon="browser">
+        Comprehensive web application testing
+        
+        ```bash
+        npx claude-code-templates@latest --command webapp-testing
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+## Testing Hooks
+
+<CardGroup cols={2}>
+  <Card title="Test Runner Hook" icon="play">
+    Automatically run tests before commits
+    
+    **Behavior:**
+    - Runs before each commit (pre-commit hook)
+    - Executes tests for changed files
+    - Blocks commit if tests fail
+    - Shows test results and failures
+    
+    **Configuration:**
+    - Run all tests or only affected tests
+    - Set timeout limits
+    - Configure coverage thresholds
+    
+    ```bash
+    npx claude-code-templates@latest --hook testing/test-runner
+    ```
+    
+    **Example:**
+    ```bash
+    git commit -m "Add user service"
+    
+    # Running tests for changed files...
+    # ✓ user.service.test.ts (5 tests)
+    # ✓ auth.service.test.ts (8 tests)
+    # 
+    # 13 tests passed
+    # Coverage: 87%
+    # Commit successful
+    ```
+  </Card>
+</CardGroup>
+
+## Testing Strategies
+
+### Testing Pyramid
+
+```
+        /\
+       /E2E\
+      /______\
+     /        \
+    /Integration\
+   /____________\
+  /              \
+ /   Unit Tests   \
+/__________________\
+```
+
+**Unit Tests (70%)**: Fast, isolated tests for individual functions/methods
+
+**Integration Tests (20%)**: Test module interactions and API endpoints
+
+**E2E Tests (10%)**: Test complete user workflows through the UI
+
+### Test-Driven Development (TDD)
+
+```bash
+# 1. Write failing test
+@test-generator Generate test for user registration validation
+
+# 2. Implement feature
+@backend-developer Implement user registration
+
+# 3. Run tests
+/test-coverage
+
+# 4. Refactor
+@code-architect Refactor user registration for better design
+```
+
+## Testing Workflows
+
+### Complete Testing Setup
+
+```bash
+# 1. Install testing tools
+npx claude-code-templates@latest \
+  --agent test-generator \
+  --command setup-testing \
+  --command e2e-setup \
+  --hook testing/test-runner
+
+# 2. Configure testing infrastructure
+/setup-testing
+/e2e-setup playwright
+
+# 3. Generate tests
+@test-generator Generate tests for existing codebase with 80% coverage
+
+# 4. Run tests
+npm test
+
+# 5. Check coverage
+/test-coverage
+```
+
+### Feature Development with Tests
+
+```bash
+# 1. Write test first (TDD)
+@test-generator Generate tests for new payment processing feature
+
+# 2. Implement feature
+@backend-developer Implement payment processing
+
+# 3. Run tests
+npm test
+
+# 4. Verify coverage
+/test-coverage src/services/payment.service.ts --threshold 85
+
+# 5. Add E2E tests
+@test-generator Generate E2E tests for payment flow
+```
+
+### CI/CD Testing Pipeline
+
+```bash
+# Install tools
+npx claude-code-templates@latest \
+  --command setup-testing \
+  --command test-coverage
+
+# Create GitHub Actions workflow
+@devops-engineer Set up testing workflow:
+- Run unit tests on PR
+- Run integration tests on merge to main
+- Run E2E tests before deploy
+- Fail if coverage < 80%
+- Upload coverage reports
+```
+
+## Best Practices
+
+### 1. Comprehensive Coverage
+
+```bash
+# Aim for 80%+ coverage
+/test-coverage --threshold 80
+
+# Focus on critical paths
+@test-generator Prioritize tests for:
+- Authentication and authorization
+- Payment processing
+- Data validation
+- Error handling
+```
+
+### 2. Test Independence
+
+```bash
+# Each test should be independent
+@test-generator Generate tests that:
+- Don't rely on execution order
+- Use test fixtures for setup
+- Clean up after themselves
+- Mock external dependencies
+```
+
+### 3. Fast Feedback
+
+```bash
+# Keep tests fast
+@test-generator:
+- Unit tests: < 100ms each
+- Integration tests: < 1s each
+- E2E tests: < 30s each
+
+# Run tests in parallel
+/setup-testing --parallel
+```
+
+### 4. Meaningful Tests
+
+```bash
+# Test behavior, not implementation
+@test-generator Write tests that:
+- Test user-facing behavior
+- Verify business logic
+- Check error scenarios
+- Don't test implementation details
+```
+
+## Real-World Examples
+
+### Example 1: API Testing
+
+```bash
+# Install testing tools
+npx claude-code-templates@latest \
+  --agent test-generator \
+  --command setup-testing
+
+# Generate API tests
+@test-generator Generate tests for REST API:
+- GET /users (list users)
+- POST /users (create user)
+- PUT /users/:id (update user)
+- DELETE /users/:id (delete user)
+
+Include:
+- Happy path tests
+- Validation errors
+- Authentication checks
+- Authorization checks
+```
+
+### Example 2: Frontend Component Testing
+
+```bash
+# Install tools
+npx claude-code-templates@latest \
+  --agent test-generator \
+  --command setup-testing
+
+# Generate component tests
+@test-generator Generate React tests for LoginForm component:
+- Renders correctly
+- Validates email format
+- Validates password length
+- Shows loading state
+- Handles login success
+- Handles login errors
+- Disables submit when invalid
+```
+
+### Example 3: E2E Testing
+
+```bash
+# Install E2E tools
+npx claude-code-templates@latest \
+  --agent test-generator \
+  --command e2e-setup
+
+# Setup E2E
+/e2e-setup playwright
+
+# Generate E2E tests
+@test-generator Generate E2E tests for checkout flow:
+1. User adds product to cart
+2. User proceeds to checkout
+3. User enters shipping info
+4. User enters payment info
+5. User confirms order
+6. User sees confirmation page
+
+Include error scenarios:
+- Invalid credit card
+- Out of stock items
+- Network errors
+```
+
+### Example 4: Load Testing
+
+```bash
+# Install load testing
+npx claude-code-templates@latest --command setup-load-testing
+
+# Setup
+/setup-load-testing k6
+
+# Create load test
+@test-generator Generate k6 load test:
+- Target: 1000 RPS
+- Duration: 5 minutes
+- Ramp-up: 1 minute
+- Endpoints: /api/products, /api/users
+- Success criteria: p95 < 200ms, errors < 1%
+```
+
+## Testing Template
+
+```bash
+npx claude-code-templates@latest --template testing-suite
+```
+
+**Includes:**
+- Test generator agent
+- Test runner agent
+- Setup testing command
+- E2E setup command
+- Test coverage command
+- Test runner hook (pre-commit)
+- Load testing setup
+- Visual testing setup
+
+## Test Types
+
+### Unit Tests
+- Test individual functions/methods
+- Fast execution (< 100ms)
+- No external dependencies
+- High code coverage
+
+### Integration Tests
+- Test module interactions
+- Test API endpoints
+- Test database operations
+- Mock external services
+
+### E2E Tests
+- Test complete user workflows
+- Browser automation
+- Real user interactions
+- Covers multiple systems
+
+### Performance Tests
+- Load testing (k6, Artillery)
+- Stress testing
+- Spike testing
+- Soak testing
+
+### Visual Tests
+- Screenshot comparison
+- Visual regression detection
+- Cross-browser testing
+- Responsive design testing
+
+## Next Steps
+
+- [Browse all testing components](https://aitmpl.com/?category=testing)
+- [View development team](/categories/development-team)
+- [Explore security components](/categories/security)
+- [Check out DevOps components](/categories/devops-infrastructure)

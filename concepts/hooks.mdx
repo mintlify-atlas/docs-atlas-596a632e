@@ -1,0 +1,643 @@
+---
+title: Hooks
+description: Event-driven automation that triggers actions before and after tool use
+---
+
+Hooks are event-driven automation triggers that execute actions automatically when Claude Code uses tools. They enable you to automate repetitive tasks, enforce standards, and create seamless workflows without manual intervention.
+
+## What Are Hooks?
+
+Hooks are JSON configuration files (`.json`) stored in `.claude/hooks/` that define:
+
+- **Trigger events** - When the hook should run (before/after tool use)
+- **Matchers** - Which tools trigger the hook (Edit, Bash, Write, etc.)
+- **Actions** - What to execute (commands, scripts, notifications)
+- **Conditions** - Optional filters for selective triggering
+
+<Info>
+Hooks run automatically in the background. Claude Code executes them without requiring user interaction.
+</Info>
+
+## Hook Types
+
+Claude Code supports two main hook types:
+
+<Tabs>
+  <Tab title="PreToolUse">
+    **PreToolUse** hooks run BEFORE Claude executes a tool.
+    
+    Use cases:
+    - Validate operations before execution
+    - Create backups before edits
+    - Check permissions before dangerous operations
+    - Block operations that violate policies
+    
+    ```json
+    {
+      "hooks": {
+        "PreToolUse": [{
+          "matcher": "Bash",
+          "hooks": [{
+            "type": "command",
+            "command": "echo 'About to run bash command'"
+          }]
+        }]
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="PostToolUse">
+    **PostToolUse** hooks run AFTER Claude completes a tool operation.
+    
+    Use cases:
+    - Auto-format code after edits
+    - Run tests after changes
+    - Commit changes automatically
+    - Send notifications
+    - Trigger builds
+    
+    ```json
+    {
+      "hooks": {
+        "PostToolUse": [{
+          "matcher": "Edit",
+          "hooks": [{
+            "type": "command",
+            "command": "npm run format"
+          }]
+        }]
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Hook Structure
+
+Hooks are configured in settings files (`.claude/settings.json` or `.claude/settings.local.json`):
+
+```json
+{
+  "description": "Hook description",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm run build"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Hook Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `matcher` | Yes | Which tool triggers this hook (Edit, Bash, Write, etc.) |
+| `type` | Yes | Hook type: `command` or `script` |
+| `command` | Yes | Shell command or script to execute |
+| `description` | No | Human-readable description (removed during installation) |
+
+## Tool Matchers
+
+Hooks can match specific Claude Code tools:
+
+| Matcher | Triggers On |
+|---------|------------|
+| `Edit` | File edits |
+| `Write` | File creation |
+| `Bash` | Shell command execution |
+| `Read` | File reads |
+| `Glob` | File pattern searches |
+| `Grep` | Content searches |
+
+<Note>
+Use specific matchers to avoid unnecessary hook execution. Matching `Edit` won't trigger on `Bash` commands.
+</Note>
+
+## Hook Categories
+
+<Tabs>
+  <Tab title="Git Automation">
+    Automate git operations:
+    
+    - **git-commit-formatter** - Format commit messages automatically
+    - **prevent-force-push** - Block dangerous git operations
+    - **auto-add-changes** - Stage changes automatically
+    - **commit-msg-validator** - Enforce commit message standards
+    
+    ```bash
+    npx claude-code-templates@latest --hook git/git-commit-formatter
+    ```
+    
+    Example:
+    ```json
+    {
+      "hooks": {
+        "PreToolUse": [{
+          "matcher": "Bash",
+          "hooks": [{
+            "type": "command",
+            "command": "if [[ $BASH_COMMAND =~ 'git push --force' ]]; then echo 'Force push blocked'; exit 1; fi"
+          }]
+        }]
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Code Quality">
+    Maintain code standards:
+    
+    - **format-on-save** - Auto-format code after edits
+    - **lint-on-change** - Run linters automatically
+    - **run-tests** - Execute tests after code changes
+    - **type-check** - Run TypeScript checks
+    
+    ```bash
+    npx claude-code-templates@latest --hook automation/format-on-save
+    ```
+    
+    Example:
+    ```json
+    {
+      "hooks": {
+        "PostToolUse": [{
+          "matcher": "Edit",
+          "hooks": [{
+            "type": "command",
+            "command": "npx prettier --write $FILE_PATH"
+          }]
+        }]
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Build Automation">
+    Trigger builds automatically:
+    
+    - **build-on-change** - Auto-build when files change
+    - **watch-mode** - Start development server
+    - **asset-optimization** - Optimize images/assets
+    - **cache-invalidation** - Clear caches after builds
+    
+    ```bash
+    npx claude-code-templates@latest --hook automation/build-on-change
+    ```
+    
+    Example:
+    ```json
+    {
+      "hooks": {
+        "PostToolUse": [{
+          "matcher": "Edit",
+          "hooks": [{
+            "type": "command",
+            "command": "if [[ -f package.json ]]; then npm run build 2>/dev/null || true; fi"
+          }]
+        }]
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Security">
+    Enforce security policies:
+    
+    - **secret-scanner** - Detect exposed secrets
+    - **dependency-audit** - Check for vulnerabilities
+    - **permission-validator** - Verify file permissions
+    - **sensitive-file-blocker** - Prevent access to sensitive files
+    
+    ```bash
+    npx claude-code-templates@latest --hook security/secret-scanner
+    ```
+    
+    Example:
+    ```json
+    {
+      "hooks": {
+        "PostToolUse": [{
+          "matcher": "Write",
+          "hooks": [{
+            "type": "command",
+            "command": "trufflehog git file://$FILE_PATH"
+          }]
+        }]
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Notifications">
+    Get notified of important events:
+    
+    - **slack-notifier** - Send Slack messages
+    - **discord-webhook** - Discord notifications
+    - **email-alerts** - Email notifications
+    - **desktop-notifications** - System notifications
+    
+    ```bash
+    npx claude-code-templates@latest --hook automation/slack-notifier
+    ```
+    
+    Example:
+    ```json
+    {
+      "hooks": {
+        "PostToolUse": [{
+          "matcher": "Bash",
+          "hooks": [{
+            "type": "command",
+            "command": "curl -X POST $SLACK_WEBHOOK -d '{\"text\":\"Command executed\"}'"
+          }]
+        }]
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Real-World Examples
+
+### Example 1: Build on Change Hook
+
+**File**: Component downloaded to settings file
+
+```json
+{
+  "description": "Automatically trigger build processes when source files change",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ -f package.json ]] && grep -q '\"build\"' package.json; then npm run build 2>/dev/null || yarn build 2>/dev/null || true; elif [[ -f Makefile ]]; then make 2>/dev/null || true; elif [[ -f Cargo.toml ]]; then cargo build 2>/dev/null || true; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Behavior**:
+- Triggers after every file edit
+- Detects build tool (npm, make, cargo, etc.)
+- Runs appropriate build command
+- Silent failures (|| true) prevent interruptions
+
+### Example 2: Git Commit Validator Hook
+
+**File**: Component configuration
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ $BASH_COMMAND =~ 'git commit' ]] && [[ ! $BASH_COMMAND =~ '(feat|fix|docs|style|refactor|test|chore):' ]]; then echo 'Error: Commit message must follow conventional commits format'; exit 1; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Behavior**:
+- Runs before bash commands
+- Checks if command is `git commit`
+- Validates conventional commit format
+- Blocks commit if format is invalid
+
+### Example 3: Python Script Hook
+
+Some hooks reference external Python scripts:
+
+**Hook Configuration**:
+```json
+{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit",
+      "hooks": [{
+        "type": "command",
+        "command": "python3 .claude/hooks/custom-formatter.py $FILE_PATH"
+      }]
+    }]
+  }
+}
+```
+
+**Supporting Script**: `.claude/hooks/custom-formatter.py`
+
+The CLI automatically downloads supporting scripts when installing hooks.
+
+## Installing Hooks
+
+### Single Hook
+
+```bash
+npx claude-code-templates@latest --hook git/git-commit-formatter
+```
+
+You'll be prompted to choose installation location:
+
+- **User settings** (`~/.claude/settings.json`) - All projects
+- **Project settings** (`.claude/settings.json`) - Shared with team
+- **Local settings** (`.claude/settings.local.json`) - Personal only
+
+### Multiple Hooks
+
+```bash
+npx claude-code-templates@latest \
+  --hook git/git-commit-formatter \
+  --hook automation/build-on-change \
+  --hook security/secret-scanner
+```
+
+### With Category Prefix
+
+```bash
+npx claude-code-templates@latest --hook automation/build-on-change
+```
+
+<Info>
+Hooks merge with existing settings. Multiple hooks can trigger on the same tool.
+</Info>
+
+## Hook Execution Context
+
+Hooks have access to context variables:
+
+### Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `$FILE_PATH` | Path to file being operated on |
+| `$TOOL_NAME` | Name of tool that triggered hook |
+| `$PROJECT_ROOT` | Project root directory |
+| `$BASH_COMMAND` | Command being executed (Bash matcher only) |
+
+Example usage:
+```bash
+echo "File modified: $FILE_PATH"
+notify-send "Claude Code" "Tool $TOOL_NAME executed"
+```
+
+## Hook Best Practices
+
+### 1. Silent Failures
+
+Prevent hooks from interrupting workflow:
+
+```bash
+npm run build 2>/dev/null || true
+```
+
+The `|| true` ensures the hook never fails.
+
+### 2. Conditional Execution
+
+Only run when necessary:
+
+```bash
+if [[ -f package.json ]] && grep -q '"test"' package.json; then
+  npm test
+fi
+```
+
+### 3. Fast Operations
+
+Hooks should be quick:
+
+```bash
+# ✅ Good: Fast check
+eslint $FILE_PATH
+
+# ❌ Bad: Slow operation
+npm run test:all  # Runs entire test suite
+```
+
+### 4. Idempotent Actions
+
+Hooks should be safe to run multiple times:
+
+```bash
+# ✅ Good: Safe to repeat
+npm run format $FILE_PATH
+
+# ⚠️ Caution: May cause issues
+git commit -m "Auto commit"  # Creates duplicate commits
+```
+
+### 5. Error Handling
+
+Handle errors gracefully:
+
+```bash
+if ! command -v prettier &> /dev/null; then
+  echo "Prettier not installed, skipping format"
+  exit 0
+fi
+
+prettier --write $FILE_PATH
+```
+
+## Hook Debugging
+
+Debug hooks by adding logging:
+
+```bash
+echo "Hook triggered: $TOOL_NAME on $FILE_PATH" >> /tmp/hook.log
+```
+
+Or use verbose output:
+
+```bash
+set -x  # Enable verbose mode
+npm run build
+set +x  # Disable verbose mode
+```
+
+## Disabling Hooks
+
+Temporarily disable hooks:
+
+### Per-Session
+
+Set environment variable:
+```bash
+export CLAUDE_DISABLE_HOOKS=true
+```
+
+### Permanent
+
+Remove hook configuration from settings file or comment out:
+
+```json
+{
+  "hooks": {
+    // "PostToolUse": [ ... ]  // Disabled
+  }
+}
+```
+
+## Hook vs Command
+
+| Hooks | Commands |
+|-------|----------|
+| Automatic execution | Manual invocation |
+| Event-driven | User-initiated |
+| Background operation | Interactive |
+| Simple commands/scripts | Complex workflows |
+| No user input | Accepts arguments |
+
+<Info>
+Hooks automate repetitive tasks. Commands handle complex workflows that need user input.
+</Info>
+
+## Advanced Hook Patterns
+
+### Chained Hooks
+
+Multiple hooks on same matcher:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit",
+      "hooks": [
+        { "type": "command", "command": "npm run format" },
+        { "type": "command", "command": "npm run lint" },
+        { "type": "command", "command": "git add $FILE_PATH" }
+      ]
+    }]
+  }
+}
+```
+
+Hooks run sequentially in order.
+
+### Conditional Hooks
+
+Use shell conditionals:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit",
+      "hooks": [{
+        "type": "command",
+        "command": "if [[ $FILE_PATH =~ \\.test\\. ]]; then npm test; fi"
+      }]
+    }]
+  }
+}
+```
+
+Only runs tests if file is a test file.
+
+### Hook with External Scripts
+
+Call custom scripts:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Write",
+      "hooks": [{
+        "type": "command",
+        "command": "bash .claude/hooks/post-write.sh $FILE_PATH"
+      }]
+    }]
+  }
+}
+```
+
+Keep complex logic in external scripts for maintainability.
+
+## Common Hook Recipes
+
+### Auto-format Python
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit",
+      "hooks": [{
+        "type": "command",
+        "command": "if [[ $FILE_PATH =~ \\.py$ ]]; then black $FILE_PATH 2>/dev/null || true; fi"
+      }]
+    }]
+  }
+}
+```
+
+### Run Tests on Change
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit",
+      "hooks": [{
+        "type": "command",
+        "command": "if [[ $FILE_PATH =~ src/ ]]; then npm run test:related $FILE_PATH 2>/dev/null || true; fi"
+      }]
+    }]
+  }
+}
+```
+
+### Notify on Bash Execution
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "command",
+        "command": "notify-send 'Claude Code' 'Executing: $BASH_COMMAND'"
+      }]
+    }]
+  }
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Browse Hooks" icon="webhook" href="/components/hooks">
+    Explore 39+ available hooks
+  </Card>
+  <Card title="Create Custom Hooks" icon="code" href="/advanced/creating-components">
+    Build your own automation
+  </Card>
+  <Card title="Settings" icon="gear" href="/concepts/settings">
+    Configure hook behavior
+  </Card>
+  <Card title="Commands" icon="terminal" href="/concepts/commands">
+    Learn about slash commands
+  </Card>
+</CardGroup>

@@ -1,0 +1,219 @@
+---
+title: 'Track Download'
+description: 'Endpoint for tracking component downloads and analytics'
+---
+
+## Endpoint
+
+**POST** `/api/track-download-supabase`
+
+Tracks component downloads for analytics. This endpoint is called automatically by the CLI whenever a user installs a component.
+
+## Request
+
+### Headers
+
+<ParamField header="Content-Type" type="string" required>
+  Must be `application/json`
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Client user agent string (automatically captured)
+</ParamField>
+
+### Body Parameters
+
+<ParamField body="type" type="string" required>
+  Component type. Must be one of:
+  - `agent`
+  - `command`
+  - `setting`
+  - `hook`
+  - `mcp`
+  - `skill`
+  - `template`
+</ParamField>
+
+<ParamField body="name" type="string" required>
+  Component name. Maximum 255 characters.
+</ParamField>
+
+<ParamField body="path" type="string">
+  Component path in the repository
+</ParamField>
+
+<ParamField body="category" type="string">
+  Component category (e.g., "development-team", "automation")
+</ParamField>
+
+<ParamField body="cliVersion" type="string">
+  Version of the CLI tool used for installation
+</ParamField>
+
+### Example Request
+
+```bash
+curl -X POST https://www.aitmpl.com/api/track-download-supabase \
+  -H "Content-Type: application/json" \
+  -H "User-Agent: claude-code-templates/1.0.0" \
+  -d '{
+    "type": "agent",
+    "name": "frontend-developer",
+    "path": "cli-tool/components/agents/development-team/frontend-developer.md",
+    "category": "development-team",
+    "cliVersion": "1.0.0"
+  }'
+```
+
+## Response
+
+### Success Response (200 OK)
+
+<ResponseField name="success" type="boolean">
+  Always `true` on success
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Download information
+  
+  <ResponseField name="data.type" type="string">
+    Component type
+  </ResponseField>
+  
+  <ResponseField name="data.name" type="string">
+    Component name
+  </ResponseField>
+  
+  <ResponseField name="data.timestamp" type="string">
+    ISO 8601 timestamp of the download
+  </ResponseField>
+</ResponseField>
+
+#### Example Success Response
+
+```json
+{
+  "success": true,
+  "message": "Download tracked successfully",
+  "data": {
+    "type": "agent",
+    "name": "frontend-developer",
+    "timestamp": "2026-02-28T12:34:56.789Z"
+  }
+}
+```
+
+### Error Responses
+
+#### 400 Bad Request - Invalid Component Type
+
+```json
+{
+  "error": "Invalid component type"
+}
+```
+
+#### 400 Bad Request - Missing Required Fields
+
+```json
+{
+  "error": "Component type and name are required"
+}
+```
+
+#### 400 Bad Request - Name Too Long
+
+```json
+{
+  "error": "Component name too long"
+}
+```
+
+#### 405 Method Not Allowed
+
+```json
+{
+  "error": "Method not allowed",
+  "allowed": ["POST"]
+}
+```
+
+#### 500 Internal Server Error
+
+```json
+{
+  "error": "Internal server error",
+  "message": "Failed to track download",
+  "details": "Database insert failed: connection timeout"
+}
+```
+
+Note: The `details` field is only included in development mode.
+
+## Data Storage
+
+Download events are stored in two Supabase tables:
+
+### component_downloads
+
+Stores individual download records with:
+- Component metadata (type, name, path, category)
+- User information (IP address, country, user agent)
+- CLI version
+- Timestamp
+
+### download_stats
+
+Aggregated statistics using upsert:
+- Total downloads per component
+- Last download timestamp
+- Automatically updated via `onConflict` on `(component_type, component_name)`
+
+## Metadata Captured
+
+The endpoint automatically captures:
+
+<ParamField query="IP Address" type="string">
+  Extracted from headers in order:
+  1. `x-forwarded-for` (first IP)
+  2. `x-real-ip`
+  3. Connection remote address
+  4. Fallback: `127.0.0.1`
+</ParamField>
+
+<ParamField query="Country" type="string">
+  Extracted from Vercel geo header `x-vercel-ip-country`
+</ParamField>
+
+<ParamField query="User Agent" type="string">
+  From `user-agent` request header
+</ParamField>
+
+## Rate Limiting
+
+No explicit rate limits are enforced, but requests are subject to:
+- Vercel serverless function execution limits (10s timeout)
+- Supabase connection pool limits
+
+## CORS Support
+
+The endpoint supports CORS with:
+
+```http
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: POST, OPTIONS
+Access-Control-Allow-Headers: Content-Type, User-Agent
+```
+
+Preflight `OPTIONS` requests return `200 OK`.
+
+## Notes
+
+- The endpoint never fails the user's installation if tracking fails
+- Stats update errors are logged but don't return 500 responses
+- All timestamps are stored in ISO 8601 format
+- The endpoint is idempotent (duplicate downloads are recorded separately)

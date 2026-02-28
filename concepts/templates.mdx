@@ -1,0 +1,655 @@
+---
+title: Templates
+description: Complete project configurations with multiple components bundled together
+---
+
+Templates are pre-configured bundles that install multiple components at once. They provide complete setups for specific use cases, frameworks, or workflows, saving time on initial configuration.
+
+## What Are Templates?
+
+Templates are curated collections of components that work together:
+
+- **Language-specific** - Optimized for JavaScript, Python, Go, etc.
+- **Framework-focused** - React, Next.js, Django, FastAPI, etc.
+- **Workflow-oriented** - Git excellence, security-first, testing-focused
+- **Use-case driven** - API development, full-stack apps, microservices
+
+<Info>
+Templates are essentially installation recipes that install multiple agents, commands, hooks, MCPs, and settings in one command.
+</Info>
+
+## Template Categories
+
+<Tabs>
+  <Tab title="Language Templates">
+    Comprehensive setups for programming languages:
+    
+    ### JavaScript/TypeScript
+    
+    - **Agents**: frontend-developer, backend-developer, fullstack-developer
+    - **Commands**: setup-testing, setup-linting, ci-pipeline
+    - **Hooks**: format-javascript-files, eslint-on-save
+    - **MCPs**: web-fetch, filesystem-access
+    - **Settings**: allow-npm-commands, use-sonnet
+    
+    ```bash
+    npx claude-code-templates@latest --language javascript-typescript
+    ```
+    
+    ### Python
+    
+    - **Agents**: python-expert, ml-engineer, api-developer
+    - **Commands**: setup-pytest, virtual-env-manager
+    - **Hooks**: format-python-files (Black), run-tests-on-save
+    - **MCPs**: postgresql-integration, filesystem-access
+    - **Settings**: allow-pip-commands, use-sonnet
+    
+    ```bash
+    npx claude-code-templates@latest --language python
+    ```
+    
+    ### Go
+    
+    - **Agents**: go-expert, microservices-architect
+    - **Commands**: setup-go-testing, module-manager
+    - **Hooks**: gofmt-on-save, go-vet-on-change
+    - **MCPs**: database integrations
+    - **Settings**: allow-go-commands
+    
+    ```bash
+    npx claude-code-templates@latest --language go
+    ```
+  </Tab>
+  
+  <Tab title="Framework Templates">
+    Framework-specific configurations:
+    
+    ### React + TypeScript
+    
+    ```bash
+    npx claude-code-templates@latest \
+      --language javascript-typescript \
+      --framework react
+    ```
+    
+    **Includes**:
+    - frontend-developer agent
+    - Component testing commands
+    - ESLint + Prettier hooks
+    - TypeScript configuration
+    - React-specific linting rules
+    
+    ### Next.js
+    
+    ```bash
+    npx claude-code-templates@latest \
+      --language javascript-typescript \
+      --framework nextjs
+    ```
+    
+    **Includes**:
+    - Next.js specialist agent
+    - Vercel deployment commands
+    - API route development tools
+    - Image optimization helpers
+    - Edge function configuration
+    
+    ### Django + PostgreSQL
+    
+    ```bash
+    npx claude-code-templates@latest \
+      --language python \
+      --framework django
+    ```
+    
+    **Includes**:
+    - Django expert agent
+    - Migration management commands
+    - PostgreSQL MCP
+    - Django-specific linting
+    - Settings for database access
+  </Tab>
+  
+  <Tab title="Workflow Templates">
+    Specialized workflows:
+    
+    ### Git Excellence
+    
+    ```bash
+    npx claude-code-templates@latest --workflow git-excellence
+    ```
+    
+    **Includes**:
+    - git-expert agent
+    - conventional-commits command
+    - commit-msg-validator hook
+    - branch-strategy command
+    - changelog-generator command
+    - Git operation permissions
+    
+    ### Security First
+    
+    ```bash
+    npx claude-code-templates@latest --workflow security-first
+    ```
+    
+    **Includes**:
+    - security-auditor agent
+    - vulnerability-scan command
+    - secret-scanner hook
+    - dependency-audit command
+    - Read-only mode settings
+    - Security-focused permissions
+    
+    ### Testing Excellence
+    
+    ```bash
+    npx claude-code-templates@latest --workflow testing-excellence
+    ```
+    
+    **Includes**:
+    - qa-expert agent
+    - setup-testing command
+    - run-tests-on-change hook
+    - coverage-reporter command
+    - Test execution permissions
+  </Tab>
+  
+  <Tab title="Use Case Templates">
+    Complete setups for specific use cases:
+    
+    ### API Development
+    
+    ```bash
+    npx claude-code-templates@latest --use-case api-development
+    ```
+    
+    **Includes**:
+    - api-developer agent
+    - api-security-audit agent
+    - api-docs command
+    - postgresql-integration MCP
+    - API testing commands
+    - Rate limiting configuration
+    
+    ### Full-Stack Application
+    
+    ```bash
+    npx claude-code-templates@latest --use-case fullstack-app
+    ```
+    
+    **Includes**:
+    - frontend-developer agent
+    - backend-developer agent
+    - database specialist agent
+    - Full CI/CD pipeline
+    - Database MCPs
+    - Comprehensive permissions
+    
+    ### Microservices
+    
+    ```bash
+    npx claude-code-templates@latest --use-case microservices
+    ```
+    
+    **Includes**:
+    - microservices-architect agent
+    - docker-deploy command
+    - kubernetes-deploy command
+    - Service mesh configuration
+    - Container orchestration tools
+  </Tab>
+</Tabs>
+
+## Interactive Template Selection
+
+Use interactive mode for guided template selection:
+
+```bash
+npx claude-code-templates@latest
+```
+
+<Steps>
+  <Step title="Choose Language">
+    Select your primary programming language:
+    - Common (language-agnostic)
+    - JavaScript/TypeScript
+    - Python
+    - Go
+    - Rust
+    - Java
+  </Step>
+  
+  <Step title="Choose Framework">
+    Select your framework (optional):
+    - None
+    - React
+    - Next.js
+    - Vue.js
+    - Django
+    - FastAPI
+  </Step>
+  
+  <Step title="Select Agents">
+    Choose AI specialists for your project:
+    - frontend-developer
+    - backend-developer
+    - devops-engineer
+    - security-auditor
+  </Step>
+  
+  <Step title="Select Hooks">
+    Choose automation hooks:
+    - format-on-save
+    - run-tests-on-change
+    - git-commit-formatter
+  </Step>
+  
+  <Step title="Select MCPs">
+    Choose service integrations:
+    - web-fetch
+    - postgresql-integration
+    - github-integration
+  </Step>
+  
+  <Step title="Confirm & Install">
+    Review selections and confirm installation.
+  </Step>
+</Steps>
+
+## Template Installation
+
+### Auto-Detection Mode
+
+Claude Code automatically detects your project type:
+
+```bash
+cd my-react-app
+npx claude-code-templates@latest --yes
+```
+
+**Detection logic**:
+- Checks `package.json` for React/Next.js/etc.
+- Looks for `requirements.txt` or `pyproject.toml` for Python
+- Finds `go.mod` for Go projects
+- Detects framework from dependencies
+
+Installs appropriate template automatically.
+
+### Manual Template Selection
+
+```bash
+# Specific language
+npx claude-code-templates@latest --language python
+
+# Language + Framework
+npx claude-code-templates@latest \
+  --language javascript-typescript \
+  --framework nextjs
+
+# With custom agents
+npx claude-code-templates@latest \
+  --language python \
+  --agent ml-engineer \
+  --agent data-scientist
+```
+
+### Dry Run Mode
+
+Preview what will be installed:
+
+```bash
+npx claude-code-templates@latest \
+  --language javascript-typescript \
+  --framework react \
+  --dry-run
+```
+
+Shows list of files that would be created without actually installing.
+
+## Template Components
+
+### Language: JavaScript/TypeScript
+
+**Default Installation**:
+
+```yaml
+Agents:
+  - frontend-developer
+  - backend-developer
+  - fullstack-developer
+
+Commands:
+  - setup-testing
+  - setup-linting
+  - ci-pipeline
+
+Hooks:
+  - format-javascript-files
+  - eslint-on-save
+
+MCPs:
+  - web-fetch
+  - filesystem-access
+
+Settings:
+  - allow-npm-commands
+  - use-sonnet
+```
+
+**Files Created**:
+```
+.claude/
+├── agents/
+│   ├── frontend-developer.md
+│   ├── backend-developer.md
+│   └── fullstack-developer.md
+├── commands/
+│   ├── setup-testing.md
+│   ├── setup-linting.md
+│   └── ci-pipeline.md
+├── settings.json
+└── settings.local.json
+.mcp.json
+```
+
+### Language: Python
+
+**Default Installation**:
+
+```yaml
+Agents:
+  - python-expert
+  - api-developer
+  - ml-engineer
+
+Commands:
+  - setup-pytest
+  - virtual-env-manager
+  - requirements-updater
+
+Hooks:
+  - format-python-files (Black)
+  - run-tests-on-save
+
+MCPs:
+  - postgresql-integration
+  - filesystem-access
+
+Settings:
+  - allow-pip-commands
+  - use-sonnet
+```
+
+## Customizing Templates
+
+After installation, customize components:
+
+### Add More Components
+
+```bash
+# Add additional agent
+npx claude-code-templates@latest --agent security-auditor
+
+# Add MCP integration
+npx claude-code-templates@latest --mcp github-integration
+
+# Add automation hook
+npx claude-code-templates@latest --hook git/commit-validator
+```
+
+New components merge with existing configuration.
+
+### Modify Settings
+
+Edit `.claude/settings.json` or `.claude/settings.local.json`:
+
+```bash
+code .claude/settings.json
+```
+
+Change permissions, add environment variables, or configure hooks.
+
+### Remove Components
+
+Delete unwanted component files:
+
+```bash
+# Remove agent
+rm .claude/agents/unwanted-agent.md
+
+# Remove command
+rm .claude/commands/unwanted-command.md
+```
+
+## Template Best Practices
+
+### 1. Start with Base Template
+
+Install language/framework template first:
+
+```bash
+npx claude-code-templates@latest --language python --framework django
+```
+
+Then add specialized components:
+
+```bash
+npx claude-code-templates@latest --agent security-auditor
+```
+
+### 2. Separate Team vs Personal Settings
+
+**Commit to git** (team settings):
+- `.claude/agents/`
+- `.claude/commands/`
+- `.claude/settings.json`
+- `.mcp.json`
+
+**Don't commit** (personal settings):
+- `.claude/settings.local.json`
+
+### 3. Document Your Template
+
+Create `CLAUDE.md` in your project:
+
+```markdown
+# Claude Code Setup
+
+## Installed Components
+
+- **Agents**: frontend-developer, backend-developer
+- **Commands**: ci-pipeline, setup-testing
+- **Hooks**: format-on-save, run-tests
+- **MCPs**: web-fetch, postgresql-integration
+
+## Usage
+
+Invoke agents: `@frontend-developer Build the dashboard`
+Run commands: `/ci-pipeline setup`
+```
+
+### 4. Version Control Template Configuration
+
+Commit `.claude/` directory:
+
+```bash
+git add .claude/
+git commit -m "Add Claude Code template configuration"
+```
+
+Team members get the same setup when they clone.
+
+## Template Migration
+
+Update to newer template versions:
+
+```bash
+# Re-run installation
+npx claude-code-templates@latest --language javascript-typescript
+```
+
+CLI merges new components with existing ones, prompting for conflicts.
+
+## Creating Custom Templates
+
+Share your template configuration:
+
+### 1. Export Current Setup
+
+Your `.claude/` directory IS your template:
+
+```bash
+# Package template
+tar -czf my-template.tar.gz .claude/ .mcp.json
+
+# Share with team
+cp my-template.tar.gz /shared/drive/
+```
+
+### 2. Install from Archive
+
+```bash
+# Extract template
+tar -xzf my-template.tar.gz
+
+# Components are ready to use
+```
+
+### 3. Publish Template Workflow
+
+Create workflow hash for easy sharing:
+
+```bash
+# Create workflow YAML
+cat > my-workflow.yml <<EOF
+agents:
+  - frontend-developer
+  - backend-developer
+commands:
+  - ci-pipeline
+hooks:
+  - format-on-save
+mcps:
+  - web-fetch
+EOF
+
+# Install from workflow
+npx claude-code-templates@latest --workflow my-workflow.yml
+```
+
+<Info>
+For detailed workflow creation, see [Workflows Guide](/guides/workflows).
+</Info>
+
+## Common Template Use Cases
+
+### Startup MVP
+
+```bash
+npx claude-code-templates@latest \
+  --language javascript-typescript \
+  --framework nextjs \
+  --agent fullstack-developer \
+  --mcp web-fetch \
+  --mcp supabase
+```
+
+**Result**: Full-stack Next.js setup with database and API integration.
+
+### Enterprise API
+
+```bash
+npx claude-code-templates@latest \
+  --language python \
+  --framework fastapi \
+  --agent api-developer \
+  --agent security-auditor \
+  --mcp postgresql-integration \
+  --setting read-only-mode
+```
+
+**Result**: Secure API development environment with database access.
+
+### Data Science Project
+
+```bash
+npx claude-code-templates@latest \
+  --language python \
+  --agent ml-engineer \
+  --agent data-scientist \
+  --mcp postgresql-integration \
+  --command data-pipeline
+```
+
+**Result**: ML/data science environment with database integration.
+
+### Open Source Project
+
+```bash
+npx claude-code-templates@latest \
+  --workflow git-excellence \
+  --agent documentation-expert \
+  --command changelog-generator \
+  --mcp github-integration
+```
+
+**Result**: Git workflow automation with documentation and GitHub integration.
+
+## Template Limitations
+
+### Not Supported
+
+- Custom file templates (React components, etc.)
+- Project scaffolding (create-react-app, etc.)
+- Package installation (npm install, pip install)
+- Code generation
+
+### Workarounds
+
+Use commands for custom workflows:
+
+```bash
+# Create command that scaffolds components
+npx claude-code-templates@latest --command scaffold-react-component
+
+# Use in Claude Code
+/scaffold-react-component Button
+```
+
+## Health Check
+
+Verify template installation:
+
+```bash
+npx claude-code-templates@latest --health
+```
+
+Checks:
+- `.claude/` directory exists
+- Agents are valid markdown
+- Commands are valid markdown
+- Settings are valid JSON
+- MCP configuration is valid
+- Hooks are properly configured
+
+<Info>
+Run health check after template installation to catch configuration issues early.
+</Info>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Install Template" icon="download" href="/quickstart">
+    Get started with a template
+  </Card>
+  <Card title="Browse Components" icon="layer-group" href="/components/overview">
+    Explore individual components
+  </Card>
+  <Card title="Create Workflows" icon="diagram-project" href="/guides/workflows">
+    Bundle components into workflows
+  </Card>
+  <Card title="Interactive Mode" icon="terminal" href="/guides/interactive-mode">
+    Use guided template selection
+  </Card>
+</CardGroup>

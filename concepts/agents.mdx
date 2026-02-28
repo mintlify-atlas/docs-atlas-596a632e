@@ -1,0 +1,444 @@
+---
+title: Agents
+description: AI specialists that extend Claude Code with domain expertise
+---
+
+Agents are specialized AI assistants with deep knowledge in specific domains. They act as expert team members, each with their own skills, tools, and workflows tailored to particular development tasks.
+
+## What Are Agents?
+
+Agents are markdown files (`.md`) stored in `.claude/agents/` that define:
+
+- **Expertise area** - Domain knowledge and specialization
+- **Tools** - Which Claude Code tools the agent can use
+- **Model** - Which Claude model to use (sonnet, opus, haiku)
+- **Instructions** - How the agent approaches tasks
+- **Communication patterns** - How the agent interacts with users and other agents
+
+<Info>
+Agents are essentially specialized prompts that Claude Code loads when invoked. They provide consistent, expert-level assistance for specific tasks.
+</Info>
+
+## Agent Structure
+
+Agents use YAML frontmatter followed by markdown instructions:
+
+```markdown
+---
+name: frontend-developer
+description: Senior frontend developer specializing in React, Vue, and Angular
+tools: Read, Write, Edit, Bash, Glob, Grep
+model: sonnet
+---
+
+You are a senior frontend developer with expertise in modern web applications...
+
+## Communication Protocol
+
+Always begin by requesting project context from the context-manager...
+
+## Execution Flow
+
+1. Context Discovery
+2. Development Execution  
+3. Handoff and Documentation
+```
+
+### Frontmatter Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | Yes | Agent identifier (kebab-case) |
+| `description` | Yes | Clear, specific description of agent's purpose |
+| `tools` | Yes | Comma-separated list of allowed tools |
+| `model` | Yes | `sonnet`, `opus`, or `haiku` |
+
+## Agent Categories
+
+Agents are organized by domain expertise:
+
+<Tabs>
+  <Tab title="Development Team">
+    Core development specialists:
+    
+    - **frontend-developer** - React, Vue, Angular expert
+    - **backend-developer** - API and server-side development
+    - **fullstack-developer** - End-to-end application development
+    - **mobile-developer** - iOS and Android applications
+    - **devops-engineer** - Infrastructure and deployment
+    
+    ```bash
+    npx claude-code-templates@latest --agent development-team/frontend-developer
+    ```
+  </Tab>
+  
+  <Tab title="Security">
+    Security and compliance specialists:
+    
+    - **api-security-audit** - API security vulnerability assessment
+    - **security-auditor** - Comprehensive security reviews
+    - **penetration-tester** - Security testing and exploitation
+    - **compliance-validator** - GDPR, HIPAA, SOC2 compliance
+    
+    ```bash
+    npx claude-code-templates@latest --agent security/api-security-audit
+    ```
+  </Tab>
+  
+  <Tab title="Database">
+    Database specialists:
+    
+    - **postgresql-optimizer** - PostgreSQL performance tuning
+    - **mysql-expert** - MySQL schema design and optimization
+    - **mongodb-specialist** - NoSQL database management
+    - **redis-architect** - Caching and real-time features
+    
+    ```bash
+    npx claude-code-templates@latest --agent database/postgresql-optimizer
+    ```
+  </Tab>
+  
+  <Tab title="AI & Data">
+    AI and data science specialists:
+    
+    - **ml-engineer** - Machine learning model development
+    - **data-scientist** - Data analysis and visualization
+    - **nlp-specialist** - Natural language processing
+    - **computer-vision** - Image and video processing
+    
+    ```bash
+    npx claude-code-templates@latest --agent data-ai/ml-engineer
+    ```
+  </Tab>
+</Tabs>
+
+## Using Agents
+
+### Installation
+
+Install agents using the CLI:
+
+```bash
+# Single agent
+npx claude-code-templates@latest --agent frontend-developer
+
+# Multiple agents
+npx claude-code-templates@latest \
+  --agent frontend-developer \
+  --agent backend-developer \
+  --agent devops-engineer
+
+# With category prefix
+npx claude-code-templates@latest --agent development-team/frontend-developer
+```
+
+### Invocation
+
+Once installed, agents are available in Claude Code:
+
+```
+@frontend-developer Build a responsive product catalog with filtering
+```
+
+Or reference them in conversations:
+
+```
+Use the frontend-developer agent to create the React components
+```
+
+<Note>
+Agents appear in Claude Code's agent picker automatically after installation.
+</Note>
+
+## Real-World Examples
+
+### Example 1: Frontend Developer Agent
+
+**File**: `.claude/agents/frontend-developer.md`
+
+```markdown
+---
+name: frontend-developer
+description: Use when building complete frontend applications across React, Vue, and Angular frameworks
+tools: Read, Write, Edit, Bash, Glob, Grep
+model: sonnet
+---
+
+You are a senior frontend developer specializing in modern web applications with deep expertise in React 18+, Vue 3+, and Angular 15+.
+
+## Communication Protocol
+
+### Required Initial Step: Project Context Gathering
+
+Always begin by requesting project context from the context-manager:
+
+```json
+{
+  "requesting_agent": "frontend-developer",
+  "request_type": "get_project_context",
+  "payload": {
+    "query": "Frontend development context needed: current UI architecture, component ecosystem, design language"
+  }
+}
+```
+
+## Execution Flow
+
+1. **Context Discovery** - Map existing frontend landscape
+2. **Development Execution** - Build components with TypeScript
+3. **Handoff and Documentation** - Deliver with tests and docs
+```
+
+**Usage**:
+```
+@frontend-developer Create a dashboard with real-time data visualization using React and TypeScript
+```
+
+### Example 2: API Security Audit Agent
+
+**File**: `.claude/agents/api-security-audit.md`
+
+```markdown
+---
+name: api-security-audit
+description: API security audit specialist. Use for REST API security audits, authentication vulnerabilities, authorization flaws
+tools: Read, Write, Edit, Bash
+model: sonnet
+---
+
+You are an API Security Audit specialist focusing on identifying, analyzing, and resolving security vulnerabilities in REST APIs.
+
+## Core Expertise
+
+- **Authentication Security**: JWT vulnerabilities, token management
+- **Authorization Flaws**: RBAC issues, privilege escalation
+- **Injection Attacks**: SQL injection, NoSQL injection prevention
+- **Data Protection**: Sensitive data exposure, encryption
+- **API Security Standards**: OWASP API Top 10
+- **Compliance**: GDPR, HIPAA, PCI DSS requirements
+
+## Security Audit Checklist
+
+### Authentication & Authorization
+
+```javascript
+// Secure JWT implementation
+const jwt = require('jsonwebtoken');
+
+class AuthService {
+  generateToken(user) {
+    return jwt.sign(
+      { userId: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '15m', issuer: 'your-api' }
+    );
+  }
+}
+```
+```
+
+**Usage**:
+```
+@api-security-audit Review the authentication endpoints in src/api/auth.js
+```
+
+## Agent Communication Patterns
+
+Agents can communicate with each other through structured protocols:
+
+### Context Manager Integration
+
+Most agents start by querying the `context-manager` for project information:
+
+```json
+{
+  "requesting_agent": "agent-name",
+  "request_type": "get_project_context",
+  "payload": {
+    "query": "Specific context needed"
+  }
+}
+```
+
+This prevents redundant questions and ensures agents have full context.
+
+### Agent-to-Agent Handoffs
+
+Agents can delegate specialized tasks:
+
+```
+Status update from frontend-developer:
+Components delivered. Requesting backend-developer to create API endpoints for data fetching.
+```
+
+## Tool Permissions
+
+Agents specify which tools they need:
+
+| Tool | Purpose |
+|------|----------|
+| `Read` | Read files from the filesystem |
+| `Write` | Create new files |
+| `Edit` | Modify existing files |
+| `Bash` | Execute shell commands |
+| `Glob` | Find files by pattern |
+| `Grep` | Search file contents |
+
+<Warning>
+Only grant agents the minimum tools they need. A documentation agent doesn't need `Bash` access.
+</Warning>
+
+## Model Selection
+
+Choose the right model for each agent:
+
+<Tabs>
+  <Tab title="Sonnet (Default)">
+    **Best for**: Most development tasks
+    
+    - Balanced performance and cost
+    - 200K context window
+    - Strong coding capabilities
+    - Good for agents that need to read/write code
+    
+    ```yaml
+    model: sonnet
+    ```
+  </Tab>
+  
+  <Tab title="Opus">
+    **Best for**: Complex analysis and architecture
+    
+    - Highest reasoning capability
+    - Large context handling
+    - Best for security audits, architecture reviews
+    - Higher cost per request
+    
+    ```yaml
+    model: opus
+    ```
+  </Tab>
+  
+  <Tab title="Haiku">
+    **Best for**: Simple, fast tasks
+    
+    - Fastest response times
+    - Lower cost
+    - Good for linting, formatting, simple edits
+    - Limited context window
+    
+    ```yaml
+    model: haiku
+    ```
+  </Tab>
+</Tabs>
+
+## Creating Custom Agents
+
+You can create your own agents:
+
+<Steps>
+  <Step title="Create Agent File">
+    Create `.claude/agents/my-agent.md`
+  </Step>
+  
+  <Step title="Add Frontmatter">
+    Define name, description, tools, and model
+  </Step>
+  
+  <Step title="Write Instructions">
+    Provide clear, specific instructions for the agent's behavior
+  </Step>
+  
+  <Step title="Test">
+    Invoke the agent in Claude Code: `@my-agent Task description`
+  </Step>
+</Steps>
+
+<Info>
+For detailed guidance on creating agents, see [Creating Components](/advanced/creating-components).
+</Info>
+
+## Agent Best Practices
+
+### 1. Clear Scope Definition
+
+Define exactly when to use the agent:
+
+```markdown
+## When to Use This Agent
+
+Use this agent for:
+- Comprehensive API security audits
+- Authentication and authorization reviews
+- Vulnerability assessments
+
+Do NOT use for:
+- General code review (use code-reviewer)
+- Frontend security (use frontend-security-specialist)
+```
+
+### 2. Context Gathering
+
+Always gather context before starting work:
+
+- Query context-manager for project information
+- Check existing patterns and conventions
+- Validate assumptions with targeted questions
+
+### 3. Structured Communication
+
+Provide clear status updates:
+
+```json
+{
+  "agent": "agent-name",
+  "update_type": "progress",
+  "current_task": "Task description",
+  "completed_items": ["Item 1", "Item 2"],
+  "next_steps": ["Next task"]
+}
+```
+
+### 4. Documentation
+
+Document all deliverables:
+
+- File locations and purposes
+- Integration points
+- Configuration changes
+- Next steps
+
+## Global Agents
+
+Create agents that work across all projects:
+
+```bash
+# Create global agent
+npx claude-code-templates@latest --create-agent my-global-agent
+
+# List global agents
+npx claude-code-templates@latest --list-agents
+
+# Remove global agent
+npx claude-code-templates@latest --remove-agent my-global-agent
+```
+
+Global agents are stored in `~/.claude/agents/` and available everywhere.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Browse Agent Library" icon="robot" href="/components/agents">
+    Explore 600+ available agents
+  </Card>
+  <Card title="Create Custom Agents" icon="code" href="/advanced/creating-components">
+    Build your own specialized agents
+  </Card>
+  <Card title="Commands" icon="terminal" href="/concepts/commands">
+    Learn about custom slash commands
+  </Card>
+  <Card title="Global Agents" icon="globe" href="/guides/global-agents">
+    Create globally accessible agents
+  </Card>
+</CardGroup>

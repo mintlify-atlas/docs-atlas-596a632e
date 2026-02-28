@@ -1,0 +1,486 @@
+---
+title: Conversation Monitor
+description: Mobile-optimized interface for browsing and searching Claude Code conversations in real-time
+---
+
+The Conversation Monitor provides a lightweight, mobile-friendly interface for browsing, searching, and analyzing Claude Code conversations. Perfect for reviewing sessions on tablets or phones.
+
+## Launch Monitor
+
+Start the conversation monitor:
+
+```bash
+claudedev chats
+```
+
+**Output:**
+```
+📱 Starting Claude Code Chats Mobile...
+🔧 Initializing Claude Code Chats Mobile...
+📂 Loaded 42 conversations
+📱 Chats Mobile server started at http://localhost:9876
+🌐 Opening browser to http://localhost:9876
+✅ Claude Code Chats Mobile is running!
+```
+
+The interface automatically opens at `http://localhost:9876`.
+
+## Options
+
+### Verbose Mode
+
+Enable detailed logging:
+
+```bash
+claudedev chats --verbose
+```
+
+Shows:
+- File watching events
+- Message change detection
+- WebSocket broadcasts
+- State calculations
+
+### Remote Access
+
+Setup Cloudflare Tunnel for remote access:
+
+```bash
+claudedev chats --tunnel
+```
+
+**Output:**
+```
+📱 Chats Mobile server started at http://localhost:9876
+☁️  Setting up Cloudflare Tunnel...
+☁️  Cloudflare Tunnel ready: https://xyz-abc.trycloudflare.com
+🌐 Opening remote URL: https://xyz-abc.trycloudflare.com
+```
+
+<Tip>
+The tunnel URL works on any device - perfect for checking conversations on your phone while away from your computer.
+</Tip>
+
+### Disable Auto-open
+
+Start server without opening browser:
+
+```bash
+claudedev chats --no-open
+```
+
+## Features
+
+### Conversation Browsing
+
+- **List view**: All conversations sorted by last modified
+- **Project grouping**: Filter by working directory
+- **State indicators**: Active, Idle, Recently active, Inactive
+- **Message counts**: Total messages per conversation
+- **Token usage**: Token counts displayed
+
+### Search Capabilities
+
+#### Metadata Search
+
+Search by:
+- Conversation ID
+- Filename
+- Project name
+
+```bash
+curl -X POST http://localhost:9876/api/search \
+  -H "Content-Type: application/json" \
+  -d '{"query": "my-project"}'
+```
+
+#### Content Search
+
+Search within message content:
+
+```bash
+curl -X POST http://localhost:9876/api/search \
+  -H "Content-Type: application/json" \
+  -d '{"contentSearch": "function calculateTokens"}'
+```
+
+Searches:
+- Text messages
+- Tool use blocks
+- Tool names
+- Tool inputs
+
+#### Date Range Filtering
+
+```bash
+curl -X POST http://localhost:9876/api/search \
+  -H "Content-Type: application/json" \
+  -d '{
+    "dateFrom": "2025-01-01",
+    "dateTo": "2025-01-31"
+  }'
+```
+
+#### Working Directory Filter
+
+```bash
+curl -X POST http://localhost:9876/api/search \
+  -H "Content-Type: application/json" \
+  -d '{"workingDirectory": "workspace"}'
+```
+
+### Conversation Details
+
+View full conversation messages:
+
+```bash
+curl "http://localhost:9876/api/conversations/{id}/messages"
+```
+
+**Pagination supported:**
+
+```bash
+curl "http://localhost:9876/api/conversations/{id}/messages?page=0&limit=50"
+```
+
+Returns:
+- Message role (user/assistant)
+- Message content (text and tool blocks)
+- Correlated tool results
+- Timestamps
+- Model information
+- Token usage per message
+
+### In-Conversation Search
+
+Search within a specific conversation:
+
+```bash
+curl -X POST "http://localhost:9876/api/conversations/{id}/search" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "error handling"}'
+```
+
+Returns:
+- Message index
+- Role and timestamp
+- Preview with context
+- Match count per message
+
+### Session Export
+
+Download conversation as markdown:
+
+```bash
+curl -X POST "http://localhost:9876/api/conversations/{id}/download"
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "conversationId": "abc123",
+  "markdown": "# Conversation Export\n\n...",
+  "filename": "conversation-abc123.md",
+  "messageCount": 25,
+  "totalMessageCount": 25,
+  "wasLimited": false
+}
+```
+
+### Conversation Analytics
+
+Get detailed analytics for a conversation:
+
+```bash
+curl "http://localhost:9876/api/conversations/{id}/analytics"
+```
+
+**Returns:**
+- Message count and token usage
+- Cost estimate (input/output/cache)
+- Model usage breakdown
+- Tool usage statistics
+- Session timeline and duration
+- Time breakdown (user vs. Claude)
+- Components used (agents, commands, skills)
+- Optimization tips
+
+## API Reference
+
+### GET /api/conversations
+
+List all conversations:
+
+```json
+{
+  "conversations": [
+    {
+      "id": "abc123",
+      "project": "my-project",
+      "messageCount": 42,
+      "tokens": 15234,
+      "created": "2025-01-15T10:30:00Z",
+      "lastModified": "2025-01-15T11:45:00Z",
+      "status": "active",
+      "fileName": "conversation.jsonl",
+      "filePath": "~/.claude/projects/my-project/conversation.jsonl"
+    }
+  ],
+  "timestamp": "2025-01-15T12:00:00Z"
+}
+```
+
+### GET /api/conversation-state
+
+Get states for all conversations:lines/chats-mobile.js:146
+
+```json
+{
+  "activeStates": {
+    "abc123": "Active",
+    "def456": "Idle",
+    "ghi789": "Inactive"
+  },
+  "timestamp": "2025-01-15T12:00:00Z",
+  "totalConversations": 3
+}
+```
+
+### GET /api/directories
+
+Get unique working directories:lines/chats-mobile.js:182
+
+```json
+{
+  "directories": [
+    "my-project",
+    "another-project",
+    "test-workspace"
+  ],
+  "count": 3,
+  "timestamp": "2025-01-15T12:00:00Z"
+}
+```
+
+### POST /api/search
+
+Advanced search:lines/chats-mobile.js:210
+
+**Request:**
+```json
+{
+  "query": "error",
+  "workingDirectory": "my-project",
+  "dateFrom": "2025-01-01",
+  "dateTo": "2025-01-31",
+  "contentSearch": "function"
+}
+```
+
+**Response:**
+```json
+{
+  "results": [...],
+  "count": 5,
+  "filters": {
+    "query": "error",
+    "workingDirectory": "my-project",
+    "dateFrom": "2025-01-01",
+    "dateTo": "2025-01-31",
+    "contentSearch": "function"
+  },
+  "timestamp": "2025-01-15T12:00:00Z"
+}
+```
+
+### POST /api/conversations/:id/search
+
+Search within conversation:lines/chats-mobile.js:312
+
+**Request:**
+```json
+{
+  "query": "error handling"
+}
+```
+
+**Response:**
+```json
+{
+  "matches": [
+    {
+      "messageIndex": 15,
+      "messageId": "msg_abc123",
+      "role": "assistant",
+      "timestamp": "2025-01-15T10:35:00Z",
+      "preview": "...implementing error handling for the API...",
+      "matchCount": 2
+    }
+  ],
+  "totalMatches": 3,
+  "conversationId": "abc123",
+  "query": "error handling"
+}
+```
+
+## Real-time Updates
+
+WebSocket connection for live updates:lines/chats-mobile.js:976
+
+```javascript
+const ws = new WebSocket('ws://localhost:9876/ws');
+
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  
+  if (data.type === 'new_message') {
+    console.log('New message in:', data.data.conversationId);
+    console.log('Message:', data.data.message);
+    console.log('Has tools:', data.data.metadata.hasTools);
+  }
+};
+```
+
+**Events:**
+- `new_message`: New message added to conversation
+- `data_refresh`: Conversations reloaded
+- `state_change`: Conversation state changed
+
+## Change Detection
+
+The monitor tracks:lines/chats-mobile.js:864
+
+1. **Message count changes**: New messages added
+2. **Message updates**: Tool results correlated
+3. **Snapshots**: Detects structural changes
+
+**Snapshot includes:**
+- Message ID
+- Role
+- Content length
+- Tool result count
+- Tool use presence
+
+## Architecture
+
+### Core Classes
+
+**ChatsMobile**:line/chats-mobile.js:16
+- Main server class
+- Express app on port 9876
+- WebSocket server integration
+- File watching and change detection
+
+**ConversationAnalyzer**:line/chats-mobile.js:32
+- Loads conversation JSONL files
+- Parses messages with tool correlation
+- Caches parsed conversations
+
+**StateCalculator**:line/chats-mobile.js:21
+- Determines conversation states
+- Uses message timestamps and activity
+
+**SessionSharing**:line/chats-mobile.js:35
+- Exports conversations as markdown
+- Handles message formatting
+- Includes tool results
+
+### Message Tracking
+
+Message counts tracked per conversation:lines/chats-mobile.js:44
+
+```javascript
+this.conversationMessageCounts = new Map();
+this.conversationMessageSnapshots = new Map();
+```
+
+On change:lines/chats-mobile.js:881
+1. Compare previous count vs. current
+2. Generate snapshots for all messages
+3. Detect new messages (count increased)
+4. Detect updated messages (snapshot changed)
+5. Broadcast via WebSocket
+
+## Example: Export Conversation
+
+```bash
+# Get conversation ID
+CONV_ID=$(curl -s http://localhost:9876/api/conversations | \
+  jq -r '.conversations[0].id')
+
+# Export as markdown
+curl -X POST "http://localhost:9876/api/conversations/$CONV_ID/download" | \
+  jq -r '.markdown' > conversation.md
+
+echo "Exported to conversation.md"
+```
+
+## Example: Search Across Projects
+
+```bash
+# Find all conversations mentioning "database"
+curl -X POST http://localhost:9876/api/search \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contentSearch": "database",
+    "dateFrom": "2025-01-01"
+  }' | jq '.results[] | {project, id, messageCount}'
+```
+
+## Troubleshooting
+
+### Port Already in Use
+
+Chats Mobile uses port 9876. If occupied:line/chats-mobile.js:19
+
+```bash
+lsof -i :9876
+kill -9 <PID>
+```
+
+### No Conversations Found
+
+Check Claude directory exists:
+
+```bash
+ls -la ~/.claude/projects/*/conversation.jsonl
+```
+
+### Search Returns No Results
+
+- Content search looks in message content AND tool results:line/chats-mobile.js:358
+- Try searching for tool names or commands
+- Check date range covers conversation dates
+
+### WebSocket Not Connecting
+
+Verify WebSocket server initialized:lines/chats-mobile.js:1054
+
+```bash
+claudedev chats --verbose
+# Look for: "🌐 WebSocket server initialized"
+```
+
+### Cloudflare Tunnel Timeout
+
+If tunnel URL not detected after 45 seconds:lines/chats-mobile.js:1154
+
+```bash
+# Manually run:
+cloudflared tunnel --url http://localhost:9876
+# Then access the displayed URL
+```
+
+## Performance Tips
+
+- **Pagination**: Use `?page=0&limit=50` for large conversations:line/chats-mobile.js:434
+- **Specific searches**: Combine filters to narrow results
+- **State polling**: Use `/api/conversation-state` for lightweight checks
+- **Export limits**: Exports limited to prevent timeout
+
+## See Also
+
+- [Analytics Dashboard](/tools/analytics-dashboard) - Comprehensive analytics
+- [Stats Tools](/tools/stats-tools) - Command and hook analyzers
+- [Health Check](/tools/health-check) - System validation

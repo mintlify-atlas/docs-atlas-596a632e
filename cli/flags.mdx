@@ -1,0 +1,706 @@
+---
+title: CLI Flags Reference
+description: Complete reference for all Claude Code Templates CLI flags and options
+---
+
+# CLI Flags Reference
+
+Complete documentation of all command-line flags and options for the Claude Code Templates CLI.
+
+## Component Installation Flags
+
+### --agent
+
+<ParamField path="--agent" type="string">
+  Install specific agent component (supports comma-separated values)
+</ParamField>
+
+**Usage**:
+```bash
+cct --agent <agent-name>
+cct --agent frontend-developer
+cct --agent development-team/frontend-developer
+cct --agent security-auditor,devops-engineer
+```
+
+**Format**: Direct name or category/name
+
+**Examples**:
+- `frontend-developer`
+- `development-team/react-specialist`
+- `security-team/penetration-tester`
+
+### --command
+
+<ParamField path="--command" type="string">
+  Install specific command component (supports comma-separated values)
+</ParamField>
+
+**Usage**:
+```bash
+cct --command <command-name>
+cct --command setup-testing
+cct --command testing/generate-tests,code-review
+```
+
+**Format**: Direct name or category/name
+
+### --mcp
+
+<ParamField path="--mcp" type="string">
+  Install specific MCP component (supports comma-separated values)
+</ParamField>
+
+**Usage**:
+```bash
+cct --mcp <mcp-name>
+cct --mcp web-fetch
+cct --mcp github-integration,filesystem-access
+```
+
+**Available MCPs**:
+- `web-fetch`
+- `filesystem-access`
+- `github-integration`
+- `memory-integration`
+- `mysql-integration`
+- `postgresql-integration`
+- `deepgraph-react`
+- `deepgraph-typescript`
+- `deepgraph-vue`
+- `deepgraph-nextjs`
+
+### --setting
+
+<ParamField path="--setting" type="string">
+  Install specific setting component (supports comma-separated values)
+</ParamField>
+
+**Usage**:
+```bash
+cct --setting <setting-name>
+cct --setting permissions/allow-npm-commands
+cct --setting model/use-sonnet,telemetry/disable-telemetry
+```
+
+**Categories**:
+- `permissions/` - Permission configurations
+- `model/` - Model selection settings
+- `telemetry/` - Telemetry controls
+- `retention/` - Data retention policies
+- `security/` - Security settings
+- `statusline/` - Statusline configurations
+
+### --hook
+
+<ParamField path="--hook" type="string">
+  Install specific hook component (supports comma-separated values)
+</ParamField>
+
+**Usage**:
+```bash
+cct --hook <hook-name>
+cct --hook automation/git-commit-validation
+cct --hook automation/simple-notifications,automation/run-tests
+```
+
+**Hook Types**:
+- PreToolUse hooks
+- PostToolUse hooks
+- Stop hooks
+- Notification hooks
+
+### --skill
+
+<ParamField path="--skill" type="string">
+  Install specific skill component (supports comma-separated values)
+</ParamField>
+
+**Usage**:
+```bash
+cct --skill <skill-name>
+cct --skill web-development/roier-seo
+cct --skill document-processing/pptx
+```
+
+## Template and Configuration Flags
+
+### --template
+
+<ParamField path="--template" type="string">
+  Specify template (e.g., common, javascript-typescript, python, ruby)
+</ParamField>
+
+**Usage**:
+```bash
+cct --template <template-name>
+cct --template javascript-typescript
+cct --template python
+```
+
+**Available Templates**:
+- `common` - Universal configuration
+- `javascript-typescript` - Node.js, React, Vue, Next.js
+- `python` - Django, Flask, FastAPI
+- `ruby` - Rails, Sinatra
+- `go` - Go projects
+- `rust` - Rust/Cargo projects
+
+### --language
+
+<ParamField path="--language" type="string">
+  Specify programming language (deprecated, use --template)
+</ParamField>
+
+**Usage**:
+```bash
+cct --language <language>
+cct --language javascript
+```
+
+**Deprecated**: Use `--template` instead.
+
+### --framework
+
+<ParamField path="--framework" type="string">
+  Specify framework (deprecated, use --template)
+</ParamField>
+
+**Usage**:
+```bash
+cct --framework <framework>
+cct --framework react
+```
+
+**Deprecated**: Use `--template` instead.
+
+### --directory
+
+<ParamField path="--directory" type="string">
+  Target directory (default: current directory)
+</ParamField>
+
+**Usage**:
+```bash
+cct --directory <path>
+cct --directory ./my-project
+cct -d ./my-project  # Short alias
+```
+
+**Alias**: `-d`
+
+## Execution Flags
+
+### --yes
+
+<ParamField path="--yes" type="boolean">
+  Skip prompts and use defaults
+</ParamField>
+
+**Usage**:
+```bash
+cct --yes
+cct -y  # Short alias
+```
+
+**Behavior**: Uses detected project type and default options.
+
+**Alias**: `-y`
+
+### --dry-run
+
+<ParamField path="--dry-run" type="boolean">
+  Show what would be copied without actually copying
+</ParamField>
+
+**Usage**:
+```bash
+cct --dry-run
+cct --agent frontend-developer --dry-run
+```
+
+**Behavior**: Displays files that would be created/modified without making changes.
+
+### --verbose
+
+<ParamField path="--verbose" type="boolean">
+  Enable verbose logging for debugging and development
+</ParamField>
+
+**Usage**:
+```bash
+cct --verbose
+cct --analytics --verbose
+```
+
+**Behavior**: Outputs detailed debugging information.
+
+## Analytics and Dashboard Flags
+
+### --analytics
+
+<ParamField path="--analytics" type="boolean">
+  Launch real-time Claude Code analytics dashboard
+</ParamField>
+
+**Usage**:
+```bash
+cct --analytics
+cct --analytics --tunnel
+```
+
+**Port**: `3333`
+**URL**: `http://localhost:3333`
+
+### --chats
+
+<ParamField path="--chats" type="boolean">
+  Launch mobile-first chats interface (AI-optimized for mobile devices)
+</ParamField>
+
+**Usage**:
+```bash
+cct --chats
+cct --chats --tunnel
+```
+
+### --agents
+
+<ParamField path="--agents" type="boolean">
+  Launch Claude Code agents dashboard (opens directly to conversations)
+</ParamField>
+
+**Usage**:
+```bash
+cct --agents
+cct --agents --tunnel
+```
+
+### --chats-mobile
+
+<ParamField path="--chats-mobile" type="boolean">
+  Launch mobile-first chats interface (same as --chats)
+</ParamField>
+
+**Usage**:
+```bash
+cct --chats-mobile
+```
+
+### --plugins
+
+<ParamField path="--plugins" type="boolean">
+  Launch Plugin Dashboard to view marketplaces, installed plugins, and permissions
+</ParamField>
+
+**Usage**:
+```bash
+cct --plugins
+```
+
+### --skills-manager
+
+<ParamField path="--skills-manager" type="boolean">
+  Launch Skills Dashboard to view and explore installed Claude Code Skills
+</ParamField>
+
+**Usage**:
+```bash
+cct --skills-manager
+```
+
+### --teams
+
+<ParamField path="--teams" type="boolean">
+  Launch Agent Teams Dashboard to review multi-agent collaboration sessions
+</ParamField>
+
+**Usage**:
+```bash
+cct --teams
+```
+
+### --2025
+
+<ParamField path="--2025" type="boolean">
+  Launch 2025 Year in Review dashboard (showcase your Claude Code usage statistics)
+</ParamField>
+
+**Usage**:
+```bash
+cct --2025
+cct --2025 --tunnel
+```
+
+### --tunnel
+
+<ParamField path="--tunnel" type="boolean">
+  Enable Cloudflare Tunnel for remote access (use with --analytics, --chats, or --2025)
+</ParamField>
+
+**Usage**:
+```bash
+cct --analytics --tunnel
+cct --chats --tunnel
+cct --2025 --tunnel
+```
+
+**Behavior**: Creates public URL for remote access.
+
+**Restriction**: Only works with dashboard flags.
+
+## Statistics and Analysis Flags
+
+### --command-stats
+
+<ParamField path="--command-stats" type="boolean">
+  Analyze existing Claude Code commands and offer optimization
+</ParamField>
+
+**Usage**:
+```bash
+cct --command-stats
+cct --commands-stats  # Alternative spelling
+```
+
+**Alias**: `--commands-stats`
+
+### --hook-stats
+
+<ParamField path="--hook-stats" type="boolean">
+  Analyze existing automation hooks and offer optimization
+</ParamField>
+
+**Usage**:
+```bash
+cct --hook-stats
+cct --hooks-stats  # Alternative spelling
+```
+
+**Alias**: `--hooks-stats`
+
+### --mcp-stats
+
+<ParamField path="--mcp-stats" type="boolean">
+  Analyze existing MCP server configurations and offer optimization
+</ParamField>
+
+**Usage**:
+```bash
+cct --mcp-stats
+cct --mcps-stats  # Alternative spelling
+```
+
+**Alias**: `--mcps-stats`
+
+## Health and Verification Flags
+
+### --health-check
+
+<ParamField path="--health-check" type="boolean">
+  Run comprehensive health check to verify Claude Code setup
+</ParamField>
+
+**Usage**:
+```bash
+cct --health-check
+cct --health  # Short alias
+cct --check   # Alternative alias
+cct --verify  # Another alias
+```
+
+**Aliases**: `--health`, `--check`, `--verify`
+
+## Global Agent Flags
+
+### --create-agent
+
+<ParamField path="--create-agent" type="string">
+  Create a global agent accessible from anywhere (e.g., customer-support)
+</ParamField>
+
+**Usage**:
+```bash
+cct --create-agent <agent-name>
+cct --create-agent customer-support
+cct --create-agent development-team/frontend-developer
+```
+
+**Installation**: Creates executable in `/usr/local/bin/` or `~/.claude-code-templates/bin/`
+
+### --list-agents
+
+<ParamField path="--list-agents" type="boolean">
+  List all installed global agents
+</ParamField>
+
+**Usage**:
+```bash
+cct --list-agents
+```
+
+### --remove-agent
+
+<ParamField path="--remove-agent" type="string">
+  Remove a global agent
+</ParamField>
+
+**Usage**:
+```bash
+cct --remove-agent <agent-name>
+cct --remove-agent customer-support
+```
+
+### --update-agent
+
+<ParamField path="--update-agent" type="string">
+  Update a global agent to the latest version
+</ParamField>
+
+**Usage**:
+```bash
+cct --update-agent <agent-name>
+cct --update-agent customer-support
+```
+
+## Sandbox and Execution Flags
+
+### --sandbox
+
+<ParamField path="--sandbox" type="string">
+  Execute Claude Code in isolated sandbox environment (e.g., e2b)
+</ParamField>
+
+**Usage**:
+```bash
+cct --sandbox <provider>
+cct --sandbox e2b --prompt "Create a React app"
+```
+
+**Supported Providers**:
+- `e2b` - E2B sandbox
+- `docker` - Docker containers
+- `cloudflare` - Cloudflare Workers
+
+### --prompt
+
+<ParamField path="--prompt" type="string">
+  Execute the provided prompt in Claude Code after installation or in sandbox
+</ParamField>
+
+**Usage**:
+```bash
+cct --prompt "Create a React component"
+cct --agent frontend-developer --prompt "Review this code"
+cct --sandbox e2b --prompt "Build an API"
+```
+
+### --e2b-api-key
+
+<ParamField path="--e2b-api-key" type="string">
+  E2B API key for sandbox execution (alternative to environment variable)
+</ParamField>
+
+**Usage**:
+```bash
+cct --sandbox e2b --e2b-api-key YOUR_KEY --prompt "Create app"
+```
+
+**Alternative**: Set `E2B_API_KEY` environment variable.
+
+### --anthropic-api-key
+
+<ParamField path="--anthropic-api-key" type="string">
+  Anthropic API key for Claude Code (alternative to environment variable)
+</ParamField>
+
+**Usage**:
+```bash
+cct --anthropic-api-key sk-ant-xxx --prompt "Create app"
+```
+
+**Alternative**: Set `ANTHROPIC_API_KEY` environment variable.
+
+## Workflow Flags
+
+### --workflow
+
+<ParamField path="--workflow" type="string">
+  Install workflow from hash (#hash) OR workflow YAML (base64 encoded) when used with component flags
+</ParamField>
+
+**Usage**:
+```bash
+# Install from hash
+cct --workflow #security-audit-workflow
+
+# Install with YAML (base64 encoded)
+cct --workflow <base64-yaml> --agent security-auditor
+```
+
+**Behavior**: 
+- Standalone: Installs workflow from hash
+- With components: Treats as YAML workflow definition
+
+## Session Management Flags
+
+### --clone-session
+
+<ParamField path="--clone-session" type="string">
+  Download and import a shared Claude Code session from URL
+</ParamField>
+
+**Usage**:
+```bash
+cct --clone-session <url>
+cct --clone-session https://example.com/session/abc123
+```
+
+**Behavior**: Downloads session data and imports into local Claude Code.
+
+### --studio
+
+<ParamField path="--studio" type="boolean">
+  Launch Claude Code Studio interface for local and cloud execution
+</ParamField>
+
+**Usage**:
+```bash
+cct --studio
+```
+
+## Version and Help Flags
+
+### --version
+
+<ParamField path="--version" type="boolean">
+  Display version information
+</ParamField>
+
+**Usage**:
+```bash
+cct --version
+cct -v  # Short alias
+```
+
+**Alias**: `-v`
+
+### --help
+
+<ParamField path="--help" type="boolean">
+  Display help information
+</ParamField>
+
+**Usage**:
+```bash
+cct --help
+cct -h  # Short alias
+```
+
+**Alias**: `-h`
+
+## Flag Combinations
+
+### Common Combinations
+
+**Install multiple components**:
+```bash
+cct --agent security-auditor \
+    --command security-audit \
+    --mcp github-integration \
+    --setting read-only-mode
+```
+
+**Analytics with remote access**:
+```bash
+cct --analytics --tunnel
+cct --chats --tunnel
+cct --2025 --tunnel
+```
+
+**Install and execute prompt**:
+```bash
+cct --agent frontend-developer --prompt "Review this React component"
+```
+
+**Sandbox execution**:
+```bash
+cct --sandbox e2b --e2b-api-key YOUR_KEY --prompt "Create a dashboard"
+```
+
+**Dry run installation**:
+```bash
+cct --agent security-auditor --command security-audit --dry-run
+```
+
+**Directory-specific installation**:
+```bash
+cct --directory ./project --agent frontend-developer --yes
+```
+
+**Verbose debugging**:
+```bash
+cct --analytics --tunnel --verbose
+cct --agent security-auditor --verbose
+```
+
+### Invalid Combinations
+
+**Tunnel without dashboard**:
+```bash
+# ❌ Error
+cct --tunnel
+
+# ✅ Correct
+cct --analytics --tunnel
+```
+
+**Multiple exclusive flags**:
+```bash
+# ❌ Avoid
+cct --analytics --chats  # Opens analytics (first wins)
+
+# ✅ Correct
+cct --analytics  # Or
+cct --chats      # Run separately
+```
+
+## Flag Priority
+
+When multiple flags are present:
+
+1. **Sandbox execution** - Runs first if present
+2. **Component installation** - If no sandbox
+3. **Dashboard launch** - If no components
+4. **Health check** - If specified
+5. **Interactive menu** - If no flags
+
+## Environment Variables vs Flags
+
+Some flags have environment variable equivalents:
+
+| Flag | Environment Variable |
+|------|---------------------|
+| `--anthropic-api-key` | `ANTHROPIC_API_KEY` |
+| `--e2b-api-key` | `E2B_API_KEY` |
+| `--directory` | `PWD` (current directory) |
+
+Flags take precedence over environment variables.
+
+## Default Values
+
+| Flag | Default Value |
+|------|---------------|
+| `--directory` | `process.cwd()` (current directory) |
+| `--template` | Auto-detected or `common` |
+| `--yes` | `false` (interactive prompts) |
+| `--dry-run` | `false` (execute changes) |
+| `--verbose` | `false` (minimal output) |
+| `--tunnel` | `false` (local only) |
+
+## Next Steps
+
+- [CLI Overview](/cli/overview) - Complete CLI documentation
+- [Configuration Guide](/cli/configuration) - Settings and config files
+- [Environment Variables](/cli/environment-variables) - Environment configuration
+- [Install Components](/cli/install-component) - Component installation guide

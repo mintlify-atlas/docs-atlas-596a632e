@@ -1,0 +1,562 @@
+---
+title: Install Components
+description: Install agents, commands, MCP servers, hooks, settings, and skills
+---
+
+# Install Components
+
+The CLI supports installing six types of components: agents, commands, MCP servers, hooks, settings, and skills. Each component type serves a specific purpose in enhancing your Claude Code workflow.
+
+## Component Installation Syntax
+
+### Basic Installation
+
+Install a single component:
+
+```bash
+cct --agent <agent-name>
+cct --command <command-name>
+cct --mcp <mcp-name>
+cct --hook <hook-name>
+cct --setting <setting-name>
+cct --skill <skill-name>
+```
+
+### Batch Installation
+
+Install multiple components of the same type (comma-separated):
+
+```bash
+cct --agent frontend-developer,backend-developer,security-auditor
+cct --mcp web-fetch,github-integration,filesystem-access
+```
+
+Install different component types together:
+
+```bash
+cct --agent security-auditor \
+    --command security-audit \
+    --mcp github-integration \
+    --setting read-only-mode
+```
+
+## Component Naming Formats
+
+Components support two naming formats:
+
+### Direct Name
+```bash
+cct --agent frontend-developer
+cct --command setup-testing
+```
+
+### Category/Name Format
+```bash
+cct --agent development-team/frontend-developer
+cct --command testing/setup-testing
+cct --hook automation/simple-notifications
+```
+
+Both formats install to the same flat directory structure.
+
+## Agents
+
+### What are Agents?
+
+Agents are specialized AI assistants with custom system prompts and behaviors. They provide expert guidance for specific tasks like frontend development, security auditing, or documentation writing.
+
+### Installation Location
+
+Agents install to:
+```
+.claude/agents/<agent-name>.md
+```
+
+### Examples
+
+```bash
+# Frontend development
+cct --agent frontend-developer
+cct --agent development-team/react-specialist
+
+# Backend development
+cct --agent backend-developer
+cct --agent development-team/api-architect
+
+# Security
+cct --agent security-auditor
+cct --agent security-team/penetration-tester
+
+# DevOps
+cct --agent devops-engineer
+cct --agent infrastructure-team/kubernetes-expert
+
+# Documentation
+cct --agent technical-writer
+cct --agent content-team/api-documentation-specialist
+```
+
+### Popular Agents
+
+<CardGroup cols={2}>
+  <Card title="Frontend Developer" icon="browser">
+    Expert in React, Vue, Angular, and modern web frameworks
+  </Card>
+  <Card title="Backend Developer" icon="server">
+    API design, database optimization, and server-side logic
+  </Card>
+  <Card title="Security Auditor" icon="shield">
+    Code security review, vulnerability detection, best practices
+  </Card>
+  <Card title="DevOps Engineer" icon="gears">
+    CI/CD, infrastructure, deployment automation
+  </Card>
+</CardGroup>
+
+### Usage After Installation
+
+Invoke agents in Claude Code:
+```
+@frontend-developer Help me optimize this React component
+@security-auditor Review this authentication code
+```
+
+## Commands
+
+### What are Commands?
+
+Slash commands provide quick access to common workflows and operations. They accept arguments and can include complex instructions.
+
+### Installation Location
+
+Commands install to:
+```
+.claude/commands/<command-name>.md
+```
+
+### Examples
+
+```bash
+# Testing
+cct --command setup-testing
+cct --command testing/generate-tests
+
+# Code review
+cct --command code-review
+cct --command review/security-check
+
+# Documentation
+cct --command generate-docs
+cct --command documentation/api-reference
+
+# Deployment
+cct --command deploy-staging
+cct --command deployment/production-checklist
+```
+
+### Command Structure
+
+Commands use the `$ARGUMENTS` placeholder for user input:
+
+```markdown
+# Command: setup-testing
+
+Setup comprehensive testing infrastructure for $ARGUMENTS.
+
+Include:
+- Test framework configuration
+- Example test files
+- CI/CD integration
+```
+
+### Usage After Installation
+
+```
+/setup-testing React components
+/generate-docs API endpoints
+/code-review authentication module
+```
+
+## MCP Servers
+
+### What are MCP Servers?
+
+MCP (Model Context Protocol) servers provide Claude Code with access to external services, databases, APIs, and tools.
+
+### Installation Location
+
+MCP configurations merge into:
+```
+.mcp.json
+```
+
+### Examples
+
+```bash
+# Web access
+cct --mcp web-fetch
+
+# File system
+cct --mcp filesystem-access
+
+# Version control
+cct --mcp github-integration
+
+# Databases
+cct --mcp mysql-integration
+cct --mcp postgresql-integration
+
+# Memory
+cct --mcp memory-integration
+
+# Code analysis
+cct --mcp deepgraph-react
+cct --mcp deepgraph-typescript
+cct --mcp deepgraph-vue
+```
+
+### Configuration Merging
+
+When installing MCPs:
+1. Existing `.mcp.json` is preserved
+2. New servers are added to `mcpServers` object
+3. Conflicting server names are overwritten
+4. Description fields are automatically removed
+
+### MCP Configuration Example
+
+After installing `web-fetch`:
+
+```json
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    }
+  }
+}
+```
+
+## Hooks
+
+### What are Hooks?
+
+Hooks are automation triggers that execute commands at specific Claude Code lifecycle events.
+
+### Installation Location
+
+Hooks merge into:
+```
+.claude/settings.json
+```
+
+### Hook Types
+
+- **PreToolUse** - Execute before tool usage
+- **PostToolUse** - Execute after tool usage
+- **Stop** - Execute when session stops
+- **Notification** - Execute for notifications
+
+### Examples
+
+```bash
+# Git automation
+cct --hook automation/git-commit-validation
+cct --hook automation/git-auto-commit
+
+# Notifications
+cct --hook automation/simple-notifications
+cct --hook automation/slack-notifications
+
+# Testing
+cct --hook automation/run-tests-before-commit
+
+# Security
+cct --hook automation/security-scan
+```
+
+### Hook Configuration Example
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "command": "npm run lint",
+        "description": "Run linter before file modifications"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "command": "git add .",
+        "description": "Stage changes automatically"
+      }
+    ]
+  }
+}
+```
+
+## Settings
+
+### What are Settings?
+
+Settings are pre-configured Claude Code settings for permissions, models, telemetry, and behavior.
+
+### Installation Location
+
+Settings merge into:
+```
+.claude/settings.json
+```
+
+### Categories
+
+#### Permissions
+```bash
+cct --setting permissions/allow-npm-commands
+cct --setting permissions/deny-sensitive-files
+cct --setting permissions/additional-directories
+```
+
+#### Model Selection
+```bash
+cct --setting model/use-sonnet
+cct --setting model/use-haiku
+cct --setting model/use-opus
+```
+
+#### Telemetry
+```bash
+cct --setting telemetry/enable-telemetry
+cct --setting telemetry/disable-telemetry
+```
+
+#### Retention
+```bash
+cct --setting retention/retention-7-days
+cct --setting retention/retention-30-days
+cct --setting retention/retention-90-days
+```
+
+#### Security
+```bash
+cct --setting security/read-only-mode
+cct --setting security/strict-permissions
+```
+
+#### Statuslines
+```bash
+cct --setting statusline/context-monitor
+cct --setting statusline/token-counter
+```
+
+### Statusline Settings
+
+Statusline settings include Python scripts that are automatically downloaded:
+
+```bash
+cct --setting statusline/context-monitor
+```
+
+This installs:
+- `.claude/settings.json` (statusline configuration)
+- `.claude/scripts/context-monitor.py` (Python script)
+
+### Settings Configuration Example
+
+```json
+{
+  "model": "claude-sonnet-4-20250514",
+  "permissions": {
+    "allow": [
+      {
+        "type": "exec",
+        "pattern": "npm"
+      }
+    ],
+    "deny": [
+      {
+        "type": "read",
+        "pattern": "**/.env*"
+      }
+    ]
+  },
+  "telemetryEnabled": false,
+  "cleanupPeriodDays": 7
+}
+```
+
+## Skills
+
+### What are Skills?
+
+Skills are specialized workflows and capabilities that extend Claude Code functionality.
+
+### Examples
+
+```bash
+# Web development
+cct --skill web-development/roier-seo
+
+# Document processing
+cct --skill document-processing/pptx
+
+# Creative design
+cct --skill creative-design/algorithmic-art
+
+# Utilities
+cct --skill utilities/playwright-skill
+```
+
+## Installation Options
+
+### Target Directory
+
+Install to a specific directory:
+
+```bash
+cct --agent frontend-developer --directory ./my-project
+cct -d ./my-project --command setup-testing
+```
+
+### Dry Run
+
+Preview what would be installed without making changes:
+
+```bash
+cct --agent security-auditor --dry-run
+```
+
+### Silent Mode
+
+Suppress installation output (used in batch operations):
+
+```bash
+cct --agent frontend-developer --silent
+```
+
+### With Prompt Execution
+
+Install components and execute a prompt:
+
+```bash
+cct --agent security-auditor --prompt "Review authentication code"
+```
+
+## Component Discovery
+
+### Browse Components
+
+Explore all available components:
+
+- Website: https://aitmpl.com/
+- Components by category
+- Search and filter functionality
+- Installation copy-paste commands
+
+### Not Found Handling
+
+If a component isn't found, the CLI shows available options:
+
+```bash
+cct --agent nonexistent-agent
+# ❌ Agent "nonexistent-agent" not found
+# 📋 Available Agents:
+# ...
+```
+
+## Workflow Installation
+
+### Install from Workflow Hash
+
+Install a pre-defined workflow:
+
+```bash
+cct --workflow #security-audit-workflow
+```
+
+### Install with YAML Workflow
+
+Provide a base64-encoded YAML workflow:
+
+```bash
+cct --workflow <base64-yaml> --agent security-auditor
+```
+
+## Troubleshooting
+
+### Component Not Found
+
+1. Verify component name spelling
+2. Check component exists at https://aitmpl.com/
+3. Try category/name format: `development-team/frontend-developer`
+
+### Installation Failed
+
+1. Check network connectivity
+2. Verify target directory permissions
+3. Try with `--verbose` flag for detailed output
+
+### Merge Conflicts
+
+- **MCPs**: New servers added, conflicts overwrite existing
+- **Settings**: Deep merge, new keys added, conflicts overwrite
+- **Hooks**: Arrays merged, duplicates may occur
+
+### Permission Issues
+
+```bash
+# Ensure write permissions
+chmod 755 .claude/
+
+# Check directory ownership
+ls -la .claude/
+```
+
+## Advanced Usage
+
+### Batch Installation Script
+
+Create a setup script:
+
+```bash
+#!/bin/bash
+# setup-claude.sh
+
+cct --agent frontend-developer \
+    --agent backend-developer \
+    --command setup-testing \
+    --command code-review \
+    --mcp github-integration \
+    --mcp web-fetch \
+    --setting permissions/allow-npm-commands \
+    --setting model/use-sonnet \
+    --hook automation/git-commit-validation
+
+echo "✅ Claude Code setup complete!"
+```
+
+### Team Configuration
+
+Share component configurations:
+
+```bash
+# Document required components
+echo "Required Components:" > CLAUDE-SETUP.md
+echo "- Agent: frontend-developer" >> CLAUDE-SETUP.md
+echo "- Command: setup-testing" >> CLAUDE-SETUP.md
+echo "- MCP: github-integration" >> CLAUDE-SETUP.md
+
+# Install from documentation
+cct --agent frontend-developer \
+    --command setup-testing \
+    --mcp github-integration
+```
+
+## Next Steps
+
+- [Create Global Agents](/cli/create-agent) - Build globally accessible agents
+- [List and Manage Agents](/cli/list-agents) - Manage installed agents
+- [CLI Flags Reference](/cli/flags) - Complete flags documentation
+- [Configuration Files](/cli/configuration) - Settings and config files

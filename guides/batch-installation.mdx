@@ -1,0 +1,583 @@
+---
+title: Batch Component Installation
+description: Install multiple agents, commands, MCPs, settings, and hooks in a single command for faster setup
+---
+
+# Batch Component Installation
+
+Batch installation allows you to install multiple components across different types in a single command. This is ideal for setting up new projects, sharing team configurations, or deploying standardized development environments.
+
+## Why Batch Install?
+
+<CardGroup cols={2}>
+  <Card title="Speed" icon="bolt">
+    Install 10 components in one command instead of running 10 separate commands
+  </Card>
+  <Card title="Consistency" icon="check">
+    Ensure all team members have the same components installed
+  </Card>
+  <Card title="Automation" icon="robot">
+    Script entire project setups in CI/CD pipelines
+  </Card>
+  <Card title="Discovery" icon="magnifying-glass">
+    Share component bundles with colleagues via single command
+  </Card>
+</CardGroup>
+
+## Basic Batch Installation
+
+Combine multiple component flags in a single command:
+
+```bash
+npx claude-code-templates@latest \
+  --agent security-auditor \
+  --agent frontend-developer \
+  --command setup-testing \
+  --mcp filesystem \
+  --setting enable-telemetry
+```
+
+<Note>
+**Flag Order**: Component flags can appear in any order. The CLI installs them sequentially.
+</Note>
+
+## Multi-Type Installation
+
+<Steps>
+
+### Install Agents and Commands
+
+```bash
+npx claude-code-templates@latest \
+  --agent backend-developer \
+  --agent database-expert \
+  --command docker-setup \
+  --command git-setup
+```
+
+Installs:
+- `.claude/agents/backend-developer.md`
+- `.claude/agents/database-expert.md`
+- `.claude/commands/docker-setup.md`
+- `.claude/commands/git-setup.md`
+
+### Add MCPs and Settings
+
+```bash
+npx claude-code-templates@latest \
+  --agent security-auditor \
+  --mcp web-fetch \
+  --mcp filesystem \
+  --setting read-only-mode
+```
+
+Installs:
+- `.claude/agents/security-auditor.md`
+- Merges MCP configs into `.mcp.json`
+- Prompts for settings installation location
+
+### Include Hooks
+
+```bash
+npx claude-code-templates@latest \
+  --agent code-reviewer \
+  --command lint-code \
+  --hook git/prevent-force-push \
+  --setting use-sonnet
+```
+
+Installs:
+- Agent and command files
+- Hook configuration in settings
+- Model preference setting
+
+</Steps>
+
+## Comma-Separated Values
+
+You can use comma-separated values for the same component type:
+
+```bash
+npx claude-code-templates@latest \
+  --agent "security-auditor,frontend-developer,backend-developer" \
+  --command "docker-setup,git-setup,setup-testing"
+```
+
+<Warning>
+**Quoting Required**: When using commas, wrap the entire value in quotes to prevent shell interpretation.
+</Warning>
+
+## Batch with Directory Target
+
+Install all components to a specific project:
+
+```bash
+npx claude-code-templates@latest \
+  --agent security-auditor \
+  --agent performance-optimizer \
+  --command security-scan \
+  --directory ./my-project
+```
+
+## Batch with Auto-Confirm
+
+Skip all prompts using `--yes`:
+
+```bash
+npx claude-code-templates@latest \
+  --agent security-auditor \
+  --mcp web-fetch \
+  --setting enable-telemetry \
+  --yes
+```
+
+<Accordion title="What does --yes do?">
+The `--yes` flag:
+- Uses default installation locations for settings/hooks (local settings)
+- Auto-confirms all merge operations
+- Skips interactive prompts
+- Ideal for CI/CD and scripted installations
+</Accordion>
+
+## Settings and Hooks Location
+
+When batch installing settings or hooks, you can pre-specify the installation location:
+
+### Method 1: Interactive (Default)
+
+```bash
+npx claude-code-templates@latest \
+  --setting enable-telemetry \
+  --hook git/pre-commit-lint
+```
+
+You'll be prompted once for where to install ALL settings and hooks:
+
+```bash
+? Where would you like to install these components?
+  ◯ User settings (~/.claude/settings.json)
+  ◯ Project settings (.claude/settings.json)
+  ◉ Local settings (.claude/settings.local.json)
+```
+
+### Method 2: Auto with --yes
+
+```bash
+npx claude-code-templates@latest \
+  --setting enable-telemetry \
+  --hook git/pre-commit-lint \
+  --yes
+```
+
+Automatically installs to **local settings** (`.claude/settings.local.json`).
+
+## Use Cases
+
+### New Project Setup
+
+Complete development environment in one command:
+
+<CodeGroup>
+
+```bash Full-Stack Setup
+npx claude-code-templates@latest \
+  --agent frontend-developer \
+  --agent backend-developer \
+  --agent database-expert \
+  --command docker-setup \
+  --command setup-testing \
+  --mcp filesystem \
+  --mcp web-fetch \
+  --setting use-sonnet \
+  --directory ./new-project
+```
+
+```bash Security-Focused Setup
+npx claude-code-templates@latest \
+  --agent security-auditor \
+  --agent penetration-tester \
+  --command security-scan \
+  --command vulnerability-check \
+  --setting read-only-mode \
+  --hook security/secrets-detection \
+  --yes
+```
+
+```bash Data Science Setup
+npx claude-code-templates@latest \
+  --agent data-scientist \
+  --agent ml-engineer \
+  --agent data-analyst \
+  --command notebook-setup \
+  --mcp database \
+  --setting retention-90-days
+```
+
+</CodeGroup>
+
+### Team Standardization
+
+Ensure all team members have consistent tooling:
+
+```bash
+# Add to README.md or onboarding script
+npx claude-code-templates@latest \
+  --agent code-reviewer \
+  --agent documentation-writer \
+  --command lint-code \
+  --command generate-tests \
+  --hook git/pre-commit-lint \
+  --hook automation/simple-notifications \
+  --yes
+```
+
+### CI/CD Pipeline
+
+Script component installation in your CI pipeline:
+
+<CodeGroup>
+
+```yaml GitHub Actions
+name: Setup Claude Code
+on: [push]
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install Claude Code Components
+        run: |
+          npx claude-code-templates@latest \
+            --agent code-reviewer \
+            --command lint-code \
+            --command security-scan \
+            --yes
+```
+
+```yaml GitLab CI
+setup-claude:
+  stage: setup
+  script:
+    - npx claude-code-templates@latest
+        --agent security-auditor
+        --command vulnerability-check
+        --mcp filesystem
+        --yes
+  only:
+    - main
+```
+
+```groovy Jenkins
+stage('Setup Claude Code') {
+  steps {
+    sh '''
+      npx claude-code-templates@latest \
+        --agent performance-optimizer \
+        --command profile-app \
+        --yes
+    '''
+  }
+}
+```
+
+</CodeGroup>
+
+### Docker Container Setup
+
+Include in your Dockerfile:
+
+```dockerfile
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install Claude Code components
+RUN npx claude-code-templates@latest \
+  --agent backend-developer \
+  --command docker-setup \
+  --mcp filesystem \
+  --yes
+
+COPY . .
+
+CMD ["npm", "start"]
+```
+
+## Component Discovery for Batch Installation
+
+<Steps>
+
+### Use the Shopping Cart
+
+1. Visit [aitmpl.com](https://aitmpl.com)
+2. Browse and add components to cart
+3. Click "View Cart"
+4. Copy the generated batch command
+
+```bash
+# Example generated command
+npx claude-code-templates@latest \
+  --agent security-auditor \
+  --agent frontend-developer \
+  --command setup-testing \
+  --mcp web-fetch
+```
+
+### Share Cart URLs
+
+The cart URL contains all selected components:
+
+```
+https://aitmpl.com/?cart=agent:security-auditor,agent:frontend-developer,command:setup-testing
+```
+
+Share this URL with teammates to install the same component set.
+
+### Export from Interactive Mode
+
+Run interactive mode and export your selection:
+
+```bash
+npx claude-code-templates@latest
+```
+
+1. Select "Project Setup"
+2. Choose components interactively
+3. At the end, get the equivalent batch command
+
+</Steps>
+
+## Batch Installation Output
+
+The CLI provides detailed progress for batch installations:
+
+```bash
+$ npx claude-code-templates@latest \
+    --agent security-auditor \
+    --command security-scan \
+    --mcp web-fetch
+
+🤖 Installing agent: security-auditor
+📥 Downloading from GitHub (main branch)...
+✅ Agent "security-auditor" installed successfully!
+📁 Installed to: .claude/agents/security-auditor.md
+
+⚡ Installing command: security-scan
+📥 Downloading from GitHub (main branch)...
+✅ Command "security-scan" installed successfully!
+📁 Installed to: .claude/commands/security-scan.md
+
+🔌 Installing MCP: web-fetch
+📥 Downloading from GitHub (main branch)...
+📝 Existing .mcp.json found, merging configurations...
+✅ MCP "web-fetch" installed successfully!
+📁 Configuration merged into: .mcp.json
+
+🎉 Batch installation complete! Installed 3 components.
+```
+
+## Error Handling
+
+Batch installations handle errors gracefully:
+
+### Partial Success
+
+If one component fails, others continue:
+
+```bash
+✅ Agent "security-auditor" installed successfully!
+❌ Command "non-existent-command" not found
+✅ MCP "web-fetch" installed successfully!
+
+⚠️ Batch installation completed with errors.
+   Successful: 2/3 components
+   Failed: 1/3 components
+```
+
+### Rollback Not Supported
+
+<Warning>
+**No Automatic Rollback**: If a component fails, previously installed components are NOT automatically removed. This is intentional to prevent data loss.
+</Warning>
+
+To undo:
+
+```bash
+# Manually remove installed components
+rm .claude/agents/security-auditor.md
+rm .claude/commands/security-scan.md
+```
+
+## Best Practices
+
+### 1. Group by Purpose
+
+Organize batch commands by project type:
+
+```bash
+# Save as scripts/setup-frontend.sh
+npx claude-code-templates@latest \
+  --agent frontend-developer \
+  --agent ui-ux-designer \
+  --command setup-react \
+  --command setup-testing \
+  --mcp web-fetch \
+  --yes
+```
+
+### 2. Document in README
+
+Add setup instructions to your project:
+
+```markdown
+## Claude Code Setup
+
+Install required components:
+
+\`\`\`bash
+npx claude-code-templates@latest \
+  --agent backend-developer \
+  --command docker-setup \
+  --mcp database \
+  --yes
+\`\`\`
+```
+
+### 3. Use Version Pinning
+
+For reproducibility, pin to a specific version:
+
+```bash
+npx claude-code-templates@1.2.3 \
+  --agent security-auditor \
+  --command security-scan
+```
+
+### 4. Separate Concerns
+
+Split personal vs. team components:
+
+```bash
+# Team setup (in repo docs)
+npx claude-code-templates@latest \
+  --agent code-reviewer \
+  --command lint-code \
+  --yes
+
+# Personal setup (in private notes)
+npx claude-code-templates@latest \
+  --agent ai-assistant \
+  --setting theme-dark \
+  --yes
+```
+
+## Combining with Workflows
+
+You can combine batch installation with workflow YAML:
+
+```bash
+# Install components and apply workflow
+npx claude-code-templates@latest \
+  --agent security-auditor \
+  --command security-scan \
+  --workflow "$(cat workflow.yaml | base64)"
+```
+
+See [Workflows Guide](/guides/workflows) for details.
+
+## Troubleshooting
+
+### Command Too Long
+
+If your batch command is very long:
+
+**Solution 1: Use a Script**
+
+```bash
+#!/bin/bash
+# setup-components.sh
+
+npx claude-code-templates@latest \
+  --agent security-auditor \
+  --agent frontend-developer \
+  --agent backend-developer \
+  --command docker-setup \
+  --command setup-testing \
+  --mcp filesystem \
+  --mcp web-fetch \
+  --yes
+```
+
+```bash
+chmod +x setup-components.sh
+./setup-components.sh
+```
+
+**Solution 2: Use Workflow Hashes**
+
+Create a workflow at [aitmpl.com/workflows](https://aitmpl.com/workflows) and use the short hash:
+
+```bash
+npx claude-code-templates@latest --workflow:#abc123def456
+```
+
+### Permission Issues
+
+If batch install fails on specific components:
+
+```bash
+✅ Agent installed
+❌ Failed to write settings: Permission denied
+✅ MCP installed
+```
+
+**Solution**: Install settings to user directory:
+
+```bash
+npx claude-code-templates@latest \
+  --setting enable-telemetry \
+  --yes  # Auto-installs to local settings
+```
+
+### Network Timeouts
+
+Large batch installs may timeout:
+
+```bash
+❌ Error: Request timeout after 30s
+```
+
+**Solution**: Split into smaller batches:
+
+```bash
+# Batch 1: Agents
+npx claude-code-templates@latest \
+  --agent security-auditor \
+  --agent frontend-developer \
+  --yes
+
+# Batch 2: Commands and MCPs
+npx claude-code-templates@latest \
+  --command docker-setup \
+  --mcp filesystem \
+  --yes
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Interactive Mode" icon="terminal" href="/guides/interactive-mode">
+    Use the visual component selector
+  </Card>
+  <Card title="Workflows" icon="diagram-project" href="/guides/workflows">
+    Create reusable installation workflows
+  </Card>
+  <Card title="Global Agents" icon="globe" href="/guides/global-agents">
+    Create globally accessible agents
+  </Card>
+  <Card title="Component Browser" icon="grid" href="https://aitmpl.com">
+    Browse all available components
+  </Card>
+</CardGroup>

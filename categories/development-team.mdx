@@ -1,0 +1,414 @@
+---
+title: Development Team Components
+description: Complete development team agents covering frontend, backend, mobile, DevOps, testing, and architecture
+---
+
+# Development Team Components
+
+The Development Team category includes AI specialists that replicate a complete software development team. These agents handle everything from frontend design to backend APIs, database architecture, testing, and deployment.
+
+<Card title="Browse Development Team" icon="globe" href="https://aitmpl.com/?category=development-team">
+  Explore all development team components at **aitmpl.com**
+</Card>
+
+## Quick Install
+
+```bash
+# Install the full development team
+npx claude-code-templates@latest \
+  --agent backend-developer \
+  --agent frontend-developer \
+  --agent devops-engineer \
+  --agent test-generator
+
+# Or install individually
+npx claude-code-templates@latest --agent backend-developer
+```
+
+## Core Development Agents
+
+<CardGroup cols={2}>
+  <Card title="Backend Developer" icon="server">
+    Senior backend developer specializing in APIs, microservices, and scalable systems
+    
+    **Expertise:**
+    - RESTful API design
+    - Microservices architecture
+    - Database integration
+    - Authentication & authorization
+    - Performance optimization
+    - Production deployment
+    
+    **Tech Stack:**
+    - Node.js 18+, Python 3.11+, Go 1.21+
+    - PostgreSQL, Redis, MongoDB
+    - Docker, Kubernetes
+    - OAuth2, JWT
+    
+    ```bash
+    npx claude-code-templates@latest --agent backend-developer
+    ```
+    
+    **Example Usage:**
+    ```
+    @backend-developer Create a user service API with JWT auth,
+    PostgreSQL persistence, and Redis caching. Target 100ms p95 latency.
+    ```
+  </Card>
+  
+  <Card title="Frontend Developer" icon="browser">
+    Expert in React, Vue, Angular, and modern frontend frameworks
+    
+    **Expertise:**
+    - Component architecture
+    - State management (Redux, Zustand, Pinia)
+    - Responsive design
+    - Performance optimization
+    - Accessibility (WCAG)
+    - Testing (Jest, Vitest, Testing Library)
+    
+    **Tech Stack:**
+    - React 18+, Vue 3, Angular 17+
+    - TypeScript, Tailwind CSS
+    - Vite, Webpack, Next.js
+    - PWA, Web Workers
+    
+    ```bash
+    npx claude-code-templates@latest --agent frontend-developer
+    ```
+    
+    **Example Usage:**
+    ```
+    @frontend-developer Build a dashboard with charts, real-time updates,
+    and dark mode using React and Tailwind CSS.
+    ```
+  </Card>
+  
+  <Card title="Fullstack Developer" icon="layer-group">
+    End-to-end application development with frontend and backend expertise
+    
+    **Expertise:**
+    - Full application architecture
+    - Frontend + Backend integration
+    - Database design
+    - API development
+    - Deployment automation
+    - Performance tuning
+    
+    **Tech Stack:**
+    - React, Next.js, Vue, Nuxt
+    - Node.js, Express, Fastify
+    - PostgreSQL, MongoDB
+    - Vercel, Railway, Fly.io
+    
+    ```bash
+    npx claude-code-templates@latest --agent fullstack-developer
+    ```
+  </Card>
+  
+  <Card title="DevOps Engineer" icon="gear">
+    Infrastructure, CI/CD, containerization, and deployment automation
+    
+    **Expertise:**
+    - Infrastructure as Code (Terraform, Bicep)
+    - Container orchestration (Docker, K8s)
+    - CI/CD pipelines (GitHub Actions, GitLab CI)
+    - Cloud platforms (AWS, Azure, GCP)
+    - Monitoring & logging
+    - Security hardening
+    
+    **Tech Stack:**
+    - Kubernetes, Docker, Helm
+    - Terraform, Pulumi
+    - Prometheus, Grafana
+    - GitHub Actions, ArgoCD
+    
+    ```bash
+    npx claude-code-templates@latest --agent devops-engineer
+    ```
+    
+    **Example Usage:**
+    ```
+    @devops-engineer Set up a Kubernetes cluster with auto-scaling,
+    monitoring, and CI/CD pipeline for our microservices.
+    ```
+  </Card>
+</CardGroup>
+
+## Specialized Development Agents
+
+<Tabs>
+  <Tab title="Mobile">
+    ### Mobile Development
+    
+    <CardGroup cols={2}>
+      <Card title="Mobile Developer" icon="mobile">
+        iOS, Android, React Native, and Flutter development
+        ```bash
+        npx claude-code-templates@latest --agent mobile-developer
+        ```
+      </Card>
+      <Card title="iOS Developer" icon="apple">
+        Native iOS development with Swift and SwiftUI
+        ```bash
+        npx claude-code-templates@latest --agent ios-developer
+        ```
+      </Card>
+      <Card title="Flutter UI Developer" icon="mobile-screen">
+        Cross-platform Flutter applications
+        ```bash
+        npx claude-code-templates@latest --agent flutter-ui-developer
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Architecture">
+    ### Architecture & Design
+    
+    <CardGroup cols={2}>
+      <Card title="Code Architect" icon="diagram-project">
+        System architecture and design patterns
+        ```bash
+        npx claude-code-templates@latest --agent code-architect
+        ```
+      </Card>
+      <Card title="Backend Architect" icon="sitemap">
+        Backend system architecture and scalability
+        ```bash
+        npx claude-code-templates@latest --agent backend-architect
+        ```
+      </Card>
+      <Card title="UI/UX Designer" icon="palette">
+        User interface and experience design
+        ```bash
+        npx claude-code-templates@latest --agent ui-ux-designer
+        ```
+      </Card>
+      <Card title="UI Designer" icon="paint-brush">
+        Visual design and component libraries
+        ```bash
+        npx claude-code-templates@latest --agent ui-designer
+        ```
+      </Card>
+      <Card title="CLI UI Designer" icon="terminal">
+        Command-line interface design
+        ```bash
+        npx claude-code-templates@latest --agent cli-ui-designer
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Testing">
+    ### Testing & Quality Assurance
+    
+    <CardGroup cols={2}>
+      <Card title="Test Generator" icon="vial">
+        Automated test generation with comprehensive coverage
+        
+        **Capabilities:**
+        - Unit test generation
+        - Integration test setup
+        - E2E test scenarios
+        - Test data factories
+        - Mocking strategies
+        - Coverage analysis
+        
+        ```bash
+        npx claude-code-templates@latest --agent test-generator
+        ```
+        
+        **Example Usage:**
+        ```
+        @test-generator Generate comprehensive tests for the user service
+        with 80%+ coverage, including edge cases and error scenarios.
+        ```
+      </Card>
+      <Card title="Test Runner" icon="play">
+        Test execution and automation
+        ```bash
+        npx claude-code-templates@latest --agent test-runner
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Desktop">
+    ### Desktop Development
+    
+    <CardGroup cols={2}>
+      <Card title="Electron Pro" icon="window-maximize">
+        Cross-platform desktop applications with Electron
+        ```bash
+        npx claude-code-templates@latest --agent electron-pro
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Exploration">
+    ### Code Exploration
+    
+    <CardGroup cols={2}>
+      <Card title="Code Explorer" icon="magnifying-glass">
+        Codebase analysis and documentation
+        ```bash
+        npx claude-code-templates@latest --agent code-explorer
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+## Team Workflows
+
+### Full Development Cycle
+
+```bash
+# 1. Architecture phase
+@code-architect Design a microservices architecture for an e-commerce platform
+
+# 2. Backend implementation
+@backend-developer Implement the product catalog service with PostgreSQL
+
+# 3. Frontend development
+@frontend-developer Build the product listing and detail pages
+
+# 4. Testing
+@test-generator Generate comprehensive tests for the product service
+
+# 5. Deployment
+@devops-engineer Set up CI/CD pipeline and Kubernetes deployment
+```
+
+### API Development Team
+
+```bash
+# Backend API
+npx claude-code-templates@latest --agent backend-developer
+
+# Database design
+npx claude-code-templates@latest --agent database-architect
+
+# API documentation
+npx claude-code-templates@latest --command generate-docs
+
+# Testing
+npx claude-code-templates@latest --agent test-generator
+```
+
+### Mobile App Team
+
+```bash
+# Cross-platform mobile
+npx claude-code-templates@latest --agent mobile-developer
+
+# Backend API
+npx claude-code-templates@latest --agent backend-developer
+
+# UI/UX design
+npx claude-code-templates@latest --agent ui-ux-designer
+```
+
+## Best Practices
+
+### Agent Coordination
+
+1. **Start with Architecture**: Use `@code-architect` to plan system design
+2. **Backend First**: Implement APIs before frontend
+3. **Test as You Go**: Use `@test-generator` alongside development
+4. **Deploy Early**: Set up CI/CD with `@devops-engineer` from the start
+
+### Communication Between Agents
+
+Agents can work together:
+
+```bash
+# Backend developer creates API
+@backend-developer Create user authentication API
+
+# Frontend developer integrates
+@frontend-developer Integrate the authentication API with login form
+
+# Test generator verifies
+@test-generator Generate E2E tests for the authentication flow
+```
+
+### Specialization vs. Generalization
+
+- **Specialized agents** (backend-developer, frontend-developer) for focused tasks
+- **Generalized agents** (fullstack-developer) for small projects or rapid prototyping
+
+## Real-World Examples
+
+### Example 1: SaaS Application
+
+```bash
+# Install team
+npx claude-code-templates@latest \
+  --agent fullstack-developer \
+  --agent database-architect \
+  --agent devops-engineer
+
+# Build features
+@fullstack-developer Create subscription management with Stripe
+@database-architect Design multi-tenant database schema
+@devops-engineer Deploy to Kubernetes with auto-scaling
+```
+
+### Example 2: Mobile App
+
+```bash
+# Install team
+npx claude-code-templates@latest \
+  --agent mobile-developer \
+  --agent backend-developer \
+  --agent ui-ux-designer
+
+# Build app
+@ui-ux-designer Design the onboarding flow
+@backend-developer Create the GraphQL API
+@mobile-developer Build the React Native app
+```
+
+### Example 3: Enterprise Web App
+
+```bash
+# Install team
+npx claude-code-templates@latest \
+  --agent backend-architect \
+  --agent frontend-developer \
+  --agent devops-engineer \
+  --agent test-generator
+
+# Build application
+@backend-architect Design microservices architecture
+@backend-developer Implement order processing service
+@frontend-developer Build admin dashboard
+@test-generator Create comprehensive test suite
+@devops-engineer Set up production infrastructure
+```
+
+## Team Templates
+
+Use pre-configured team setups:
+
+```bash
+# Fullstack web team
+npx claude-code-templates@latest --template fullstack-web
+
+# Mobile development team
+npx claude-code-templates@latest --template mobile-development
+
+# Microservices team
+npx claude-code-templates@latest --template microservices
+```
+
+## Next Steps
+
+- [Browse all development team agents](https://aitmpl.com/?category=development-team)
+- [View database components](/categories/database)
+- [Explore DevOps components](/categories/devops-infrastructure)
+- [Check out testing components](/categories/testing)
+- [See all templates](/components/templates)

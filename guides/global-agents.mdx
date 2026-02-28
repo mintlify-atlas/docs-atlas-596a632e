@@ -1,0 +1,669 @@
+---
+title: Global Agents
+description: Create globally accessible AI agents that can be executed from any directory on your system
+---
+
+# Global Agents
+
+Global agents are AI specialists that you can execute from anywhere on your system, just like any other terminal command. Instead of navigating to a project directory to use an agent, you can invoke it from any location.
+
+## What are Global Agents?
+
+Global agents transform Claude Code agents into standalone CLI commands:
+
+- **Regular Agent**: Only works in the directory where installed (`.claude/agents/`)
+- **Global Agent**: Works from any directory, like `npm`, `git`, or `docker`
+
+<CardGroup cols={2}>
+  <Card title="System-Wide Access" icon="earth-americas">
+    Run from any directory without navigating to project
+  </Card>
+  <Card title="Auto Context Detection" icon="brain">
+    Automatically detects project type and includes relevant files
+  </Card>
+  <Card title="Standalone Execution" icon="rocket">
+    No need for Claude Code to be open
+  </Card>
+  <Card title="Script Integration" icon="code">
+    Use in npm scripts, CI/CD, and shell scripts
+  </Card>
+</CardGroup>
+
+## How Global Agents Work
+
+<Steps>
+
+### Installation Process
+
+1. Download agent from GitHub
+2. Store in `~/.claude-code-templates/agents/`
+3. Generate executable wrapper script
+4. Install to system bin directory (`/usr/local/bin` or `~/.claude-code-templates/bin`)
+5. Add to PATH (if needed)
+
+### Execution Flow
+
+1. You run: `security-auditor "check this code"`
+2. Wrapper script:
+   - Loads agent system prompt from `~/.claude-code-templates/agents/security-auditor.md`
+   - Detects project context (language, framework)
+   - Auto-includes relevant files
+   - Calls Claude CLI with agent context
+3. Claude executes with agent persona and project awareness
+
+</Steps>
+
+## Creating Global Agents
+
+### Basic Creation
+
+```bash
+npx claude-code-templates@latest --create-agent security-auditor
+```
+
+Output:
+
+```bash
+🤖 Creating global agent: security-auditor
+🌍 Installing to system directory (immediately available)
+📥 Downloading agent from GitHub...
+✅ Agent downloaded successfully
+✅ Global agent 'security-auditor' created successfully!
+
+📦 Usage:
+  security-auditor "your prompt here"
+
+🎉 Ready to use immediately! No setup required.
+💡 Works in scripts, npm tasks, CI/CD, etc.
+```
+
+Now you can run from anywhere:
+
+```bash
+cd ~/projects/my-app
+security-auditor "audit this codebase for vulnerabilities"
+```
+
+### With Category Path
+
+If the agent name is ambiguous, use the full category path:
+
+```bash
+npx claude-code-templates@latest --create-agent development-team/frontend-developer
+```
+
+### Creating Multiple Global Agents
+
+Create several agents at once:
+
+```bash
+# Create security suite
+npx claude-code-templates@latest --create-agent security-auditor
+npx claude-code-templates@latest --create-agent penetration-tester
+npx claude-code-templates@latest --create-agent code-reviewer
+```
+
+## Using Global Agents
+
+### Basic Usage
+
+```bash
+<agent-name> "your prompt"
+```
+
+Examples:
+
+<CodeGroup>
+
+```bash Security Audit
+security-auditor "check this file for SQL injection vulnerabilities"
+```
+
+```bash Code Review
+code-reviewer "review the auth.js file for best practices"
+```
+
+```bash Performance Analysis
+performance-optimizer "analyze this React component for performance issues"
+```
+
+```bash Documentation
+documentation-writer "generate API documentation for this endpoint"
+```
+
+</CodeGroup>
+
+### Auto-Context Detection
+
+Global agents automatically detect your project type and include relevant files:
+
+```bash
+cd ~/projects/my-react-app
+frontend-developer "add error boundary to this component"
+```
+
+The agent automatically:
+- Detects React project (from `package.json`)
+- Includes `src/`, `components/`, `pages/` directories
+- Understands React patterns and conventions
+- Can read files using the Read tool
+
+**Supported Project Types**:
+- **JavaScript/Node**: Detects from `package.json`, includes `src/`, `lib/`, `components/`
+- **Python**: Detects from `requirements.txt` or `pyproject.toml`, includes `*.py` files
+- **Go**: Detects from `go.mod`, includes `*.go`, `cmd/`, `internal/`, `pkg/`
+- **Rust**: Detects from `Cargo.toml`, includes `src/`, `Cargo.toml`
+- **React/Vue/Next.js**: Framework detection from dependencies
+
+### Explicit File Selection
+
+Override auto-detection by specifying files:
+
+```bash
+security-auditor --file auth.js --file database.js "check these files"
+```
+
+### Directory Targeting
+
+```bash
+code-reviewer --dir src/components "review all components"
+```
+
+### Disable Auto-Detection
+
+For general advice without project context:
+
+```bash
+security-auditor --no-auto "explain OAuth 2.0 best practices"
+```
+
+### Verbose Mode
+
+See what the agent is doing:
+
+```bash
+security-auditor --verbose "audit this code"
+```
+
+Outputs:
+
+```bash
+🔍 DEBUG MODE - Command Details:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 User Input: audit this code
+📁 Project Context: Auto-detected
+🎯 Final Prompt Length: 234 characters
+🤖 System Prompt Preview: You are a security auditor...
+⚡ Claude Command: claude -p "audit this code..." --system-prompt "..."
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+## Managing Global Agents
+
+### List Installed Agents
+
+```bash
+npx claude-code-templates@latest --list-agents
+```
+
+Output:
+
+```bash
+📋 Installed Global Agents:
+
+✅ Found 3 global agent(s):
+
+  ✅ security-auditor (🌍 system)
+      Usage: security-auditor "your prompt"
+      Created: 2/28/2026
+
+  ✅ frontend-developer (👤 user)
+      Usage: frontend-developer "your prompt"
+      Created: 2/27/2026
+
+  ✅ code-reviewer (🌍 system)
+      Usage: code-reviewer "your prompt"
+      Created: 2/26/2026
+
+🌟 Global Usage:
+  • Run from any directory: <agent-name> "prompt"
+  • List agents: npx claude-code-templates@latest --list-agents
+  • Remove agent: npx claude-code-templates@latest --remove-agent <name>
+```
+
+### Remove an Agent
+
+```bash
+npx claude-code-templates@latest --remove-agent security-auditor
+```
+
+Output:
+
+```bash
+🗑️ Removing global agent: security-auditor
+✅ Removed system executable: security-auditor
+✅ Removed agent file: security-auditor.md
+🎉 Global agent 'security-auditor' removed successfully!
+```
+
+### Update an Agent
+
+Fetch the latest version from GitHub:
+
+```bash
+npx claude-code-templates@latest --update-agent security-auditor
+```
+
+Output:
+
+```bash
+🔄 Updating global agent: security-auditor
+🔄 Re-downloading latest version...
+🌍 Installing to system directory (immediately available)
+📥 Downloading agent from GitHub...
+✅ Agent downloaded successfully
+✅ Global agent 'security-auditor' created successfully!
+```
+
+## Installation Locations
+
+### System Directory (Recommended)
+
+If you have write access to `/usr/local/bin`, agents are installed there:
+
+```bash
+/usr/local/bin/security-auditor
+~/.claude-code-templates/agents/security-auditor.md
+```
+
+✅ **Advantages**:
+- Immediately available in PATH
+- No shell configuration needed
+- Works in all terminals and IDEs
+
+### User Directory (Fallback)
+
+If system directory is not writable, uses user directory:
+
+```bash
+~/.claude-code-templates/bin/security-auditor
+~/.claude-code-templates/agents/security-auditor.md
+```
+
+⚠️ **Requires PATH Setup**:
+
+The CLI automatically adds to your shell config:
+
+```bash ~/.bashrc or ~/.zshrc
+# Claude Code Templates - Global Agents
+export PATH="$HOME/.claude-code-templates/bin:$PATH"
+```
+
+Restart your terminal or run:
+
+```bash
+source ~/.bashrc  # or ~/.zshrc
+```
+
+## Advanced Usage
+
+### In npm Scripts
+
+Add global agents to package.json:
+
+```json package.json
+{
+  "scripts": {
+    "audit": "security-auditor 'audit for vulnerabilities'",
+    "review": "code-reviewer 'review src/ for improvements'",
+    "optimize": "performance-optimizer 'analyze bundle size'"
+  }
+}
+```
+
+```bash
+npm run audit
+npm run review
+npm run optimize
+```
+
+### In Shell Scripts
+
+Create automation scripts:
+
+```bash pre-commit.sh
+#!/bin/bash
+
+# Run code review before commit
+code-reviewer "review staged changes" || exit 1
+
+# Check for security issues
+security-auditor "scan staged files for vulnerabilities" || exit 1
+
+echo "✅ Pre-commit checks passed"
+```
+
+```bash
+chmod +x pre-commit.sh
+./pre-commit.sh
+```
+
+### In CI/CD Pipelines
+
+<CodeGroup>
+
+```yaml GitHub Actions
+name: Code Review
+on: [pull_request]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Global Agent
+        run: |
+          npx claude-code-templates@latest --create-agent code-reviewer
+          echo "$HOME/.claude-code-templates/bin" >> $GITHUB_PATH
+      
+      - name: Run Code Review
+        run: code-reviewer "review all changes in this PR"
+```
+
+```yaml GitLab CI
+code-review:
+  stage: test
+  script:
+    - npx claude-code-templates@latest --create-agent code-reviewer
+    - export PATH="$HOME/.claude-code-templates/bin:$PATH"
+    - code-reviewer "review MR changes"
+  only:
+    - merge_requests
+```
+
+</CodeGroup>
+
+### In Docker Containers
+
+```dockerfile
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install global agent
+RUN npx claude-code-templates@latest --create-agent security-auditor
+
+ENV PATH="$HOME/.claude-code-templates/bin:$PATH"
+
+COPY . .
+
+# Use agent in container
+RUN security-auditor "audit codebase"
+
+CMD ["npm", "start"]
+```
+
+## Custom Global Agents
+
+You can create custom global agents by:
+
+1. Creating a custom agent in `.claude/agents/`
+2. Publishing to GitHub
+3. Installing as global agent
+
+<Steps>
+
+### Create Custom Agent
+
+```markdown .claude/agents/my-custom-agent.md
+---
+name: my-custom-agent
+description: Custom agent for my specific needs
+tools: Read, Write, Bash
+model: sonnet
+---
+
+You are a custom agent that specializes in...
+
+[Agent instructions here]
+```
+
+### Publish to GitHub
+
+```bash
+# Push to your repo
+git add .claude/agents/my-custom-agent.md
+git commit -m "Add custom agent"
+git push
+```
+
+### Install as Global
+
+Currently, global agents must be in the official repository. For custom agents:
+
+**Workaround**: Manually create global wrapper:
+
+```bash
+# 1. Copy agent to global location
+mkdir -p ~/.claude-code-templates/agents
+cp .claude/agents/my-custom-agent.md ~/.claude-code-templates/agents/
+
+# 2. Create wrapper script
+cat > ~/.claude-code-templates/bin/my-custom-agent << 'EOF'
+#!/usr/bin/env node
+
+const { execSync } = require('child_process');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+
+const agentPath = path.join(os.homedir(), '.claude-code-templates/agents/my-custom-agent.md');
+const systemPrompt = fs.readFileSync(agentPath, 'utf8').replace(/^---[\s\S]*?---\n/, '').trim();
+const userInput = process.argv.slice(2).join(' ');
+
+if (!userInput) {
+  console.error('Usage: my-custom-agent "your prompt"');
+  process.exit(1);
+}
+
+const cmd = `claude -p "${userInput}" --system-prompt "${systemPrompt}"`;
+execSync(cmd, { stdio: 'inherit' });
+EOF
+
+# 3. Make executable
+chmod +x ~/.claude-code-templates/bin/my-custom-agent
+
+# 4. Use it
+my-custom-agent "your prompt"
+```
+
+</Steps>
+
+## Troubleshooting
+
+### Command Not Found
+
+If you get `command not found` after creating a global agent:
+
+```bash
+$ security-auditor "test"
+bash: security-auditor: command not found
+```
+
+**Solutions**:
+
+1. **Check PATH**:
+   ```bash
+   echo $PATH | grep -q ".claude-code-templates" && echo "PATH OK" || echo "PATH missing"
+   ```
+
+2. **Add to PATH manually**:
+   ```bash
+   # Add to ~/.bashrc or ~/.zshrc
+   export PATH="$HOME/.claude-code-templates/bin:$PATH"
+   
+   # Reload shell config
+   source ~/.bashrc  # or source ~/.zshrc
+   ```
+
+3. **Use absolute path**:
+   ```bash
+   ~/.claude-code-templates/bin/security-auditor "test"
+   ```
+
+### Permission Denied
+
+```bash
+$ security-auditor "test"
+bash: /usr/local/bin/security-auditor: Permission denied
+```
+
+**Solution**: Make executable:
+
+```bash
+sudo chmod +x /usr/local/bin/security-auditor
+```
+
+### Claude CLI Not Found
+
+Global agents require Claude CLI:
+
+```bash
+❌ Claude CLI not found in PATH
+💡 Install Claude CLI: https://claude.ai/code
+💡 Or install via npm: npm install -g @anthropic-ai/claude-code
+```
+
+**Solution**: Install Claude CLI:
+
+```bash
+npm install -g @anthropic-ai/claude-code
+
+# Verify
+claude --version
+```
+
+### Agent File Not Found
+
+```bash
+❌ Agent file not found: ~/.claude-code-templates/agents/security-auditor.md
+```
+
+**Solution**: Recreate the global agent:
+
+```bash
+npx claude-code-templates@latest --create-agent security-auditor
+```
+
+### Context Detection Not Working
+
+If the agent doesn't detect your project:
+
+```bash
+security-auditor --verbose "test"
+# Check if "Project type: unknown" in debug output
+```
+
+**Solution**: Manually specify files:
+
+```bash
+security-auditor --file auth.js --file api.js "audit these files"
+```
+
+## Best Practices
+
+### 1. Name Agents Descriptively
+
+✅ Good:
+```bash
+security-auditor
+frontend-developer
+api-documentation-writer
+```
+
+❌ Bad:
+```bash
+sa
+dev
+docs
+```
+
+### 2. Use for Specialized Tasks
+
+Global agents work best for:
+- Security audits
+- Code reviews
+- Documentation generation
+- Performance analysis
+- Compliance checks
+
+Not ideal for:
+- General chatting
+- Multi-step projects
+- Interactive sessions
+
+### 3. Combine with Shell Aliases
+
+```bash ~/.bashrc
+alias audit="security-auditor"
+alias review="code-reviewer"
+alias docs="documentation-writer"
+```
+
+```bash
+audit "check auth.js"
+review "analyze src/"
+docs "generate API docs"
+```
+
+### 4. Create Agent Sets
+
+Install related agents together:
+
+```bash
+# Security suite
+npx claude-code-templates@latest --create-agent security-auditor
+npx claude-code-templates@latest --create-agent penetration-tester
+npx claude-code-templates@latest --create-agent compliance-checker
+
+# Development suite
+npx claude-code-templates@latest --create-agent frontend-developer
+npx claude-code-templates@latest --create-agent backend-developer
+npx claude-code-templates@latest --create-agent devops-engineer
+```
+
+### 5. Document in Team README
+
+```markdown README.md
+## Global Agents
+
+This project uses global Claude Code agents:
+
+\`\`\`bash
+# Setup (one-time)
+npx claude-code-templates@latest --create-agent security-auditor
+npx claude-code-templates@latest --create-agent code-reviewer
+
+# Usage
+security-auditor "audit for vulnerabilities"
+code-reviewer "review my changes"
+\`\`\`
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Installing Components" icon="download" href="/guides/installing-components">
+    Learn about regular component installation
+  </Card>
+  <Card title="Batch Installation" icon="layer-group" href="/guides/batch-installation">
+    Install multiple components at once
+  </Card>
+  <Card title="Workflows" icon="diagram-project" href="/guides/workflows">
+    Create reusable installation workflows
+  </Card>
+  <Card title="Component Browser" icon="grid" href="https://aitmpl.com">
+    Browse all available agents
+  </Card>
+</CardGroup>

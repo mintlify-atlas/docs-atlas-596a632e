@@ -1,0 +1,259 @@
+---
+title: Command Components
+description: 200+ custom slash commands for automated workflows and common development tasks
+---
+
+# Command Components
+
+Commands are custom slash commands that automate common development tasks. They execute pre-defined workflows, run scripts, or coordinate multiple operations.
+
+<Card title="Browse All Commands" icon="globe" href="https://aitmpl.com/?type=commands">
+  Explore 200+ commands with search and filtering at **aitmpl.com**
+</Card>
+
+## Installation
+
+```bash
+# Install a single command
+npx claude-code-templates@latest --command security-audit
+
+# Install multiple commands
+npx claude-code-templates@latest --command setup-testing --command generate-docs
+
+# Install from specific category
+npx claude-code-templates@latest --command security/security-audit
+```
+
+## Command Categories
+
+<Tabs>
+  <Tab title="Security">
+    ### Security Commands
+    
+    Automated security scanning, auditing, and hardening:
+    
+    <CardGroup cols={2}>
+      <Card title="security-audit" icon="shield">
+        Comprehensive security assessment and vulnerability analysis
+        ```bash
+        npx claude-code-templates@latest --command security-audit
+        ```
+        Usage: `/security-audit` or `/security-audit --full`
+      </Card>
+      <Card title="secrets-scanner" icon="key">
+        Scan codebase for hardcoded secrets and credentials
+        ```bash
+        npx claude-code-templates@latest --command secrets-scanner
+        ```
+      </Card>
+      <Card title="dependency-audit" icon="box">
+        Check dependencies for known vulnerabilities
+        ```bash
+        npx claude-code-templates@latest --command dependency-audit
+        ```
+      </Card>
+      <Card title="security-hardening" icon="lock">
+        Apply security best practices to your application
+        ```bash
+        npx claude-code-templates@latest --command security-hardening
+        ```
+      </Card>
+      <Card title="penetration-test" icon="bug">
+        Automated penetration testing workflows
+        ```bash
+        npx claude-code-templates@latest --command penetration-test
+        ```
+      </Card>
+      <Card title="add-authentication-system" icon="user-lock">
+        Add authentication system to your application
+        ```bash
+        npx claude-code-templates@latest --command add-authentication-system
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Testing">
+    ### Testing Commands
+    
+    Test generation, automation, and quality assurance:
+    
+    <CardGroup cols={2}>
+      <Card title="setup-testing" icon="vial">
+        Configure comprehensive testing infrastructure
+        ```bash
+        npx claude-code-templates@latest --command setup-testing
+        ```
+      </Card>
+      <Card title="generate-tests" icon="code">
+        Auto-generate unit and integration tests
+        ```bash
+        npx claude-code-templates@latest --command generate-tests
+        ```
+      </Card>
+      <Card title="e2e-setup" icon="robot">
+        Set up end-to-end testing with Playwright or Cypress
+        ```bash
+        npx claude-code-templates@latest --command e2e-setup
+        ```
+      </Card>
+      <Card title="test-coverage" icon="chart-pie">
+        Analyze and improve test coverage
+        ```bash
+        npx claude-code-templates@latest --command test-coverage
+        ```
+      </Card>
+      <Card title="setup-load-testing" icon="gauge">
+        Configure load and performance testing
+        ```bash
+        npx claude-code-templates@latest --command setup-load-testing
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Database">
+    ### Database Commands
+    
+    Database management, migrations, and optimization:
+    
+    <CardGroup cols={2}>
+      <Card title="supabase-migration-assistant" icon="database">
+        Create and manage Supabase migrations
+        ```bash
+        npx claude-code-templates@latest --command supabase-migration-assistant
+        ```
+      </Card>
+      <Card title="supabase-schema-sync" icon="sync">
+        Sync database schema with Supabase
+        ```bash
+        npx claude-code-templates@latest --command supabase-schema-sync
+        ```
+      </Card>
+      <Card title="supabase-performance-optimizer" icon="bolt">
+        Optimize Supabase database performance
+        ```bash
+        npx claude-code-templates@latest --command supabase-performance-optimizer
+        ```
+      </Card>
+      <Card title="supabase-security-audit" icon="shield-check">
+        Audit Supabase security configuration
+        ```bash
+        npx claude-code-templates@latest --command supabase-security-audit
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Git Workflow">
+    ### Git Workflow Commands
+    
+    Git flow automation and branch management:
+    
+    <CardGroup cols={2}>
+      <Card title="feature" icon="code-branch">
+        Start a new feature branch with git flow
+        ```bash
+        npx claude-code-templates@latest --command feature
+        ```
+      </Card>
+      <Card title="hotfix" icon="fire">
+        Create and manage hotfix branches
+        ```bash
+        npx claude-code-templates@latest --command hotfix
+        ```
+      </Card>
+      <Card title="release" icon="tag">
+        Manage release branches and versioning
+        ```bash
+        npx claude-code-templates@latest --command release
+        ```
+      </Card>
+      <Card title="finish" icon="check">
+        Complete feature/hotfix/release branches
+        ```bash
+        npx claude-code-templates@latest --command finish
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Documentation">
+    ### Documentation Commands
+    
+    Auto-generate docs and maintain documentation:
+    
+    <CardGroup cols={2}>
+      <Card title="generate-docs" icon="book">
+        Auto-generate API and code documentation
+        ```bash
+        npx claude-code-templates@latest --command generate-docs
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Deployment">
+    ### Deployment Commands
+    
+    Deployment automation and infrastructure:
+    
+    <CardGroup cols={2}>
+      <Card title="nextjs-vercel-deploy" icon="rocket">
+        Deploy Next.js applications to Vercel
+        ```bash
+        npx claude-code-templates@latest --command nextjs-vercel
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+## Command Structure
+
+Commands typically include:
+
+- **Description**: What the command does
+- **Allowed Tools**: Tools the command can use (Read, Write, Bash, etc.)
+- **Argument Hints**: Expected parameters
+- **Workflow Steps**: Pre-defined execution steps
+- **Context Loading**: Automatic file and environment loading
+
+## How Commands Work
+
+When you install a command:
+
+1. The command file is downloaded to `.claude/commands/`
+2. Use `/command-name` in your Claude Code chat to invoke it
+3. The command executes its pre-defined workflow
+4. Results are applied to your codebase
+
+## Example Usage
+
+```bash
+# Install security audit command
+npx claude-code-templates@latest --command security-audit
+
+# In Claude Code chat:
+# /security-audit
+# or with arguments:
+# /security-audit --full
+```
+
+## Command Arguments
+
+Many commands accept arguments:
+
+```bash
+# In Claude Code chat:
+/security-audit frontend         # Focus on frontend security
+/generate-tests src/api          # Generate tests for specific directory
+/feature user-authentication     # Start feature branch with name
+```
+
+## Next Steps
+
+- [Browse all commands at aitmpl.com](https://aitmpl.com/?type=commands)
+- [View security commands](/categories/security)
+- [Explore database commands](/categories/database)
+- [Check out testing commands](/categories/testing)

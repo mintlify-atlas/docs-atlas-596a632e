@@ -1,0 +1,599 @@
+---
+title: Model Context Protocol (MCP)
+description: Integrate external services and tools with Claude Code through MCP servers
+---
+
+Model Context Protocol (MCP) is an open standard that enables Claude Code to connect with external data sources, APIs, and services. MCP servers act as bridges between Claude and the outside world.
+
+## What Are MCPs?
+
+MCPs are JSON configuration files (`.json`) that define server connections:
+
+- **Server configuration** - How to start and connect to MCP servers
+- **Command and arguments** - What to execute (npm packages, binaries, scripts)
+- **Environment variables** - Configuration and API keys
+- **Capabilities** - What tools and resources the server provides
+
+<Info>
+MCP servers run as separate processes and communicate with Claude Code via stdio (standard input/output).
+</Info>
+
+## MCP Architecture
+
+MCP configuration lives in `.mcp.json` at your project root:
+
+```json
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://user:pass@localhost/db"
+      }
+    }
+  }
+}
+```
+
+### Configuration Structure
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `command` | Yes | Executable to run (e.g., `npx`, `node`, `python`) |
+| `args` | Yes | Array of command arguments |
+| `env` | No | Environment variables for the server |
+| `description` | No | Human-readable description (removed during installation) |
+
+## MCP Categories
+
+<Tabs>
+  <Tab title="Web & APIs">
+    Access web content and external APIs:
+    
+    - **web-fetch** - HTTP requests, web scraping, API calls
+    - **github-integration** - GitHub API access (repos, issues, PRs)
+    - **slack-integration** - Slack API for messages and channels
+    
+    ```bash
+    npx claude-code-templates@latest --mcp web/web-fetch
+    ```
+    
+    **Capabilities**:
+    - Fetch web pages and parse HTML
+    - Make REST API requests
+    - Download files and images
+    - Parse JSON and XML responses
+  </Tab>
+  
+  <Tab title="Databases">
+    Direct database access and queries:
+    
+    - **postgresql-integration** - PostgreSQL database access
+    - **mysql-integration** - MySQL database operations
+    - **supabase** - Supabase client with auth and storage
+    - **neon** - Neon serverless Postgres
+    
+    ```bash
+    npx claude-code-templates@latest --mcp database/postgresql-integration
+    ```
+    
+    **Capabilities**:
+    - Execute SQL queries
+    - Inspect database schemas
+    - Run migrations
+    - Analyze query performance
+  </Tab>
+  
+  <Tab title="Development Tools">
+    Code analysis and development utilities:
+    
+    - **deepgraph-react** - React component analysis
+    - **deepgraph-nextjs** - Next.js project insights
+    - **deepgraph-typescript** - TypeScript codebase analysis
+    - **sentry** - Error tracking and monitoring
+    
+    ```bash
+    npx claude-code-templates@latest --mcp devtools/deepgraph-react
+    ```
+    
+    **Capabilities**:
+    - Analyze component dependencies
+    - Find unused code
+    - Track imports and exports
+    - Visualize code structure
+  </Tab>
+  
+  <Tab title="Browser Automation">
+    Headless browser control:
+    
+    - **playwright** - Browser automation with Playwright
+    - **puppeteer** - Chrome automation
+    - **selenium** - Multi-browser automation
+    
+    ```bash
+    npx claude-code-templates@latest --mcp browser_automation/playwright
+    ```
+    
+    **Capabilities**:
+    - Navigate web pages
+    - Fill forms and click buttons
+    - Take screenshots
+    - Extract data from dynamic sites
+  </Tab>
+  
+  <Tab title="Filesystem">
+    Enhanced file operations:
+    
+    - **filesystem-access** - Extended file system operations
+    - **memory-integration** - Persistent memory and notes
+    
+    ```bash
+    npx claude-code-templates@latest --mcp filesystem/filesystem-access
+    ```
+    
+    **Capabilities**:
+    - Read/write files with advanced options
+    - Watch file changes
+    - Search file contents
+    - Manage permissions
+  </Tab>
+  
+  <Tab title="Productivity">
+    Note-taking and productivity tools:
+    
+    - **obsidian** - Obsidian vault access
+    - **notion** - Notion workspace integration
+    - **google-drive** - Google Drive file access
+    
+    ```bash
+    npx claude-code-templates@latest --mcp productivity/obsidian
+    ```
+    
+    **Capabilities**:
+    - Read/write notes
+    - Search across documents
+    - Manage tags and links
+    - Export content
+  </Tab>
+</Tabs>
+
+## Real-World Examples
+
+### Example 1: Web Fetch MCP
+
+**File**: `.mcp.json`
+
+```json
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    }
+  }
+}
+```
+
+**Usage in Claude Code**:
+```
+Fetch the latest release notes from https://api.github.com/repos/anthropics/claude-code/releases/latest
+```
+
+Claude automatically uses the MCP server to make the HTTP request.
+
+### Example 2: PostgreSQL Database MCP
+
+**File**: `.mcp.json`
+
+```json
+{
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://localhost/mydb"
+      }
+    }
+  }
+}
+```
+
+**Usage in Claude Code**:
+```
+Query the users table and show me all users created in the last 7 days
+```
+
+Claude connects to PostgreSQL and executes the query.
+
+### Example 3: GitHub Integration MCP
+
+**File**: `.mcp.json`
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "ghp_your_token_here"
+      }
+    }
+  }
+}
+```
+
+**Usage in Claude Code**:
+```
+List all open issues in the main repository and summarize the top 3 by reactions
+```
+
+Claude uses the GitHub API via MCP to fetch and analyze issues.
+
+## Installing MCPs
+
+### Single MCP
+
+```bash
+npx claude-code-templates@latest --mcp web-fetch
+```
+
+The MCP configuration merges with your existing `.mcp.json`.
+
+### Multiple MCPs
+
+```bash
+npx claude-code-templates@latest \
+  --mcp web-fetch \
+  --mcp postgresql-integration \
+  --mcp github-integration
+```
+
+### With Category Prefix
+
+```bash
+npx claude-code-templates@latest --mcp database/postgresql-integration
+```
+
+<Info>
+MCP servers are downloaded on-demand when first used. No manual installation required beyond configuration.
+</Info>
+
+## Environment Variables
+
+Many MCPs require API keys or connection strings:
+
+### Secure Configuration
+
+**DON'T** hardcode secrets:
+```json
+{
+  "env": {
+    "API_KEY": "sk-1234567890"  // ❌ Bad: exposed in git
+  }
+}
+```
+
+**DO** use environment variables:
+```json
+{
+  "env": {
+    "API_KEY": "${API_KEY}"  // ✅ Good: reads from shell environment
+  }
+}
+```
+
+Set variables in your shell:
+```bash
+export API_KEY="sk-1234567890"
+```
+
+Or use `.env` files (add to `.gitignore`):
+```bash
+# .env
+POSTGRES_CONNECTION_STRING=postgresql://localhost/db
+GITHUB_TOKEN=ghp_your_token
+```
+
+<Warning>
+Never commit API keys, database passwords, or tokens to version control. Use environment variables or secret management tools.
+</Warning>
+
+## MCP Server Types
+
+### NPM Packages
+
+Most official MCPs are npm packages:
+
+```json
+{
+  "command": "npx",
+  "args": ["-y", "@modelcontextprotocol/server-name"]
+}
+```
+
+The `-y` flag auto-installs packages without prompting.
+
+### Python Scripts
+
+```json
+{
+  "command": "python",
+  "args": ["-m", "mcp_server_name"]
+}
+```
+
+Requires the Python package to be installed: `pip install mcp-server-name`
+
+### Custom Executables
+
+```json
+{
+  "command": "/path/to/custom-server",
+  "args": ["--config", "./config.json"]
+}
+```
+
+### Docker Containers
+
+```json
+{
+  "command": "docker",
+  "args": [
+    "run",
+    "--rm",
+    "-i",
+    "custom/mcp-server:latest"
+  ]
+}
+```
+
+## MCP Capabilities
+
+MCP servers can provide:
+
+### 1. Tools
+
+Functions that Claude can call:
+
+```typescript
+// Example: web-fetch provides
+fetch(url: string, options?: RequestInit)
+html_to_markdown(html: string)
+download_file(url: string, path: string)
+```
+
+### 2. Resources
+
+Data that Claude can read:
+
+```typescript
+// Example: postgres provides
+schema://tables          // List all tables
+schema://tables/{name}   // Table schema
+query://{sql}            // Query results
+```
+
+### 3. Prompts
+
+Pre-built prompt templates:
+
+```typescript
+// Example: github provides
+analyze-repo    // Analyze repository structure
+review-pr       // Review pull request
+```
+
+## Creating Custom MCP Servers
+
+You can build custom MCP servers:
+
+<Steps>
+  <Step title="Choose Implementation">
+    Use the MCP SDK for TypeScript or Python:
+    
+    ```bash
+    npm install @modelcontextprotocol/sdk
+    ```
+  </Step>
+  
+  <Step title="Implement Server">
+    Create server with tools and resources:
+    
+    ```typescript
+    import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+    
+    const server = new Server({
+      name: 'my-server',
+      version: '1.0.0'
+    });
+    
+    server.tool('my-tool', async (args) => {
+      // Tool implementation
+      return { result: 'success' };
+    });
+    ```
+  </Step>
+  
+  <Step title="Configure in .mcp.json">
+    Add your server configuration:
+    
+    ```json
+    {
+      "mcpServers": {
+        "my-server": {
+          "command": "node",
+          "args": ["./mcp-servers/my-server.js"]
+        }
+      }
+    }
+    ```
+  </Step>
+  
+  <Step title="Test">
+    Use your custom server in Claude Code:
+    
+    ```
+    Use my-tool to process the data
+    ```
+  </Step>
+</Steps>
+
+<Info>
+For detailed MCP development guides, see [MCP Documentation](https://modelcontextprotocol.io).
+</Info>
+
+## MCP Best Practices
+
+### 1. Security First
+
+- Never hardcode credentials
+- Use environment variables for secrets
+- Validate all inputs
+- Limit server permissions
+- Use read-only access when possible
+
+### 2. Error Handling
+
+Servers should handle errors gracefully:
+
+```typescript
+server.tool('fetch-data', async (args) => {
+  try {
+    const response = await fetch(args.url);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    return {
+      error: true,
+      message: error.message
+    };
+  }
+});
+```
+
+### 3. Resource Management
+
+- Close connections properly
+- Implement timeouts
+- Clean up resources
+- Handle server shutdown gracefully
+
+### 4. Documentation
+
+Document your MCP tools clearly:
+
+```typescript
+server.tool(
+  'search-database',
+  {
+    description: 'Search database with SQL query',
+    parameters: {
+      query: { type: 'string', description: 'SQL query to execute' },
+      limit: { type: 'number', description: 'Max results', default: 100 }
+    }
+  },
+  async (args) => { /* ... */ }
+);
+```
+
+## Troubleshooting MCPs
+
+### Server Won't Start
+
+Check the command and arguments:
+
+```json
+{
+  "command": "npx",
+  "args": ["-y", "@modelcontextprotocol/server-fetch"]
+}
+```
+
+Test manually:
+```bash
+npx -y @modelcontextprotocol/server-fetch
+```
+
+### Environment Variables Not Working
+
+Ensure variables are exported:
+```bash
+export DATABASE_URL="postgresql://localhost/db"
+echo $DATABASE_URL  # Should print the URL
+```
+
+Check variable syntax:
+```json
+{
+  "env": {
+    "DATABASE_URL": "${DATABASE_URL}"  // Must use ${VAR} syntax
+  }
+}
+```
+
+### Connection Errors
+
+Verify network access:
+- Database servers are running
+- Firewall allows connections
+- Credentials are correct
+- Connection strings are properly formatted
+
+### Permission Denied
+
+Ensure executable permissions:
+```bash
+chmod +x ./mcp-servers/my-server.js
+```
+
+## MCP vs Claude Code Tools
+
+| MCP Servers | Claude Code Tools |
+|-------------|------------------|
+| External services | Built-in capabilities |
+| Requires configuration | Always available |
+| Custom capabilities | Standard operations |
+| Network/database access | File system access |
+| Community-built | Official tools |
+
+<Info>
+MCPs extend Claude's capabilities beyond the built-in tools. Use them to connect Claude with your specific services and data sources.
+</Info>
+
+## Official MCP Servers
+
+Anthropics maintains official MCP servers:
+
+- `@modelcontextprotocol/server-fetch` - HTTP requests
+- `@modelcontextprotocol/server-filesystem` - File operations
+- `@modelcontextprotocol/server-github` - GitHub API
+- `@modelcontextprotocol/server-postgres` - PostgreSQL
+- `@modelcontextprotocol/server-sqlite` - SQLite
+
+Browse all at [MCP Registry](https://github.com/modelcontextprotocol/servers).
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Browse MCPs" icon="plug" href="/components/mcps">
+    Explore 55+ available MCPs
+  </Card>
+  <Card title="MCP Documentation" icon="book" href="https://modelcontextprotocol.io">
+    Official MCP specification
+  </Card>
+  <Card title="Create MCP Server" icon="code" href="https://modelcontextprotocol.io/quickstart">
+    Build custom MCP servers
+  </Card>
+  <Card title="Settings" icon="gear" href="/concepts/settings">
+    Configure Claude Code behavior
+  </Card>
+</CardGroup>

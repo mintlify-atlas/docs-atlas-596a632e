@@ -1,0 +1,273 @@
+---
+title: MCP Components
+description: 55+ Model Context Protocol servers for integrating external services with Claude Code
+---
+
+# MCP Components
+
+MCPs (Model Context Protocol servers) enable Claude Code to integrate with external services, databases, APIs, and tools. They extend Claude's capabilities beyond the local codebase.
+
+<Card title="Browse All MCPs" icon="globe" href="https://aitmpl.com/?type=mcps">
+  Explore 55+ MCP integrations at **aitmpl.com**
+</Card>
+
+## Installation
+
+```bash
+# Install a single MCP
+npx claude-code-templates@latest --mcp neon
+
+# Install multiple MCPs
+npx claude-code-templates@latest --mcp neon --mcp supabase --mcp web-fetch
+
+# Install from specific category
+npx claude-code-templates@latest --mcp database/neon
+```
+
+## MCP Categories
+
+<Tabs>
+  <Tab title="Database">
+    ### Database MCPs
+    
+    Connect to databases and manage data:
+    
+    <CardGroup cols={2}>
+      <Card title="Neon" icon="bolt">
+        Neon serverless Postgres integration
+        ```bash
+        npx claude-code-templates@latest --mcp neon
+        ```
+        **Features:**
+        - Query databases directly
+        - Manage schemas and migrations
+        - Access Neon Management API
+      </Card>
+      <Card title="Supabase" icon="database">
+        Supabase platform integration
+        ```bash
+        npx claude-code-templates@latest --mcp supabase
+        ```
+        **Features:**
+        - Database operations
+        - Authentication management
+        - Storage and realtime
+      </Card>
+      <Card title="PostgreSQL" icon="elephant">
+        Direct PostgreSQL database access
+        ```bash
+        npx claude-code-templates@latest --mcp postgresql-integration
+        ```
+      </Card>
+      <Card title="MySQL" icon="database">
+        MySQL database integration
+        ```bash
+        npx claude-code-templates@latest --mcp mysql-integration
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Web">
+    ### Web MCPs
+    
+    Fetch and interact with web content:
+    
+    <CardGroup cols={2}>
+      <Card title="Web Fetch" icon="globe">
+        Fetch and parse web content
+        ```bash
+        npx claude-code-templates@latest --mcp web-fetch
+        ```
+        **Features:**
+        - HTTP requests
+        - HTML parsing
+        - Content extraction
+      </Card>
+      <Card title="Web Reader" icon="book-open">
+        Read and analyze web pages
+        ```bash
+        npx claude-code-templates@latest --mcp web-reader
+        ```
+      </Card>
+      <Card title="Web Search Prime" icon="search">
+        Advanced web search capabilities
+        ```bash
+        npx claude-code-templates@latest --mcp web-search-prime
+        ```
+      </Card>
+      <Card title="ZRead" icon="file-lines">
+        Enhanced web content reading
+        ```bash
+        npx claude-code-templates@latest --mcp zread
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Browser Automation">
+    ### Browser Automation MCPs
+    
+    Automate browser interactions and web scraping:
+    
+    <CardGroup cols={2}>
+      <Card title="Puppeteer" icon="robot">
+        Browser automation with Puppeteer
+        ```bash
+        npx claude-code-templates@latest --mcp puppeteer
+        ```
+        **Features:**
+        - Page navigation
+        - Form filling
+        - Screenshot capture
+        - PDF generation
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Productivity">
+    ### Productivity MCPs
+    
+    Task management, notes, and workflow automation:
+    
+    <CardGroup cols={2}>
+      <Card title="Todoist" icon="check-square">
+        Todoist task management integration
+        ```bash
+        npx claude-code-templates@latest --mcp todoist
+        ```
+      </Card>
+      <Card title="Notion" icon="book">
+        Notion workspace integration
+        ```bash
+        npx claude-code-templates@latest --mcp notion
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="DevTools">
+    ### Development Tools MCPs
+    
+    Developer utilities and integrations:
+    
+    <CardGroup cols={2}>
+      <Card title="GitHub" icon="github">
+        GitHub API integration
+        ```bash
+        npx claude-code-templates@latest --mcp github
+        ```
+        **Features:**
+        - Repository management
+        - Issue tracking
+        - Pull request automation
+      </Card>
+      <Card title="Docker" icon="docker">
+        Docker container management
+        ```bash
+        npx claude-code-templates@latest --mcp docker
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Audio">
+    ### Audio MCPs
+    
+    Audio processing and transcription:
+    
+    <CardGroup cols={2}>
+      <Card title="Whisper" icon="microphone">
+        Audio transcription with OpenAI Whisper
+        ```bash
+        npx claude-code-templates@latest --mcp whisper
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Marketing">
+    ### Marketing MCPs
+    
+    Marketing automation and analytics:
+    
+    <CardGroup cols={2}>
+      <Card title="Google Analytics" icon="chart-line">
+        Google Analytics data access
+        ```bash
+        npx claude-code-templates@latest --mcp google-analytics
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+## MCP Configuration
+
+MCPs are configured in `.claude/.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "Neon": {
+      "description": "MCP server for Neon database",
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.neon.tech/mcp"]
+    }
+  }
+}
+```
+
+## How MCPs Work
+
+1. **Installation**: MCP configuration is added to `.mcp.json`
+2. **Startup**: Claude Code loads configured MCPs on launch
+3. **Tool Access**: MCPs expose tools that Claude can use
+4. **Execution**: When Claude uses an MCP tool, it communicates with the external service
+
+## Environment Variables
+
+Many MCPs require API keys or credentials:
+
+```bash
+# In your .env file
+NEON_API_KEY=your_api_key
+SUPABASE_URL=your_project_url
+SUPABASE_KEY=your_service_key
+GITHUB_TOKEN=your_github_token
+```
+
+## Example Usage
+
+```bash
+# Install Neon MCP
+npx claude-code-templates@latest --mcp neon
+
+# Add your Neon API key to .env
+echo "NEON_API_KEY=your_key" >> .env
+
+# In Claude Code chat:
+# "Query my Neon database for all users"
+# "Create a new branch in my Neon project"
+```
+
+## Popular MCPs
+
+### Neon
+Serverless Postgres with branching, instant provisioning, and autoscaling.
+
+### Supabase
+Complete backend platform with database, auth, storage, and realtime.
+
+### Web Fetch
+Fetch and parse web content for research and analysis.
+
+### GitHub
+Manage repositories, issues, pull requests, and workflows.
+
+## Next Steps
+
+- [Browse all MCPs at aitmpl.com](https://aitmpl.com/?type=mcps)
+- [View database MCPs](/categories/database)
+- [Explore MCP settings](/components/settings)
+- [Learn about MCP configuration](https://modelcontextprotocol.io)

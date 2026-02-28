@@ -1,0 +1,408 @@
+---
+title: CLI Tool Overview
+description: Complete guide to the Claude Code Templates CLI for managing components, agents, and configurations
+---
+
+# CLI Tool Overview
+
+The Claude Code Templates CLI is a powerful tool for managing Claude Code configurations, components, and development workflows. Install and configure agents, commands, MCP servers, hooks, and settings for your projects.
+
+## Installation
+
+Install globally via npm:
+
+```bash
+npm install -g claude-code-templates
+```
+
+Or use directly with npx (no installation required):
+
+```bash
+npx claude-code-templates@latest
+```
+
+## Command Aliases
+
+The CLI supports multiple command aliases for convenience:
+
+```bash
+create-claude-config   # Full command name
+claude-code-templates  # Package name
+claude-code-template   # Singular form
+claude-init            # Short init command
+cctemplates            # Abbreviated
+cct                    # Shortest alias
+claude-setup           # Setup-focused
+claude-config          # Config-focused
+```
+
+All aliases provide identical functionality.
+
+## Quick Start
+
+### Interactive Setup
+
+Launch the interactive menu to explore all features:
+
+```bash
+cct
+```
+
+The menu provides access to:
+- **Analytics Dashboard** - Monitor Claude Code usage and sessions
+- **Chats Mobile** - AI-first mobile interface for conversations
+- **Agents Dashboard** - View and analyze Claude conversations
+- **Project Setup** - Configure Claude Code for your project
+- **Health Check** - Verify your Claude Code setup
+
+### Project Configuration
+
+Setup Claude Code for your project with automatic detection:
+
+```bash
+cct --yes  # Use defaults with detected project type
+```
+
+Or run interactive prompts:
+
+```bash
+cct  # Follow guided setup
+```
+
+### Component Installation
+
+Install specific components:
+
+```bash
+# Install an agent
+cct --agent frontend-developer
+
+# Install a command
+cct --command setup-testing
+
+# Install an MCP server
+cct --mcp web-fetch
+
+# Install a hook
+cct --hook automation/simple-notifications
+
+# Install a setting
+cct --setting permissions/allow-npm-commands
+
+# Install a skill
+cct --skill web-development/roier-seo
+```
+
+### Batch Installation
+
+Install multiple components at once:
+
+```bash
+cct --agent security-auditor --command security-audit --setting read-only-mode
+
+cct --mcp web-fetch,filesystem-access,github-integration
+```
+
+## Core Features
+
+### Analytics & Monitoring
+
+Real-time analytics dashboard for Claude Code usage:
+
+```bash
+cct --analytics              # Launch analytics dashboard
+cct --analytics --tunnel     # Enable remote access via Cloudflare Tunnel
+cct --agents                 # Launch agents dashboard
+cct --2025                   # Year in Review dashboard
+```
+
+### Global Agents
+
+Create globally accessible AI agents:
+
+```bash
+# Create a global agent
+cct --create-agent customer-support
+
+# List installed global agents
+cct --list-agents
+
+# Update an agent
+cct --update-agent customer-support
+
+# Remove an agent
+cct --remove-agent customer-support
+```
+
+Once created, use global agents from anywhere:
+
+```bash
+customer-support "How do I handle refund requests?"
+```
+
+### Health Check
+
+Verify your Claude Code setup:
+
+```bash
+cct --health-check
+cct --health      # Short alias
+cct --verify      # Alternative alias
+```
+
+Checks:
+- System requirements (Node.js, OS, memory)
+- Claude Code installation and authentication
+- Project configuration files
+- Agents, commands, and MCP servers
+- Hook configurations
+
+### Statistics & Analysis
+
+Analyze your Claude Code usage:
+
+```bash
+cct --command-stats   # Analyze command usage
+cct --hook-stats      # Analyze automation hooks
+cct --mcp-stats       # Analyze MCP server usage
+```
+
+### Sandbox Execution
+
+Run Claude Code in isolated sandbox environments:
+
+```bash
+# E2B sandbox
+cct --sandbox e2b --prompt "Create a React app"
+
+# With API key
+cct --sandbox e2b --e2b-api-key YOUR_KEY --prompt "Build a dashboard"
+```
+
+### Session Management
+
+Clone and share Claude Code sessions:
+
+```bash
+cct --clone-session https://example.com/session/abc123
+```
+
+## Component Types
+
+The CLI manages six types of components:
+
+### Agents (600+)
+AI specialists for specific development tasks:
+- Frontend developers (React, Vue, Angular)
+- Backend developers (Node.js, Python, Go)
+- Security auditors
+- DevOps engineers
+- Documentation writers
+
+### Commands (200+)
+Custom slash commands for workflows:
+- Code review commands
+- Testing setup
+- Deployment automation
+- Documentation generation
+
+### MCP Servers (55+)
+External service integrations:
+- Web fetch
+- Database connections (MySQL, PostgreSQL)
+- GitHub integration
+- Memory management
+- File system access
+
+### Settings (60+)
+Claude Code configuration presets:
+- Permissions management
+- Model selection (Sonnet, Haiku)
+- Telemetry controls
+- Retention policies
+- Statuslines
+
+### Hooks (39+)
+Automation triggers:
+- Pre-tool use hooks
+- Post-tool use hooks
+- Notification hooks
+- Git automation
+- Testing automation
+
+### Skills
+Specialized workflows and capabilities:
+- Web development tools
+- Document processing
+- Creative design
+- Data analysis
+
+## Configuration Files
+
+The CLI creates and manages these files:
+
+```bash
+.claude/
+├── CLAUDE.md              # Project context and guidelines
+├── agents/                # Custom AI agents
+├── commands/              # Slash commands
+├── settings.json          # Project settings
+├── settings.local.json    # Local overrides (gitignored)
+└── scripts/               # Helper scripts
+
+.mcp.json                  # MCP server configurations
+```
+
+## Environment Variables
+
+Optional environment variables for enhanced functionality:
+
+```bash
+# Anthropic API
+ANTHROPIC_API_KEY=sk-ant-xxx
+
+# Sandbox providers
+E2B_API_KEY=xxx
+
+# Remote access
+CLOUDFLARE_TUNNEL_TOKEN=xxx
+```
+
+## Templates
+
+Pre-configured templates for popular frameworks:
+
+- **Common** - Universal configuration for any project
+- **JavaScript/TypeScript** - Node.js, React, Vue, Next.js
+- **Python** - Django, Flask, FastAPI
+- **Ruby** - Rails, Sinatra
+- **Go** - Standard library, Gin, Echo
+- **Rust** - Cargo projects
+
+## Dashboards
+
+The CLI includes multiple web-based dashboards:
+
+### Analytics Dashboard
+```bash
+cct --analytics
+```
+
+Features:
+- Real-time conversation tracking
+- Token usage monitoring
+- Session analysis
+- Agent performance metrics
+- Activity heatmaps
+
+### Chats Mobile
+```bash
+cct --chats
+```
+
+Mobile-optimized interface for:
+- Conversation browsing
+- Quick access to recent chats
+- Search and filtering
+
+### Plugin Dashboard
+```bash
+cct --plugins
+```
+
+Manage:
+- Marketplace browsing
+- Installed plugins
+- Permission management
+
+### Skills Dashboard
+```bash
+cct --skills-manager
+```
+
+Explore and manage Claude Code Skills.
+
+### Teams Dashboard
+```bash
+cct --teams
+```
+
+Review multi-agent collaboration sessions.
+
+## Remote Access
+
+Enable remote access to dashboards via Cloudflare Tunnel:
+
+```bash
+cct --analytics --tunnel
+cct --chats --tunnel
+```
+
+Generates a public URL for accessing dashboards from any device.
+
+## Workflow Examples
+
+### New Project Setup
+```bash
+# Navigate to your project
+cd my-project
+
+# Run interactive setup
+cct
+
+# Or use defaults for detected project type
+cct --yes
+```
+
+### Security-Focused Setup
+```bash
+cct --agent security-auditor \
+    --command security-audit \
+    --setting permissions/deny-sensitive-files \
+    --setting security/read-only-mode
+```
+
+### Full-Stack Development
+```bash
+cct --agent frontend-developer \
+    --agent backend-developer \
+    --command setup-testing \
+    --mcp github-integration \
+    --hook automation/git-commit-validation
+```
+
+### Documentation Project
+```bash
+cct --agent technical-writer \
+    --command generate-docs \
+    --setting statusline/context-monitor
+```
+
+## Tips & Best Practices
+
+1. **Start with Health Check**: Run `cct --health` before setup
+2. **Use Dry Run**: Test configurations with `--dry-run`
+3. **Leverage Analytics**: Monitor usage with `cct --analytics`
+4. **Create Global Agents**: Build reusable agents with `--create-agent`
+5. **Batch Install**: Install multiple components in one command
+6. **Version Consistency**: Use `@latest` with npx for latest features
+
+## Getting Help
+
+View help for any command:
+
+```bash
+cct --help
+```
+
+Explore components at:
+- Website: https://aitmpl.com/
+- Documentation: https://docs.aitmpl.com/
+- GitHub: https://github.com/davila7/claude-code-templates
+
+## Next Steps
+
+- [Install Components](/cli/install-component) - Detailed component installation guide
+- [Create Global Agents](/cli/create-agent) - Build globally accessible agents
+- [CLI Flags Reference](/cli/flags) - Complete flags documentation
+- [Configuration Guide](/cli/configuration) - Settings and configuration files

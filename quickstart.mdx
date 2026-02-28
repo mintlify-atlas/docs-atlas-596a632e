@@ -1,80 +1,365 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quick Start
+description: Install and use your first Claude Code component in under 2 minutes
 ---
 
-## Get started in three steps
+# Quick Start
 
-Get your documentation site running locally and make your first customization.
-
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+Get up and running with Claude Code Templates in under 2 minutes. This guide will walk you through installing your first component and using it with Claude Code.
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  **Prerequisites**: You need [Anthropic's Claude Code](https://code.claude.com) installed on your machine. Claude Code Templates works as an enhancement to the official Claude Code IDE.
 </Note>
+
+## Installation
+
+<Steps>
+  <Step title="Run the CLI">
+    Open your terminal and run the npx command. No installation required:
+    
+    ```bash
+    npx claude-code-templates@latest
+    ```
+    
+    <Tip>
+      Use the short alias `cct` to save typing:
+      ```bash
+      npx cct@latest
+      ```
+    </Tip>
+  </Step>
+
+  <Step title="Choose Your Component">
+    The interactive menu will appear. Let's install a frontend developer agent:
+    
+    ```bash
+    # Navigate using arrow keys
+    ? What would you like to do?
+    ❯ ⚙️  Project Setup - Configure Claude Code for your project
+      📊 Analytics Dashboard
+      💬 Chats Mobile
+      🔍 Health Check
+    
+    # Select "Project Setup" and press Enter
+    ```
+    
+    Then select the component type:
+    ```bash
+    ? What would you like to install?
+    ❯ 🤖 Agent
+      ⚡ Command
+      🔌 MCP Server
+      ⚙️  Setting
+      🪝 Hook
+    ```
+  </Step>
+
+  <Step title="Select Component Category">
+    Browse by category to find what you need:
+    
+    ```bash
+    ? Select agent category:
+    ❯ Development Team
+      Development Tools
+      Security
+      DevOps & Infrastructure
+      Data & AI
+      Documentation
+      Testing & QA
+    ```
+    
+    <Note>
+      There are 600+ agents organized into 30+ categories. Use arrow keys to browse or start typing to filter.
+    </Note>
+  </Step>
+
+  <Step title="Install Component">
+    Choose your specific component:
+    
+    ```bash
+    ? Select agent:
+    ❯ frontend-developer - Expert in modern frontend development
+      backend-developer - Specializes in server-side development
+      fullstack-developer - Full-stack web application expert
+      react-expert - React and Next.js specialist
+      vue-expert - Vue.js and Nuxt specialist
+    
+    # Select and press Enter
+    ```
+    
+    The CLI will download and install the component:
+    ```bash
+    ✓ Installing frontend-developer agent...
+    ✓ Component installed successfully!
+    ```
+  </Step>
+</Steps>
+
+## Quick Install (Skip Interactive Mode)
+
+If you already know what you want, install directly:
+
+<CodeGroup>
+```bash Install Single Component
+npx claude-code-templates@latest \
+  --agent development-team/frontend-developer \
+  --yes
+```
+
+```bash Install Multiple Components
+npx claude-code-templates@latest \
+  --agent development-team/frontend-developer \
+  --command testing/generate-tests \
+  --mcp development/github-integration \
+  --yes
+```
+
+```bash Install Complete Stack
+# React development environment
+npx claude-code-templates@latest \
+  --agent development-team/frontend-developer \
+  --agent development-team/react-expert \
+  --command testing/generate-tests \
+  --command performance/optimize-bundle \
+  --mcp development/github-integration \
+  --hook git/pre-commit-validation \
+  --yes
+```
+</CodeGroup>
+
+<Tip>
+  The `--yes` flag skips all confirmation prompts. Perfect for automation and scripting.
+</Tip>
+
+## Using Your Component
+
+After installation, your components are immediately available in Claude Code:
+
+### Using Agents
+
+Agents are installed to `.claude/agents/` in your project:
+
+1. Open Claude Code in your project directory
+2. Reference the agent in conversation:
+   ```
+   @frontend-developer help me optimize this React component
+   ```
+3. The agent has specialized knowledge and context for its domain
+
+### Using Commands
+
+Commands are available as slash commands:
+
+1. Type `/` in Claude Code to see available commands
+2. Use the command:
+   ```
+   /generate-tests src/components/Button.tsx
+   ```
+3. Claude Code executes the command with the agent's context
+
+### Using MCPs (Model Context Protocol)
+
+MCPs integrate external services:
+
+1. MCPs are automatically configured in your `.claude/` directory
+2. Claude Code connects to the service on startup
+3. Use natural language to interact:
+   ```
+   Show me recent pull requests from GitHub
+   ```
+
+## Verify Installation
+
+Check that components were installed correctly:
+
+```bash
+# List all installed components
+ls -la .claude/
+
+# Example output:
+drwxr-xr-x  agents/
+drwxr-xr-x  commands/
+drwxr-xr-x  hooks/
+-rw-r--r--  config.json
+```
+
+Or run the health check:
+
+```bash
+npx claude-code-templates@latest --health-check
+```
+
+This will validate:
+- ✓ Claude Code is installed
+- ✓ Configuration files are valid
+- ✓ All components are properly configured
+- ✓ Dependencies are installed
+
+## Example: Complete React Setup
+
+Let's set up a complete React development environment:
+
+<Steps>
+  <Step title="Create New Project">
+    ```bash
+    npx create-react-app my-app
+    cd my-app
+    ```
+  </Step>
+
+  <Step title="Install Components">
+    ```bash
+    npx claude-code-templates@latest \
+      --agent development-team/frontend-developer \
+      --agent development-team/react-expert \
+      --command testing/generate-tests \
+      --command performance/optimize-bundle \
+      --mcp development/github-integration \
+      --hook git/pre-commit-validation \
+      --yes
+    ```
+    
+    This installs:
+    - 🤖 Frontend Developer agent
+    - 🤖 React Expert agent
+    - ⚡ Generate Tests command
+    - ⚡ Optimize Bundle command
+    - 🔌 GitHub MCP integration
+    - 🪝 Pre-commit validation hook
+  </Step>
+
+  <Step title="Open in Claude Code">
+    ```bash
+    code .
+    ```
+    
+    Claude Code will automatically detect and load your components.
+  </Step>
+
+  <Step title="Start Building">
+    Try these prompts in Claude Code:
+    
+    ```
+    @react-expert create a reusable Button component with TypeScript
+    ```
+    
+    ```
+    /generate-tests src/components/Button.tsx
+    ```
+    
+    ```
+    @frontend-developer optimize this component for performance
+    ```
+    
+    ```
+    /optimize-bundle
+    ```
+  </Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Browse Components"
+    icon="grid"
+    href="https://aitmpl.com"
+  >
+    Explore 900+ agents, commands, MCPs, and more in the interactive catalog.
+  </Card>
+  <Card
+    title="Installation Guide"
+    icon="book"
+    href="/installation"
+  >
+    Learn about component types, batch installation, and advanced configuration.
+  </Card>
+  <Card
+    title="CLI Reference"
+    icon="code"
+    href="/cli/overview"
+  >
+    Complete CLI reference with all commands and options.
+  </Card>
+  <Card
+    title="Analytics Dashboard"
+    icon="chart-line"
+    href="/tools/analytics-dashboard"
+  >
+    Monitor your Claude Code sessions in real-time.
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Components not showing in Claude Code">
+    Make sure you're running Claude Code in the same directory where you installed components:
+    
+    ```bash
+    # Check current directory
+    pwd
+    
+    # Check for .claude directory
+    ls -la .claude/
+    ```
+    
+    If `.claude/` doesn't exist, run the installation again in your project directory.
+  </Accordion>
+
+  <Accordion title="Permission denied errors">
+    Some components require executable permissions. Run:
+    
+    ```bash
+    chmod +x .claude/scripts/*
+    chmod +x .claude/hooks/*
+    ```
+  </Accordion>
+
+  <Accordion title="MCP connection errors">
+    MCPs require external services to be configured:
+    
+    1. Check the MCP documentation for required environment variables
+    2. Add credentials to `.env` or Claude Code settings
+    3. Restart Claude Code to reload configuration
+    
+    Example for GitHub MCP:
+    ```bash
+    # Add to .env
+    GITHUB_TOKEN=ghp_your_token_here
+    ```
+  </Accordion>
+
+  <Accordion title="npx command not found">
+    You need Node.js 14+ installed:
+    
+    ```bash
+    # Check Node.js version
+    node --version
+    
+    # Install Node.js from https://nodejs.org
+    # Or use nvm:
+    nvm install 20
+    nvm use 20
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Get Help
+
+If you're stuck:
+
+- **GitHub Discussions**: [Ask the community](https://github.com/davila7/claude-code-templates/discussions)
+- **Issues**: [Report bugs](https://github.com/davila7/claude-code-templates/issues)
+- **Documentation**: [Read the full docs](https://docs.aitmpl.com)
+- **Discord**: [Join our community](https://discord.gg/claude-code-templates)
+
+---
+
+<Card
+  title="Ready to explore?"
+  icon="rocket"
+  href="https://aitmpl.com"
+>
+  Browse 900+ components in the interactive catalog and find exactly what you need.
+</Card>

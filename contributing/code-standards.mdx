@@ -1,0 +1,607 @@
+---
+title: Code Standards
+description: Coding conventions and style guidelines for contributors
+---
+
+This guide covers the coding standards, conventions, and best practices for contributing to Claude Code Templates.
+
+## Security Guidelines
+
+<Warning>
+  **CRITICAL: NEVER hardcode secrets or IDs in code.** This is the most important rule.
+</Warning>
+
+### Never Hardcode Secrets
+
+NEVER write these in code:
+- API keys, tokens, passwords
+- Project IDs, organization IDs
+- Vercel project/org IDs
+- Supabase URLs
+- Discord IDs
+- Database connection strings
+- Any infrastructure identifier
+
+ALL secrets must go in `.env` files.
+
+```javascript
+// ❌ WRONG - Hardcoded secret
+const API_KEY = "AIzaSy...";
+const SUPABASE_URL = "https://xyz.supabase.co";
+
+// ✅ CORRECT - Environment variable
+const API_KEY = process.env.GOOGLE_API_KEY;
+const SUPABASE_URL = process.env.SUPABASE_URL;
+```
+
+### Using Environment Variables
+
+For Node.js:
+
+```javascript
+// Load environment variables
+require('dotenv').config();
+
+// Use process.env
+const apiKey = process.env.API_KEY;
+const dbUrl = process.env.DATABASE_URL;
+
+// Always check for missing variables
+if (!apiKey) {
+  throw new Error('API_KEY environment variable is required');
+}
+```
+
+For Python:
+
+```python
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Use os.environ.get()
+api_key = os.environ.get('API_KEY')
+db_url = os.environ.get('DATABASE_URL')
+
+# Always check for missing variables
+if not api_key:
+    raise ValueError('API_KEY environment variable is required')
+```
+
+### .env File Structure
+
+Create `.env.example` with placeholder values:
+
+```bash
+# .env.example
+API_KEY=<YOUR_API_KEY>
+DATABASE_URL=<YOUR_DATABASE_URL>
+SUPABASE_URL=<YOUR_SUPABASE_URL>
+SUPABASE_SERVICE_ROLE_KEY=<YOUR_SUPABASE_KEY>
+```
+
+Verify `.env` is in `.gitignore`:
+
+```bash
+# .gitignore
+.env
+.env.local
+.env.*.local
+```
+
+### If You Accidentally Commit a Secret
+
+<Warning>
+  If you commit a secret, it's compromised FOREVER (git history). Act immediately.
+</Warning>
+
+<Steps>
+  <Step title="Revoke the Key">
+    Immediately revoke the exposed key/token in the service.
+  </Step>
+  
+  <Step title="Generate New Key">
+    Create a new key/token in the service.
+  </Step>
+  
+  <Step title="Update .env">
+    Update your `.env` file with the new key.
+  </Step>
+  
+  <Step title="Never Reuse">
+    The old key is compromised forever. Never reuse it.
+  </Step>
+</Steps>
+
+## Path Handling
+
+### Always Use Relative Paths
+
+```bash
+# ✅ Correct - Relative paths
+.claude/scripts/
+.claude/hooks/
+.claude/agents/
+$CLAUDE_PROJECT_DIR/.claude/
+
+# ❌ Wrong - Absolute paths
+/Users/username/.claude/
+/home/user/project/.claude/
+~/project/.claude/
+C:\Users\username\.claude\
+```
+
+### Cross-Platform Compatibility
+
+Use `path.join()` for cross-platform paths:
+
+```javascript
+const path = require('path');
+
+// ✅ Correct - Cross-platform
+const configPath = path.join('.claude', 'settings.json');
+const scriptPath = path.join(process.env.CLAUDE_PROJECT_DIR, '.claude', 'scripts', 'hook.py');
+
+// ❌ Wrong - Unix-only
+const configPath = '.claude/settings.json';
+const scriptPath = process.env.CLAUDE_PROJECT_DIR + '/.claude/scripts/hook.py';
+```
+
+### Path Constants
+
+Define path constants for reusability:
+
+```javascript
+const PATHS = {
+  CLAUDE_DIR: '.claude',
+  AGENTS_DIR: path.join('.claude', 'agents'),
+  COMMANDS_DIR: path.join('.claude', 'commands'),
+  HOOKS_DIR: path.join('.claude', 'hooks'),
+  SCRIPTS_DIR: path.join('.claude', 'scripts'),
+  SETTINGS_FILE: path.join('.claude', 'settings.json'),
+  MCP_FILE: '.mcp.json'
+};
+
+// Use constants
+const agentPath = path.join(PATHS.AGENTS_DIR, `${agentName}.md`);
+```
+
+## Naming Conventions
+
+### File Names
+
+```bash
+# JavaScript/TypeScript files
+kebab-case.js           # ✅ Utility files, scripts
+PascalCase.js           # ✅ Class definitions
+index.js                # ✅ Module entry points
+
+# Component files (Markdown)
+frontend-developer.md   # ✅ Kebab-case
+generate-tests.md       # ✅ Kebab-case
+
+# JSON configuration files
+settings.json           # ✅ Lowercase
+package.json            # ✅ Standard
+components.json         # ✅ Lowercase
+
+# Python files
+generate_components_json.py  # ✅ Snake case
+data_processor.py            # ✅ Snake case
+```
+
+### Variables and Functions
+
+```javascript
+// Variables: camelCase
+const userName = 'John';
+const componentList = [];
+let isActive = false;
+
+// Functions: camelCase
+function getUserData() { }
+function processComponent(name) { }
+const fetchAgents = async () => { };
+
+// Constants: UPPER_SNAKE_CASE
+const MAX_RETRIES = 3;
+const API_BASE_URL = 'https://api.example.com';
+const DEFAULT_TIMEOUT = 30000;
+
+// Classes: PascalCase
+class ComponentProcessor { }
+class DataCache { }
+class WebSocketServer { }
+
+// Private variables: _prefix
+class Example {
+  constructor() {
+    this._privateData = null;
+  }
+}
+```
+
+### Component Names
+
+```bash
+# Agent names: kebab-case
+frontend-developer
+api-security-auditor
+database-optimizer
+
+# Command names: kebab-case
+generate-tests
+setup-development-environment
+code-review
+
+# Hook names: kebab-case
+simple-notifications
+prevent-force-push
+format-on-save
+
+# Category names: kebab-case
+development-team
+domain-experts
+code-generation
+```
+
+## Code Style
+
+### JavaScript/Node.js
+
+#### General Guidelines
+
+```javascript
+// Use const by default, let when reassignment needed
+const config = loadConfig();
+let counter = 0;
+
+// Use arrow functions for callbacks
+array.map(item => item.name);
+array.filter(item => item.active);
+
+// Use template literals
+const message = `Hello, ${userName}!`;
+const path = `${baseDir}/${fileName}`;
+
+// Use async/await over promises
+async function fetchData() {
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
+// Use destructuring
+const { name, age } = user;
+const [first, second] = array;
+
+// Use spread operator
+const newArray = [...oldArray, newItem];
+const newObject = { ...oldObject, newKey: 'value' };
+```
+
+#### Error Handling
+
+```javascript
+// Always use try/catch for async operations
+async function processComponent(name) {
+  try {
+    const component = await fetchComponent(name);
+    const result = await installComponent(component);
+    return result;
+  } catch (error) {
+    // Log with context
+    console.error(`Failed to process component ${name}:`, error);
+    // Provide helpful error message
+    throw new Error(`Component installation failed: ${error.message}`);
+  }
+}
+
+// Validate input parameters
+function installAgent(name) {
+  if (!name || typeof name !== 'string') {
+    throw new TypeError('Agent name must be a non-empty string');
+  }
+  if (name.includes('/')) {
+    throw new Error('Agent name cannot contain slashes');
+  }
+  // Proceed with installation
+}
+
+// Use fallback mechanisms
+function getConfig() {
+  try {
+    return JSON.parse(fs.readFileSync('config.json', 'utf8'));
+  } catch (error) {
+    console.warn('Config file not found, using defaults');
+    return DEFAULT_CONFIG;
+  }
+}
+```
+
+#### Async Operations
+
+```javascript
+// Use Promise.all for parallel operations
+const [agents, commands, hooks] = await Promise.all([
+  fetchAgents(),
+  fetchCommands(),
+  fetchHooks()
+]);
+
+// Use Promise.allSettled to handle failures gracefully
+const results = await Promise.allSettled([
+  downloadAgent('agent1'),
+  downloadAgent('agent2'),
+  downloadAgent('agent3')
+]);
+
+results.forEach((result, index) => {
+  if (result.status === 'fulfilled') {
+    console.log(`Agent ${index} downloaded successfully`);
+  } else {
+    console.error(`Agent ${index} failed:`, result.reason);
+  }
+});
+```
+
+### Python
+
+#### General Guidelines
+
+```python
+# Use type hints
+def process_component(name: str, category: str) -> dict:
+    """Process a component and return metadata."""
+    return {'name': name, 'category': category}
+
+# Use f-strings for formatting
+message = f"Processing {component_name} in {category}"
+path = f"{base_dir}/{file_name}"
+
+# Use list comprehensions
+names = [agent['name'] for agent in agents]
+active_users = [u for u in users if u.is_active]
+
+# Use context managers
+with open('file.txt', 'r') as f:
+    content = f.read()
+
+# Use pathlib for paths
+from pathlib import Path
+
+base_dir = Path('cli-tool/components')
+agent_file = base_dir / 'agents' / 'development-team' / 'frontend-developer.md'
+```
+
+#### Error Handling
+
+```python
+# Use specific exception types
+try:
+    component = load_component(name)
+except FileNotFoundError:
+    print(f"Component {name} not found")
+    return None
+except json.JSONDecodeError as e:
+    print(f"Invalid JSON in component: {e}")
+    return None
+except Exception as e:
+    print(f"Unexpected error: {e}")
+    raise
+
+# Provide context in error messages
+if not component_name:
+    raise ValueError("Component name cannot be empty")
+if '/' in component_name:
+    raise ValueError(f"Invalid component name: {component_name}")
+```
+
+## Documentation Standards
+
+### Code Comments
+
+```javascript
+// Good comments explain WHY, not WHAT
+
+// ❌ Bad comment - explains obvious WHAT
+// Loop through agents
+for (const agent of agents) { }
+
+// ✅ Good comment - explains WHY
+// Process agents in parallel batches to avoid rate limiting
+for (const batch of agentBatches) {
+  await Promise.all(batch.map(processAgent));
+}
+
+// Document complex logic
+/**
+ * Merges hook configurations from multiple sources.
+ * Priority: User config > Template config > Default config
+ * 
+ * @param {Object} userHooks - User-defined hooks
+ * @param {Object} templateHooks - Template default hooks
+ * @returns {Object} Merged hook configuration
+ */
+function mergeHooks(userHooks, templateHooks) {
+  // Implementation
+}
+```
+
+### JSDoc Comments
+
+```javascript
+/**
+ * Install a component to the user's project.
+ * 
+ * @param {string} componentType - Type of component (agent, command, hook, etc.)
+ * @param {string} componentName - Name of the component to install
+ * @param {Object} options - Installation options
+ * @param {boolean} options.dryRun - If true, don't actually install
+ * @param {boolean} options.force - If true, overwrite existing files
+ * @returns {Promise<Object>} Installation result with status and files created
+ * @throws {Error} If component not found or installation fails
+ */
+async function installComponent(componentType, componentName, options = {}) {
+  // Implementation
+}
+```
+
+### Python Docstrings
+
+```python
+def generate_component_catalog(component_dir: str, output_file: str) -> dict:
+    """
+    Generate a JSON catalog of all components.
+    
+    Scans the component directory for agents, commands, hooks, etc.
+    and generates a comprehensive JSON catalog with metadata and content.
+    
+    Args:
+        component_dir: Path to the cli-tool/components directory
+        output_file: Path where the catalog JSON should be written
+    
+    Returns:
+        Dictionary with component counts by type
+    
+    Raises:
+        FileNotFoundError: If component directory doesn't exist
+        ValueError: If output path is invalid
+    """
+    # Implementation
+```
+
+## Testing Standards
+
+### Test Structure
+
+```javascript
+// Use descriptive test names
+describe('ComponentInstaller', () => {
+  describe('installAgent', () => {
+    it('should install agent to .claude/agents/ directory', async () => {
+      // Test implementation
+    });
+    
+    it('should throw error if agent name is invalid', async () => {
+      // Test implementation
+    });
+    
+    it('should not overwrite existing agent without force flag', async () => {
+      // Test implementation
+    });
+  });
+});
+
+// Follow AAA pattern: Arrange, Act, Assert
+it('should merge hook configurations correctly', () => {
+  // Arrange
+  const userHooks = { PreToolUse: ['hook1'] };
+  const templateHooks = { PostToolUse: ['hook2'] };
+  
+  // Act
+  const result = mergeHooks(userHooks, templateHooks);
+  
+  // Assert
+  expect(result.PreToolUse).toEqual(['hook1']);
+  expect(result.PostToolUse).toEqual(['hook2']);
+});
+```
+
+### Test Coverage Goals
+
+- Aim for **70%+ code coverage**
+- Test all critical paths
+- Test error handling
+- Test edge cases
+- Test boundary conditions
+
+## Git Workflow
+
+### Commit Messages
+
+```bash
+# Use conventional commits format
+feat: Add new security-auditor agent
+fix: Correct path handling in Windows
+docs: Update contributing guidelines
+chore: Bump version to 1.28.17
+refactor: Simplify hook installation logic
+test: Add tests for component validation
+
+# Provide context in commit body
+git commit -m "feat: Add PostgreSQL MCP integration" -m "Adds Model Context Protocol server for PostgreSQL database access. Includes connection pooling and query execution support."
+```
+
+### Branch Naming
+
+```bash
+feature/add-rust-template
+fix/windows-path-handling
+docs/update-testing-guide
+chore/update-dependencies
+refactor/simplify-installer
+```
+
+## Performance Considerations
+
+### Caching
+
+```javascript
+// Cache expensive operations
+const componentCache = new Map();
+
+async function getComponent(name) {
+  if (componentCache.has(name)) {
+    return componentCache.get(name);
+  }
+  
+  const component = await fetchComponent(name);
+  componentCache.set(name, component);
+  return component;
+}
+
+// Clear cache when needed
+function clearCache() {
+  componentCache.clear();
+}
+```
+
+### Async Optimization
+
+```javascript
+// Parallelize independent operations
+const [catalog, downloads, stats] = await Promise.all([
+  loadComponentCatalog(),
+  fetchDownloadStats(),
+  calculateStatistics()
+]);
+
+// Use streaming for large files
+const stream = fs.createReadStream('large-file.json');
+stream.pipe(parser).on('data', processChunk);
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Component Guidelines" icon="check-circle" href="/contributing/component-guidelines">
+    Best practices for creating components
+  </Card>
+  <Card title="Testing Workflow" icon="vial" href="/contributing/testing">
+    Complete testing guide
+  </Card>
+  <Card title="Architecture" icon="sitemap" href="/contributing/architecture">
+    Project architecture overview
+  </Card>
+  <Card title="Publishing Workflow" icon="rocket" href="/contributing/publishing">
+    Publishing to npm
+  </Card>
+</CardGroup>

@@ -1,0 +1,361 @@
+---
+title: 'Discord Integration'
+description: 'Discord bot slash commands for component search and installation'
+---
+
+## Endpoint
+
+**POST** `/api/discord/interactions`
+
+Handles Discord application command interactions. This endpoint processes slash commands from the Claude Code Templates Discord bot.
+
+## Authentication
+
+Requests are authenticated using Ed25519 signature verification:
+
+<ParamField header="x-signature-ed25519" type="string" required>
+  Ed25519 signature of the request
+</ParamField>
+
+<ParamField header="x-signature-timestamp" type="string" required>
+  Unix timestamp of the request
+</ParamField>
+
+The endpoint uses the `discord-interactions` library to verify signatures against `DISCORD_PUBLIC_KEY`.
+
+### Invalid Signature
+
+```json
+{
+  "error": "Invalid request signature"
+}
+```
+
+Returns `401 Unauthorized`.
+
+## Available Commands
+
+### /search
+
+Search for components by name or category.
+
+<ParamField body="query" type="string" required>
+  Search query (matches component name or category)
+</ParamField>
+
+<ParamField body="type" type="string">
+  Filter by component type:
+  - `skills`
+  - `agents`
+  - `commands`
+  - `mcps`
+  - `settings`
+  - `hooks`
+  - `templates`
+  - `plugins`
+</ParamField>
+
+#### Response
+
+Returns Discord embed with search results (up to 10 matches):
+
+```json
+{
+  "type": 4,
+  "data": {
+    "embeds": [{
+      "title": "🔍 Search Results for \"react\"",
+      "description": "Found 3 result(s)",
+      "color": 56831,
+      "fields": [
+        {
+          "name": "1. 🤖 react-expert",
+          "value": "**Type:** agents | **Downloads:** 142\n[View on aitmpl.com](https://www.aitmpl.com/component/agent/development-team/react-expert)",
+          "inline": false
+        }
+      ],
+      "timestamp": "2026-02-28T12:34:56.789Z"
+    }]
+  }
+}
+```
+
+Results are ranked by relevance:
+- Exact match: score 100
+- Starts with query: score 50
+- Contains query: score 20
+
+### /info
+
+Get detailed information about a specific component.
+
+<ParamField body="name" type="string" required>
+  Component name
+</ParamField>
+
+<ParamField body="type" type="string">
+  Component type (if omitted, searches all types)
+</ParamField>
+
+#### Response
+
+Returns Discord embed with component details:
+
+```json
+{
+  "type": 4,
+  "data": {
+    "embeds": [{
+      "title": "🤖 frontend-developer",
+      "url": "https://www.aitmpl.com/component/agent/development-team/frontend-developer",
+      "description": "Expert frontend developer specializing in React, Vue, and modern web technologies",
+      "color": 16737131,
+      "fields": [
+        {
+          "name": "Type",
+          "value": "`agents`",
+          "inline": true
+        },
+        {
+          "name": "Category",
+          "value": "development-team",
+          "inline": true
+        },
+        {
+          "name": "Downloads",
+          "value": "142",
+          "inline": true
+        },
+        {
+          "name": "Component Page",
+          "value": "[View on aitmpl.com](https://www.aitmpl.com/component/agent/development-team/frontend-developer)",
+          "inline": false
+        }
+      ],
+      "timestamp": "2026-02-28T12:34:56.789Z"
+    }]
+  }
+}
+```
+
+#### Component Not Found
+
+```json
+{
+  "type": 4,
+  "data": {
+    "content": "Component \"invalid-name\" not found. Use `/search` to find components.",
+    "flags": 64
+  }
+}
+```
+
+The `flags: 64` makes the message ephemeral (only visible to the user).
+
+### /install
+
+Get installation command for a component.
+
+<ParamField body="name" type="string" required>
+  Component name
+</ParamField>
+
+<ParamField body="type" type="string">
+  Component type (if omitted, searches all types)
+</ParamField>
+
+#### Response
+
+Returns Discord embed with installation instructions:
+
+```json
+{
+  "type": 4,
+  "data": {
+    "embeds": [{
+      "title": "🤖 Install frontend-developer",
+      "description": "Copy and paste this command in your terminal:",
+      "color": 56831,
+      "url": "https://www.aitmpl.com/component/agent/development-team/frontend-developer",
+      "fields": [
+        {
+          "name": "Installation Command",
+          "value": "```bash\nnpx claude-code-templates@latest --agent frontend-developer\n```",
+          "inline": false
+        },
+        {
+          "name": "Component Page",
+          "value": "[View on aitmpl.com](https://www.aitmpl.com/component/agent/development-team/frontend-developer)",
+          "inline": false
+        }
+      ],
+      "timestamp": "2026-02-28T12:34:56.789Z"
+    }]
+  }
+}
+```
+
+Note: Templates use `--template` flag instead of `--templates`.
+
+### /popular
+
+Show the most downloaded component of a specific type.
+
+<ParamField body="type" type="string" required>
+  Component type to filter by
+</ParamField>
+
+#### Response
+
+Returns the component with the highest download count:
+
+```json
+{
+  "type": 4,
+  "data": {
+    "embeds": [{
+      "title": "🤖 fullstack-developer",
+      "url": "https://www.aitmpl.com/component/agent/development-team/fullstack-developer",
+      "description": "Complete fullstack development specialist",
+      "color": 16737131,
+      "fields": [
+        {
+          "name": "Type",
+          "value": "`agents`",
+          "inline": true
+        },
+        {
+          "name": "Category",
+          "value": "development-team",
+          "inline": true
+        },
+        {
+          "name": "Downloads",
+          "value": "856",
+          "inline": true
+        }
+      ],
+      "timestamp": "2026-02-28T12:34:56.789Z"
+    }]
+  }
+}
+```
+
+### /random
+
+Show a random component of a specific type.
+
+<ParamField body="type" type="string" required>
+  Component type to filter by
+</ParamField>
+
+#### Response
+
+Returns a randomly selected component (same format as `/popular`).
+
+## Component Cache
+
+The endpoint caches component data from `https://aitmpl.com/components.json`:
+
+- **Cache duration**: 5 minutes
+- **Cache key**: `cachedComponents` (in-memory)
+- **Refresh**: Automatic on cache expiration
+- **Timeout**: 10 seconds for HTTP request
+
+## Component Types & Icons
+
+Each component type has an associated icon and color:
+
+| Type | Icon | Color (Hex) |
+|------|------|-------------|
+| skills | 🎨 | #9B59B6 |
+| agents | 🤖 | #FF6B6B |
+| commands | ⚡ | #4ECDC4 |
+| mcps | 🔌 | #95E1D3 |
+| settings | ⚙️ | #F9CA24 |
+| hooks | 🪝 | #6C5CE7 |
+| templates | 📋 | #A8E6CF |
+| plugins | 🧩 | #FFD93D |
+
+## Error Handling
+
+### 405 Method Not Allowed
+
+```json
+{
+  "error": "Method not allowed"
+}
+```
+
+### 500 Server Configuration Error
+
+```json
+{
+  "error": "Server configuration error"
+}
+```
+
+Returned when `DISCORD_PUBLIC_KEY` is not configured.
+
+### Generic Command Error
+
+If a command fails (e.g., network error fetching components):
+
+```json
+{
+  "type": 4,
+  "data": {
+    "content": "❌ An error occurred",
+    "flags": 64
+  }
+}
+```
+
+The error is logged to console but shown generically to the user.
+
+## Interaction Types
+
+The endpoint handles two Discord interaction types:
+
+### PING (type: 1)
+
+Discord verification ping. Returns:
+
+```json
+{
+  "type": 1
+}
+```
+
+### APPLICATION_COMMAND (type: 2)
+
+Slash command execution. See command responses above.
+
+## Example Request
+
+Example curl request (signature headers must be valid):
+
+```bash
+curl -X POST https://www.aitmpl.com/api/discord/interactions \
+  -H "Content-Type: application/json" \
+  -H "x-signature-ed25519: abc123..." \
+  -H "x-signature-timestamp: 1709123456" \
+  -d '{
+    "type": 2,
+    "data": {
+      "name": "search",
+      "options": [
+        {"name": "query", "value": "react"},
+        {"name": "type", "value": "agents"}
+      ]
+    }
+  }'
+```
+
+## Notes
+
+- All embed timestamps use ISO 8601 format
+- Component URLs follow pattern: `/component/{singular_type}/{category}/{name}`
+- Type names are pluralized in the code but singularized in URLs
+- Ephemeral messages (flags: 64) are only visible to the command user
+- The endpoint returns Discord interaction responses, not standard REST responses

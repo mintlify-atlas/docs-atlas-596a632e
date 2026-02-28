@@ -1,0 +1,496 @@
+---
+title: Testing Workflow
+description: Complete testing guide for component contributions
+---
+
+This guide covers the testing workflow for components, templates, and tools before submitting contributions.
+
+## Testing Philosophy
+
+<Info>
+  All components must be tested before submission. Testing ensures components install correctly, work as expected, and don't break existing functionality.
+</Info>
+
+Aim for **70%+ test coverage** on critical paths and error handling.
+
+## Component Testing
+
+### Dry-Run Installation
+
+Test component installation without making changes:
+
+```bash
+# Test agent installation
+npx claude-code-templates@latest --agent your-agent --dry-run
+
+# Test command installation
+npx claude-code-templates@latest --command your-command --dry-run
+
+# Test hook installation  
+npx claude-code-templates@latest --hook automation/your-hook --dry-run
+
+# Test MCP installation
+npx claude-code-templates@latest --mcp your-mcp --dry-run
+
+# Test setting installation
+npx claude-code-templates@latest --setting your-setting --dry-run
+```
+
+Dry-run should:
+- Download component files successfully
+- Show what would be installed
+- Not create any files
+- Not show any errors
+
+### Actual Installation Test
+
+Test real installation in a test project:
+
+```bash
+# Create test directory
+mkdir /tmp/test-project
+cd /tmp/test-project
+
+# Initialize a basic project
+git init
+npm init -y
+
+# Install your component
+npx claude-code-templates@latest --agent your-agent
+
+# Verify installation
+ls -la .claude/agents/
+cat .claude/agents/your-agent.md
+
+# Test the component works
+# (Component-specific testing)
+
+# Cleanup
+cd ..
+rm -rf test-project
+```
+
+### Component-Specific Testing
+
+#### Testing Agents
+
+```bash
+# After installing agent
+cd /tmp/test-project
+
+# 1. Verify file was created
+test -f .claude/agents/your-agent.md && echo "✅ Agent file exists" || echo "❌ Agent file missing"
+
+# 2. Verify YAML frontmatter is valid
+head -20 .claude/agents/your-agent.md
+
+# 3. Test with Claude Code (if available)
+# Use the agent in a real Claude Code session
+```
+
+#### Testing Commands
+
+```bash
+# After installing command
+cd /tmp/test-project
+
+# 1. Verify file was created
+test -f .claude/commands/your-command.md && echo "✅ Command file exists" || echo "❌ Command file missing"
+
+# 2. Verify YAML frontmatter is valid
+head -20 .claude/commands/your-command.md
+
+# 3. Test command execution (if Claude Code available)
+# Use /your-command in Claude Code session
+```
+
+#### Testing Hooks
+
+```bash
+# After installing hook
+cd /tmp/test-project
+
+# 1. Verify hook was installed
+test -f .claude/settings.json && echo "✅ Settings file exists" || echo "❌ Settings file missing"
+
+# 2. Check hook configuration in settings
+cat .claude/settings.json | grep -A 5 "hooks"
+
+# 3. Verify supporting scripts (if any)
+if [ -f .claude/hooks/your-hook.py ]; then
+  echo "✅ Supporting script exists"
+  # Test script syntax
+  python3 -m py_compile .claude/hooks/your-hook.py
+fi
+
+# 4. Test hook execution (trigger the event)
+# For PostToolUse hooks: trigger a tool use
+# For PreToolUse hooks: trigger before tool use
+```
+
+#### Testing MCPs
+
+```bash
+# After installing MCP
+cd /tmp/test-project
+
+# 1. Verify MCP configuration
+test -f .mcp.json && echo "✅ MCP config exists" || echo "❌ MCP config missing"
+
+# 2. Validate JSON structure
+cat .mcp.json | jq . > /dev/null && echo "✅ Valid JSON" || echo "❌ Invalid JSON"
+
+# 3. Check MCP server configuration
+cat .mcp.json | jq '.mcpServers'
+
+# 4. Test MCP connection (if service available)
+# This requires the actual service to be running
+```
+
+#### Testing Settings
+
+```bash
+# After installing setting
+cd /tmp/test-project
+
+# 1. Verify settings file
+test -f .claude/settings.json && echo "✅ Settings file exists" || echo "❌ Settings file missing"
+
+# 2. Validate JSON structure
+cat .claude/settings.json | jq . > /dev/null && echo "✅ Valid JSON" || echo "❌ Invalid JSON"
+
+# 3. Verify setting is properly merged
+cat .claude/settings.json | jq .
+```
+
+## Template Testing
+
+Test complete template installations:
+
+```bash
+# Test template installation (dry-run)
+npx claude-code-templates@latest --template your-template --dry-run
+
+# Test with specific scenarios
+npm start -- --language python --framework django --dry-run
+npm start -- --language javascript --framework react --dry-run
+
+# Test actual installation
+mkdir /tmp/test-template
+cd /tmp/test-template
+npx claude-code-templates@latest --template your-template
+
+# Verify all files were created
+ls -la
+cat CLAUDE.md
+cat .claude/settings.json
+cat .mcp.json
+
+# Test template-specific commands
+# Use template commands in Claude Code session
+```
+
+### Template Quality Checks
+
+- [ ] CLAUDE.md is comprehensive and well-documented
+- [ ] All referenced files exist
+- [ ] Commands work as expected
+- [ ] MCPs are properly configured
+- [ ] Settings are valid and complete
+- [ ] No hardcoded secrets or paths
+- [ ] Documentation includes usage examples
+
+## Tool Testing
+
+For contributors working on additional tools (analytics, health check, chat monitor):
+
+### Analytics Dashboard
+
+```bash
+cd cli-tool
+
+# Start analytics dashboard
+npm run analytics:start
+
+# In another terminal, test API endpoints
+curl http://localhost:3333/api/health
+curl http://localhost:3333/api/conversations
+
+# Clear cache during testing
+curl -X POST http://localhost:3333/api/cache/clear \
+  -H "Content-Type: application/json" \
+  -d '{"type":"all"}'
+
+# Refresh data
+curl http://localhost:3333/api/refresh
+
+# Test WebSocket connection
+# Open browser to http://localhost:3333
+# Verify real-time updates work
+
+# Restart server completely
+pkill -f analytics && sleep 3 && npm run analytics:start
+```
+
+### Chat Monitor
+
+```bash
+cd cli-tool
+
+# Start chat monitor
+npm run chats:start
+
+# Test with tunnel (requires cloudflared)
+npm run chats:start -- --tunnel
+
+# Test mobile interface
+npm run chats:test
+
+# Verify mobile responsiveness
+# Open on mobile device or use browser dev tools
+```
+
+### Health Check
+
+```bash
+cd cli-tool
+
+# Run health check
+npm run health-check
+
+# Test with various scenarios
+# - Fresh installation
+# - Existing project with components
+# - Project with issues
+# - Project with optimal setup
+
+# Verify all checks run
+# Verify recommendations are helpful
+# Verify no false positives
+```
+
+## Automated Testing
+
+### Running Test Suite
+
+```bash
+cd cli-tool
+
+# Run all tests
+npm test
+
+# Run in watch mode
+npm run test:watch
+
+# Run with coverage
+npm run test:coverage
+
+# View coverage report
+open coverage/index.html
+```
+
+### API Endpoint Testing
+
+<Warning>
+  ALWAYS test API endpoints before deploying to production. Broken endpoints can affect download tracking and analytics.
+</Warning>
+
+```bash
+cd api
+
+# Install dependencies
+npm install
+
+# Run API tests
+npm test
+
+# Test specific endpoints
+curl -X POST http://localhost:3000/api/track-download-supabase \
+  -H "Content-Type: application/json" \
+  -d '{
+    "component_type": "agent",
+    "component_name": "test-agent",
+    "component_category": "test"
+  }'
+```
+
+## Component Reviewer Validation
+
+<Warning>
+  This is a REQUIRED step before submitting any component.
+</Warning>
+
+Use the component-reviewer agent to validate your component:
+
+```bash
+# Review single component
+Use the component-reviewer agent to review cli-tool/components/agents/development-team/your-agent.md
+
+# Review multiple components
+Use the component-reviewer agent to review all modified components in cli-tool/components/
+```
+
+The reviewer checks:
+
+- ✅ Valid format and structure
+- ✅ Required fields present
+- ✅ Proper naming conventions
+- ✅ No security issues
+- ✅ Supporting files exist
+- ✅ Best practices followed
+
+Fix all critical issues before proceeding.
+
+## Integration Testing
+
+Test how your component works with existing components:
+
+```bash
+# Install your component with related components
+npx claude-code-templates@latest \
+  --agent your-agent \
+  --command related-command \
+  --hook automation/notifications
+
+# Verify they work together
+# Test agent uses command properly
+# Test hooks trigger correctly
+# Test no conflicts occur
+```
+
+## Performance Testing
+
+For components that may affect performance:
+
+```bash
+# Test installation speed
+time npx claude-code-templates@latest --agent your-agent
+
+# Test file size
+du -h .claude/agents/your-agent.md
+
+# Test catalog generation
+time python scripts/generate_components_json.py
+
+# Check catalog size
+du -h docs/components.json
+```
+
+## Regression Testing
+
+Ensure your changes don't break existing functionality:
+
+```bash
+# Test existing components still work
+npx claude-code-templates@latest --agent frontend-developer
+npx claude-code-templates@latest --command generate-tests
+
+# Test batch installation
+npx claude-code-templates@latest \
+  --agent frontend-developer \
+  --command generate-tests \
+  --setting read-only-mode
+
+# Test interactive mode
+npx claude-code-templates@latest
+# Navigate through menus
+# Verify all options work
+```
+
+## Pre-Submission Checklist
+
+Before submitting your pull request:
+
+<Steps>
+  <Step title="Component Reviewer Validation">
+    ```bash
+    Use the component-reviewer agent to review [your-component]
+    ```
+    Fix all critical issues.
+  </Step>
+  
+  <Step title="Dry-Run Test">
+    ```bash
+    npx claude-code-templates@latest --[type] your-component --dry-run
+    ```
+    Verify no errors.
+  </Step>
+  
+  <Step title="Actual Installation Test">
+    ```bash
+    # In test project
+    npx claude-code-templates@latest --[type] your-component
+    ```
+    Verify files created correctly.
+  </Step>
+  
+  <Step title="Update Catalog">
+    ```bash
+    python scripts/generate_components_json.py
+    ```
+    Verify no errors during generation.
+  </Step>
+  
+  <Step title="Run Test Suite">
+    ```bash
+    npm test
+    ```
+    All tests should pass.
+  </Step>
+  
+  <Step title="API Tests (if modified)">
+    ```bash
+    cd api && npm test
+    ```
+    Verify endpoints still work.
+  </Step>
+</Steps>
+
+## Common Testing Issues
+
+### Component Not Found
+
+```bash
+# Issue: Component not in catalog
+# Fix: Regenerate catalog
+python scripts/generate_components_json.py
+
+# Verify component appears
+cat docs/components.json | jq '.agents[] | select(.name=="your-agent")'
+```
+
+### Installation Fails
+
+```bash
+# Issue: Installation errors
+# Check: File paths are correct
+# Check: No hardcoded absolute paths
+# Check: Required fields present
+# Check: JSON/YAML is valid
+
+# Debug with dry-run
+npx claude-code-templates@latest --agent your-agent --dry-run
+```
+
+### Hook Not Triggering
+
+```bash
+# Issue: Hook doesn't execute
+# Check: Hook is in settings.json
+cat .claude/settings.json | jq '.hooks'
+
+# Check: Matcher is correct
+# Check: Command syntax is valid
+# Check: Supporting scripts have correct permissions
+ls -la .claude/hooks/
+```
+
+## Next Steps
+
+After successful testing:
+
+1. Commit your changes
+2. Push to your fork
+3. Submit pull request
+
+See the [Publishing Workflow](/contributing/publishing) for the complete submission process.

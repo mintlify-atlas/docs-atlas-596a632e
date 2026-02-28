@@ -1,0 +1,369 @@
+---
+title: Analytics Dashboard
+description: Real-time Claude Code analytics with conversation tracking, token usage, and performance monitoring
+---
+
+The Analytics Dashboard provides comprehensive real-time analytics for your Claude Code usage, including conversation tracking, token usage statistics, agent analysis, and performance monitoring.
+
+## Launch Dashboard
+
+Start the analytics dashboard server:
+
+```bash
+claudedev analytics
+```
+
+**Output:**
+```
+🚀 Analytics dashboard started at http://localhost:3333
+🌐 Opening browser to Claude Code Analytics...
+```
+
+The dashboard automatically opens in your default browser at `http://localhost:3333`.
+
+## Options
+
+### Verbose Mode
+
+Enable detailed logging:
+
+```bash
+claudedev analytics --verbose
+```
+
+### Open Specific View
+
+Open directly to the agents view:
+
+```bash
+claudedev analytics --agents
+```
+
+Open to the 2025 Year in Review:
+
+```bash
+claudedev analytics --2025
+```
+
+### Remote Access via Cloudflare Tunnel
+
+For secure remote access to your analytics dashboard:
+
+```bash
+claudedev analytics --tunnel
+```
+
+**Requirements:**
+- `cloudflared` must be installed
+- macOS: `brew install cloudflared`
+- Windows: `winget install --id Cloudflare.cloudflared`
+- Linux: `apt-get install cloudflared`
+
+**Output:**
+```
+🚀 Analytics dashboard started at http://localhost:3333
+☁️  Setting up Cloudflare Tunnel...
+☁️  Cloudflare Tunnel ready: https://abc-def-ghi.trycloudflare.com
+```
+
+<Note>
+Cloudflare Tunnel creates a secure, private connection. Only you have access to the generated URL. The connection is end-to-end encrypted and automatically closes when you stop the server.
+</Note>
+
+## Features
+
+### Conversation Analytics
+
+- **Real-time tracking** of all Claude Code conversations
+- **State detection**: Active, Idle, Recently active, Inactive
+- **Process monitoring**: Detects running Claude Code processes
+- **File watching**: Automatically refreshes when conversations change
+
+### Token Usage
+
+Detailed token statistics:
+- **Input tokens**: User prompts and context
+- **Output tokens**: Claude responses
+- **Cache creation tokens**: Prompt caching overhead
+- **Cache read tokens**: Tokens read from cache
+- **Total usage**: Aggregate token consumption
+
+### Agent Usage Analysis
+
+Track subagent invocations:
+- Agent types and frequency
+- Task tool usage patterns
+- Agent performance metrics
+- Date range filtering
+
+### Session Data
+
+Claude Max plan usage tracking:
+- 5-hour session windows
+- Current session progress
+- Session timer and countdown
+- Monthly and weekly session counts
+
+### Performance Monitoring
+
+- Memory usage tracking
+- Request statistics
+- Cache hit rates
+- Error monitoring
+- System health status
+
+## API Endpoints
+
+The dashboard exposes several REST API endpoints:
+
+### Get All Data
+
+```bash
+curl http://localhost:3333/api/data
+```
+
+Returns conversations, summary, and detailed token usage.
+
+### Paginated Conversations
+
+```bash
+curl "http://localhost:3333/api/conversations?page=0&limit=10"
+```
+
+### Conversation States
+
+```bash
+curl http://localhost:3333/api/conversation-state
+```
+
+Returns current state for all conversations.
+
+### Agent Analytics
+
+```bash
+curl "http://localhost:3333/api/agents?startDate=2025-01-01&endDate=2025-12-31"
+```
+
+### Session Data
+
+```bash
+curl http://localhost:3333/api/session/data
+```
+
+Returns Max plan session tracking with timer data.
+
+### System Health
+
+```bash
+curl http://localhost:3333/api/system/health
+```
+
+### Refresh Data
+
+```bash
+curl http://localhost:3333/api/refresh
+```
+
+Forces a full data reload.
+
+### Clear Cache
+
+```bash
+curl -X POST http://localhost:3333/api/clear-cache
+```
+
+Clears the conversation cache.
+
+## WebSocket Support
+
+Real-time updates via WebSocket:
+
+```javascript
+const ws = new WebSocket('ws://localhost:3333');
+
+ws.on('message', (data) => {
+  const event = JSON.parse(data);
+  if (event.type === 'new_message') {
+    console.log('New message:', event.data);
+  }
+});
+```
+
+**Event Types:**
+- `new_message`: New conversation message
+- `data_refresh`: Data reloaded
+- `state_change`: Conversation state changed
+
+## Data Sources
+
+The dashboard reads from:
+
+- `~/.claude/`: Conversation JSONL files
+- `~/Library/Application Support/Claude/`: Claude Desktop data (macOS)
+- `~/.claude/statsig/`: Usage statistics
+
+## Performance Considerations
+
+### Memory Management
+
+The dashboard implements several optimizations:
+
+- **Conversation limiting**: Keeps only 150 most recent conversations in memory
+- **Data caching**: Parsed conversations cached to reduce disk I/O
+- **Garbage collection**: Manual GC hints when available
+
+### File Watching
+
+Automatic refresh when:
+- New conversation files created
+- Existing conversations modified
+- Settings files updated
+
+Debounced to prevent excessive reloads (2-second delay).
+
+## Architecture
+
+### Core Components
+
+**StateCalculator** (`analytics/core/StateCalculator.js`):lines/analytics.js:31
+- Determines conversation states
+- Quick state calculation for active processes
+- Idle time detection
+
+**ProcessDetector** (`analytics/core/ProcessDetector.js`):lines/analytics.js:32
+- Detects running Claude Code processes
+- Enriches conversations with process info
+- Finds orphan processes
+
+**ConversationAnalyzer** (`analytics/core/ConversationAnalyzer.js`):lines/analytics.js:98
+- Loads and parses conversation files
+- Extracts project information
+- Calculates token usage
+
+**SessionAnalyzer** (`analytics/core/SessionAnalyzer.js`):lines/analytics.js:34
+- Tracks Max plan sessions
+- Calculates 5-hour windows
+- Provides session timer data
+
+**AgentAnalyzer** (`analytics/core/AgentAnalyzer.js`):lines/analytics.js:35
+- Analyzes agent usage patterns
+- Tracks subagent invocations
+- Generates usage summaries
+
+**YearInReview2025** (`analytics/core/YearInReview2025.js`):lines/analytics.js:36
+- Generates annual statistics
+- Activity heatmaps
+- Top projects and patterns
+
+### Data Flow
+
+1. **Initialization**:lines/analytics.js:86
+   - Check Claude directories exist
+   - Load initial conversation data
+   - Setup file watchers
+   - Start Express server
+
+2. **Data Loading**:lines/analytics.js:105
+   - Parse conversation JSONL files
+   - Calculate token usage
+   - Extract model information
+   - Generate status squares
+
+3. **Real-time Updates**:lines/analytics.js:592
+   - File watcher detects changes
+   - Debounced data refresh
+   - WebSocket broadcast to clients
+
+4. **Fast State Updates**:lines/analytics.js:999
+   - Only updates conversation states
+   - Doesn't reload entire dataset
+   - Used for frequent polling
+
+## Example: Monitoring Token Usage
+
+```bash
+# Start dashboard
+claudedev analytics
+
+# In another terminal, query token usage
+curl http://localhost:3333/api/data | jq '.detailedTokenUsage'
+```
+
+**Output:**
+```json
+{
+  "total": 1234567,
+  "inputTokens": 456789,
+  "outputTokens": 654321,
+  "cacheCreationTokens": 12345,
+  "cacheReadTokens": 111112,
+  "messagesWithUsage": 150,
+  "totalMessages": 200
+}
+```
+
+## Troubleshooting
+
+### Dashboard Won't Start
+
+**Error:** `Claude Code directory not found`
+
+Run Claude Code at least once to create `~/.claude/` directory.
+
+### No Conversations Showing
+
+Check conversation files exist:
+
+```bash
+ls ~/.claude/projects/*/conversation.jsonl
+```
+
+### Port Already in Use
+
+The dashboard uses port 3333. If occupied:
+
+```bash
+lsof -i :3333
+kill -9 <PID>
+```
+
+### WebSocket Connection Failed
+
+Verify WebSocket server initialized:
+
+```bash
+claudedev analytics --verbose
+```
+
+Look for: `🌐 WebSocket server initialized`
+
+## Advanced Usage
+
+### Custom Port
+
+Edit `analytics.js`:line/analytics.js:30
+
+```javascript
+this.port = 3333; // Change to desired port
+```
+
+### Disable File Watching
+
+Comment out file watcher setup in `initialize()`:line/analytics.js:102
+
+### Extend with Custom Analytics
+
+Add custom endpoint:
+
+```javascript
+this.app.get('/api/custom', (req, res) => {
+  const customData = calculateCustomMetrics(this.data);
+  res.json(customData);
+});
+```
+
+## See Also
+
+- [Conversation Monitor](/tools/conversation-monitor) - Mobile-optimized chat interface
+- [Stats Tools](/tools/stats-tools) - Command, hook, and MCP analyzers
+- [Health Check](/tools/health-check) - System validation tool

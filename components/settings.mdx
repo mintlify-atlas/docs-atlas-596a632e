@@ -1,0 +1,358 @@
+---
+title: Settings Components
+description: 60+ configuration presets for Claude Code behavior, integrations, and workflow customization
+---
+
+# Settings Components
+
+Settings are configuration presets that customize Claude Code's behavior, integrations, and workflow. They configure everything from model selection to status line displays.
+
+<Card title="Browse All Settings" icon="globe" href="https://aitmpl.com/?type=settings">
+  Explore 60+ settings at **aitmpl.com**
+</Card>
+
+## Installation
+
+```bash
+# Install a single setting
+npx claude-code-templates@latest --setting read-only-mode
+
+# Install multiple settings
+npx claude-code-templates@latest --setting read-only-mode --setting git/auto-commit
+
+# Install from specific category
+npx claude-code-templates@latest --setting mcp/enable-all-project-servers
+```
+
+## Setting Categories
+
+<Tabs>
+  <Tab title="MCP">
+    ### MCP Settings
+    
+    Configure Model Context Protocol servers:
+    
+    <CardGroup cols={2}>
+      <Card title="Enable All Project Servers" icon="plug">
+        Enable all MCP servers defined in the project
+        ```bash
+        npx claude-code-templates@latest --setting mcp/enable-all-project-servers
+        ```
+      </Card>
+      <Card title="Enable Specific Servers" icon="server">
+        Enable only selected MCP servers
+        ```bash
+        npx claude-code-templates@latest --setting mcp/enable-specific-servers
+        ```
+      </Card>
+      <Card title="Disable Risky Servers" icon="shield">
+        Disable MCP servers with dangerous capabilities
+        ```bash
+        npx claude-code-templates@latest --setting mcp/disable-risky-servers
+        ```
+      </Card>
+      <Card title="MCP Timeouts" icon="clock">
+        Configure timeout settings for MCP servers
+        ```bash
+        npx claude-code-templates@latest --setting mcp/mcp-timeouts
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Model">
+    ### Model Settings
+    
+    Configure AI model selection and behavior:
+    
+    <CardGroup cols={2}>
+      <Card title="Default Model" icon="brain">
+        Set default model for Claude Code
+        ```bash
+        npx claude-code-templates@latest --setting model/default
+        ```
+        **Options:**
+        - claude-4.5-sonnet (balanced)
+        - claude-opus (complex tasks)
+        - claude-haiku (fast tasks)
+      </Card>
+      <Card title="Agent-Specific Models" icon="robot">
+        Configure different models for different agents
+        ```bash
+        npx claude-code-templates@latest --setting model/agent-specific
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Git">
+    ### Git Settings
+    
+    Configure git workflow automation:
+    
+    <CardGroup cols={2}>
+      <Card title="Auto Commit" icon="code-commit">
+        Automatically commit changes after operations
+        ```bash
+        npx claude-code-templates@latest --setting git/auto-commit
+        ```
+      </Card>
+      <Card title="Commit Message Templates" icon="message">
+        Use templates for commit messages
+        ```bash
+        npx claude-code-templates@latest --setting git/commit-templates
+        ```
+      </Card>
+      <Card title="Branch Protection" icon="shield-alt">
+        Configure protected branches
+        ```bash
+        npx claude-code-templates@latest --setting git/branch-protection
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Permissions">
+    ### Permission Settings
+    
+    Control Claude Code's access and capabilities:
+    
+    <CardGroup cols={2}>
+      <Card title="Read Only Mode" icon="lock">
+        Restrict Claude to read-only operations
+        ```bash
+        npx claude-code-templates@latest --setting permissions/read-only-mode
+        ```
+        **Blocks:**
+        - File writes and edits
+        - Git commits
+        - Destructive commands
+      </Card>
+      <Card title="Restricted Bash" icon="terminal">
+        Limit bash command execution
+        ```bash
+        npx claude-code-templates@latest --setting permissions/restricted-bash
+        ```
+      </Card>
+      <Card title="Allowed Directories" icon="folder">
+        Restrict file access to specific directories
+        ```bash
+        npx claude-code-templates@latest --setting permissions/allowed-directories
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Statusline">
+    ### Statusline Settings
+    
+    Customize the status line display:
+    
+    <CardGroup cols={2}>
+      <Card title="Git Status" icon="code-branch">
+        Show git branch and status in statusline
+        ```bash
+        npx claude-code-templates@latest --setting statusline/git-status
+        ```
+      </Card>
+      <Card title="Token Counter" icon="calculator">
+        Display token usage in statusline
+        ```bash
+        npx claude-code-templates@latest --setting statusline/token-counter
+        ```
+      </Card>
+      <Card title="Custom Statusline" icon="sliders">
+        Create custom statusline with Python script
+        ```bash
+        npx claude-code-templates@latest --setting statusline/custom
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Environment">
+    ### Environment Settings
+    
+    Configure environment variables and context:
+    
+    <CardGroup cols={2}>
+      <Card title="Auto Load .env" icon="file">
+        Automatically load .env files
+        ```bash
+        npx claude-code-templates@latest --setting environment/auto-load-env
+        ```
+      </Card>
+      <Card title="Environment Templates" icon="file-code">
+        Use .env templates for different environments
+        ```bash
+        npx claude-code-templates@latest --setting environment/templates
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="API">
+    ### API Settings
+    
+    Configure API endpoints and keys:
+    
+    <CardGroup cols={2}>
+      <Card title="Custom API Endpoint" icon="server">
+        Use custom Claude API endpoint
+        ```bash
+        npx claude-code-templates@latest --setting api/custom-endpoint
+        ```
+      </Card>
+      <Card title="Rate Limiting" icon="gauge">
+        Configure API rate limiting
+        ```bash
+        npx claude-code-templates@latest --setting api/rate-limiting
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Telemetry">
+    ### Telemetry Settings
+    
+    Control analytics and telemetry:
+    
+    <CardGroup cols={2}>
+      <Card title="Disable Telemetry" icon="eye-slash">
+        Disable all telemetry collection
+        ```bash
+        npx claude-code-templates@latest --setting telemetry/disable
+        ```
+      </Card>
+      <Card title="Anonymous Analytics" icon="chart-line">
+        Enable anonymous usage analytics
+        ```bash
+        npx claude-code-templates@latest --setting telemetry/anonymous
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Cleanup">
+    ### Cleanup Settings
+    
+    Automatic cleanup and maintenance:
+    
+    <CardGroup cols={2}>
+      <Card title="Auto Cleanup" icon="broom">
+        Automatically clean temporary files
+        ```bash
+        npx claude-code-templates@latest --setting cleanup/auto-cleanup
+        ```
+      </Card>
+      <Card title="Log Rotation" icon="rotate">
+        Rotate and archive logs
+        ```bash
+        npx claude-code-templates@latest --setting cleanup/log-rotation
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Global">
+    ### Global Settings
+    
+    System-wide configurations:
+    
+    <CardGroup cols={2}>
+      <Card title="Editor Integration" icon="code">
+        Configure editor integration settings
+        ```bash
+        npx claude-code-templates@latest --setting global/editor-integration
+        ```
+      </Card>
+      <Card title="Workspace Defaults" icon="folder-tree">
+        Set default workspace configurations
+        ```bash
+        npx claude-code-templates@latest --setting global/workspace-defaults
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+## Settings Configuration
+
+Settings are stored in `.claude/settings/` and `.claude/config/`:
+
+```json
+{
+  "name": "read-only-mode",
+  "description": "Restrict Claude to read-only operations",
+  "config": {
+    "permissions": {
+      "allowWrite": false,
+      "allowBash": false,
+      "allowGit": false
+    }
+  }
+}
+```
+
+## Statusline with Python
+
+Custom statuslines can use Python scripts:
+
+```python
+# .claude/scripts/git-status.py
+import subprocess
+
+def get_git_status():
+    branch = subprocess.check_output(['git', 'branch', '--show-current'])
+    status = subprocess.check_output(['git', 'status', '--short'])
+    return f"{branch.strip()} | {len(status.splitlines())} changes"
+
+print(get_git_status())
+```
+
+## Setting Priorities
+
+Settings are applied in order:
+
+1. **Global settings**: System-wide defaults
+2. **Project settings**: Project-specific configs
+3. **User settings**: User overrides
+4. **Runtime settings**: Temporary overrides
+
+## Example Usage
+
+```bash
+# Enable read-only mode for safety
+npx claude-code-templates@latest --setting read-only-mode
+
+# Claude can now only read files, not modify them
+# To disable, remove .claude/settings/read-only-mode.json
+```
+
+## Combining Settings
+
+Install multiple related settings:
+
+```bash
+# Security-focused configuration
+npx claude-code-templates@latest \
+  --setting permissions/read-only-mode \
+  --setting mcp/disable-risky-servers \
+  --setting git/branch-protection
+```
+
+## Temporary Settings
+
+Some settings can be overridden temporarily:
+
+```bash
+# In Claude Code, use environment variables
+export CLAUDE_ALLOW_WRITE=true
+```
+
+## Next Steps
+
+- [Browse all settings at aitmpl.com](https://aitmpl.com/?type=settings)
+- [View MCP settings](/components/settings#mcp)
+- [Explore permission settings](/components/settings#permissions)
+- [Learn about statusline customization](/components/settings#statusline)

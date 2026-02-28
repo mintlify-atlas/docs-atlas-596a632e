@@ -1,0 +1,646 @@
+---
+title: Installation Guide
+description: Comprehensive guide to installing and configuring Claude Code Templates components
+---
+
+# Installation Guide
+
+This guide covers everything you need to know about installing Claude Code Templates, from basic usage to advanced configuration and batch installation.
+
+## Prerequisites
+
+<Card title="Required Software" icon="list-check">
+  - **Node.js 14+**: Required to run the CLI tool
+  - **Claude Code**: Anthropic's Claude Code IDE ([download](https://code.claude.com))
+  - **Git** (optional): For version control integration
+</Card>
+
+<Tip>
+  Claude Code Templates works with any project type. The CLI automatically detects your project structure and recommends appropriate components.
+</Tip>
+
+## Basic Installation
+
+### Install via npx (Recommended)
+
+No installation required - run directly with npx:
+
+```bash
+npx claude-code-templates@latest
+```
+
+The `@latest` tag ensures you always get the newest components:
+
+```bash Package Information
+Package: claude-code-templates
+Version: 1.28.16
+NPM: https://www.npmjs.com/package/claude-code-templates
+Short alias: cct
+```
+
+### Install Globally
+
+For frequent use, install globally:
+
+```bash
+npm install -g claude-code-templates
+
+# Then run anywhere:
+claude-code-templates
+# or
+cct
+```
+
+<Warning>
+  Global installation may use an older version unless you update regularly:
+  ```bash
+  npm update -g claude-code-templates
+  ```
+</Warning>
+
+## Component Types
+
+Claude Code Templates provides six types of components:
+
+### 🤖 Agents (600+)
+
+**What they are**: AI specialists with domain-specific knowledge and context.
+
+**Location**: `.claude/agents/`
+
+**Installation**:
+```bash
+npx claude-code-templates@latest --agent development-team/frontend-developer
+```
+
+**Usage**: Reference in Claude Code with `@agent-name`
+
+**Examples**:
+- `development-team/frontend-developer` - Expert in React, Vue, Angular
+- `security/security-auditor` - Security analysis and vulnerability detection
+- `devops-infrastructure/kubernetes-expert` - Container orchestration specialist
+- `data-ai/machine-learning-engineer` - ML model development and training
+
+**Categories**:
+- Development Team (Frontend, Backend, Fullstack)
+- Development Tools (Code Review, Refactoring)
+- Security (Auditing, Penetration Testing)
+- DevOps & Infrastructure (Docker, Kubernetes, AWS)
+- Data & AI (ML, Data Science, Analytics)
+- Documentation (Technical Writing, API Docs)
+- Testing & QA (Unit Testing, E2E Testing)
+- Database (PostgreSQL, MongoDB, Redis)
+- API & GraphQL (REST, GraphQL, API Design)
+- And 20+ more categories...
+
+### ⚡ Commands (200+)
+
+**What they are**: Custom slash commands for automated workflows.
+
+**Location**: `.claude/commands/`
+
+**Installation**:
+```bash
+npx claude-code-templates@latest --command testing/generate-tests
+```
+
+**Usage**: Type `/command-name` in Claude Code
+
+**Examples**:
+- `/generate-tests` - Generate unit tests for selected code
+- `/optimize-bundle` - Analyze and optimize bundle size
+- `/check-security` - Run security audit on dependencies
+- `/setup-ci` - Configure CI/CD pipeline
+- `/refactor-code` - Suggest refactoring improvements
+
+**Categories**:
+- Testing (Unit Tests, E2E Tests, Coverage)
+- Performance (Bundle Optimization, Profiling)
+- Security (Vulnerability Scanning, SAST)
+- Documentation (README, API Docs, Changelog)
+- Code Quality (Linting, Formatting, Review)
+- Deployment (CI/CD, Docker, Cloud)
+
+### 🔌 MCPs (55+)
+
+**What they are**: Model Context Protocol integrations for external services.
+
+**Location**: `.claude/mcps/`
+
+**Installation**:
+```bash
+npx claude-code-templates@latest --mcp development/github-integration
+```
+
+**Usage**: Claude Code connects automatically on startup
+
+**Examples**:
+- `development/github-integration` - GitHub API access
+- `database/postgresql-integration` - PostgreSQL queries
+- `cloud/aws-integration` - AWS service management
+- `payment/stripe-integration` - Stripe API integration
+- `ai/openai-integration` - OpenAI API access
+
+**Categories**:
+- Development (GitHub, GitLab, Bitbucket)
+- Database (PostgreSQL, MySQL, MongoDB, Redis)
+- Cloud (AWS, Azure, GCP, Vercel)
+- Payment (Stripe, PayPal)
+- AI & ML (OpenAI, Anthropic, Hugging Face)
+- Communication (Slack, Discord, Telegram)
+
+<Note>
+  MCPs often require API credentials. Check component documentation for required environment variables.
+</Note>
+
+### ⚙️ Settings (60+)
+
+**What they are**: Claude Code configuration presets.
+
+**Location**: `.claude/settings/`
+
+**Installation**:
+```bash
+npx claude-code-templates@latest --setting performance/mcp-timeouts
+```
+
+**Examples**:
+- `performance/mcp-timeouts` - Optimize MCP connection timeouts
+- `memory/large-projects` - Memory settings for large codebases
+- `output/verbose-logging` - Enable detailed logging
+- `read-only-mode` - Prevent file modifications
+
+### 🪝 Hooks (39+)
+
+**What they are**: Automation triggers for development workflows.
+
+**Location**: `.claude/hooks/`
+
+**Installation**:
+```bash
+npx claude-code-templates@latest --hook git/pre-commit-validation
+```
+
+**Examples**:
+- `git/pre-commit-validation` - Validate code before commits
+- `automation/simple-notifications` - Send notifications on events
+- `deployment/post-deploy-check` - Verify deployments
+
+### 🎨 Skills (300+)
+
+**What they are**: Reusable capabilities with progressive disclosure.
+
+**Location**: `.claude/skills/`
+
+**Installation**:
+```bash
+npx claude-code-templates@latest --skill pdf-processing
+```
+
+**Examples**:
+- `pdf-processing` - Generate and manipulate PDFs
+- `excel-automation` - Automate Excel operations
+- `scientific-computing` - Scientific computation tools
+
+## Installation Methods
+
+### Interactive Mode
+
+Launch the interactive CLI to browse and select components:
+
+```bash
+npx claude-code-templates@latest
+```
+
+**Workflow**:
+1. Main menu appears
+2. Select "Project Setup"
+3. Choose component type (Agent, Command, MCP, etc.)
+4. Browse categories
+5. Select specific components
+6. Confirm installation
+
+<Tip>
+  Interactive mode is great for discovering new components and learning what's available.
+</Tip>
+
+### Direct Installation
+
+Install specific components directly:
+
+```bash Single Component
+# Install one agent
+npx claude-code-templates@latest --agent development-team/frontend-developer
+
+# Install one command
+npx claude-code-templates@latest --command testing/generate-tests
+
+# Install one MCP
+npx claude-code-templates@latest --mcp development/github-integration
+```
+
+### Batch Installation
+
+Install multiple components in one command:
+
+```bash Multiple Components
+npx claude-code-templates@latest \
+  --agent development-team/frontend-developer \
+  --agent development-team/react-expert \
+  --command testing/generate-tests \
+  --command performance/optimize-bundle \
+  --mcp development/github-integration \
+  --hook git/pre-commit-validation \
+  --setting performance/mcp-timeouts \
+  --yes
+```
+
+<Note>
+  You can install multiple of the same type by repeating the flag:
+  ```bash
+  --agent security-auditor --agent code-reviewer --agent react-expert
+  ```
+</Note>
+
+### Skip Prompts
+
+Use `--yes` to skip all confirmation prompts:
+
+```bash
+npx claude-code-templates@latest \
+  --agent development-team/frontend-developer \
+  --yes
+```
+
+Perfect for:
+- Automated scripts
+- CI/CD pipelines
+- Team onboarding scripts
+- Docker containers
+
+## Advanced Installation
+
+### Install to Specific Directory
+
+By default, components install to the current directory's `.claude/` folder. Change the target:
+
+```bash
+npx claude-code-templates@latest \
+  --directory /path/to/project \
+  --agent frontend-developer
+```
+
+### Dry Run
+
+See what would be installed without actually installing:
+
+```bash
+npx claude-code-templates@latest \
+  --agent frontend-developer \
+  --dry-run
+```
+
+Output shows:
+- Files that would be created
+- Directories that would be modified
+- Configuration changes
+
+### Comma-Separated Values
+
+Install multiple components of the same type with commas:
+
+```bash
+npx claude-code-templates@latest \
+  --agent "development-team/frontend-developer,security/security-auditor,devops-infrastructure/kubernetes-expert" \
+  --yes
+```
+
+### Workflow Installation
+
+Install complete workflows from templates:
+
+```bash
+npx claude-code-templates@latest --workflow "#react-testing-workflow"
+```
+
+Workflows are pre-configured sets of components that work together.
+
+## Project Templates
+
+For new projects, use complete project templates:
+
+```bash JavaScript/TypeScript
+npx claude-code-templates@latest --template javascript-typescript --yes
+```
+
+```bash Python
+npx claude-code-templates@latest --template python --yes
+```
+
+```bash Ruby
+npx claude-code-templates@latest --template ruby --yes
+```
+
+```bash Common (Language Agnostic)
+npx claude-code-templates@latest --template common --yes
+```
+
+Templates include:
+- Language-specific agents
+- Common commands
+- Recommended MCPs
+- Standard hooks
+- Configuration presets
+
+## Configuration
+
+### Component Configuration
+
+After installation, components are configured in `.claude/`:
+
+```bash Directory Structure
+.claude/
+├── agents/
+│   ├── frontend-developer.md
+│   └── react-expert.md
+├── commands/
+│   ├── generate-tests.json
+│   └── optimize-bundle.json
+├── hooks/
+│   └── pre-commit-validation.json
+├── mcps/
+│   └── github-integration.json
+├── settings/
+│   └── mcp-timeouts.json
+└── config.json
+```
+
+### Environment Variables
+
+Some components require environment variables:
+
+```bash .env
+# GitHub MCP
+GITHUB_TOKEN=ghp_your_token_here
+
+# PostgreSQL MCP
+DATABASE_URL=postgresql://user:pass@localhost:5432/db
+
+# AWS MCP
+AWS_ACCESS_KEY_ID=AKIA...
+AWS_SECRET_ACCESS_KEY=...
+AWS_REGION=us-east-1
+
+# OpenAI MCP
+OPENAI_API_KEY=sk-...
+```
+
+<Warning>
+  Never commit `.env` files to version control. Add to `.gitignore`:
+  ```bash
+  echo ".env" >> .gitignore
+  ```
+</Warning>
+
+### Python Command Configuration
+
+On Windows, the CLI automatically detects and uses the correct Python command:
+
+- Windows: `python` or `py`
+- Unix/Linux/Mac: `python3`
+
+Statusline settings with Python scripts work automatically across platforms.
+
+## CLI Reference
+
+Complete CLI options:
+
+```bash Command Line Options
+claude-code-templates [options]
+
+Options:
+  -V, --version                    Output version number
+  -h, --help                       Display help
+  -t, --template <template>        Project template (common, javascript-typescript, python, ruby)
+  -d, --directory <directory>      Target directory (default: current)
+  -y, --yes                        Skip prompts and use defaults
+  --dry-run                        Show what would be installed
+  
+Component Installation:
+  --agent <agent>                  Install agent (comma-separated)
+  --command <command>              Install command (comma-separated)
+  --mcp <mcp>                      Install MCP (comma-separated)
+  --setting <setting>              Install setting (comma-separated)
+  --hook <hook>                    Install hook (comma-separated)
+  --skill <skill>                  Install skill (comma-separated)
+  --workflow <workflow>            Install workflow from hash
+  
+Tools & Utilities:
+  --analytics                      Launch analytics dashboard
+  --chats                          Launch conversation monitor
+  --agents                         Launch agents dashboard
+  --plugins                        Launch plugin dashboard
+  --skills-manager                 Launch skills dashboard
+  --teams                          Launch agent teams dashboard
+  --health-check                   Run health diagnostics
+  --tunnel                         Enable Cloudflare Tunnel (with --analytics or --chats)
+  --verbose                        Enable verbose logging
+  
+Statistics & Analysis:
+  --command-stats                  Analyze command usage
+  --hook-stats                     Analyze hook usage
+  --mcp-stats                      Analyze MCP usage
+  
+Global Agents:
+  --create-agent <name>            Create global agent
+  --list-agents                    List global agents
+  --remove-agent <name>            Remove global agent
+  --update-agent <name>            Update global agent
+  
+Advanced:
+  --sandbox <provider>             Execute in sandbox (e2b)
+  --studio                         Launch Claude Code Studio
+  --clone-session <url>            Import shared session
+  --prompt <prompt>                Execute prompt after install
+```
+
+## Verification
+
+### Health Check
+
+Verify installation with the health check tool:
+
+```bash
+npx claude-code-templates@latest --health-check
+```
+
+Checks:
+- ✓ Claude Code installation
+- ✓ Configuration file validity
+- ✓ Component integrity
+- ✓ Dependency availability
+- ✓ Environment variable configuration
+- ✓ File permissions
+
+### Manual Verification
+
+Check installed components:
+
+```bash
+# List all components
+ls -la .claude/
+
+# Check agents
+ls .claude/agents/
+
+# Check commands
+ls .claude/commands/
+
+# Verify configuration
+cat .claude/config.json
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Installation fails with permission errors">
+    On Unix systems, ensure you have write permissions:
+    
+    ```bash
+    # Check permissions
+    ls -la
+    
+    # Fix permissions if needed
+    chmod +w .
+    
+    # Or install to home directory
+    npx claude-code-templates@latest --directory ~/my-project
+    ```
+  </Accordion>
+
+  <Accordion title="Components not appearing in Claude Code">
+    1. Make sure Claude Code is running in the correct directory:
+       ```bash
+       pwd
+       ls .claude/
+       ```
+    
+    2. Restart Claude Code to reload configuration
+    
+    3. Check Claude Code output for errors
+    
+    4. Run health check:
+       ```bash
+       npx claude-code-templates@latest --health-check
+       ```
+  </Accordion>
+
+  <Accordion title="MCP connection failures">
+    1. Check required environment variables:
+       ```bash
+       cat .env
+       ```
+    
+    2. Verify credentials are valid
+    
+    3. Check MCP configuration:
+       ```bash
+       cat .claude/mcps/github-integration.json
+       ```
+    
+    4. Look for error messages in Claude Code output
+    
+    5. Some MCPs require external services to be running
+  </Accordion>
+
+  <Accordion title="npx command not found">
+    Install Node.js 14 or higher:
+    
+    ```bash
+    # Check current version
+    node --version
+    
+    # Install from https://nodejs.org
+    # Or use nvm:
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+    nvm install 20
+    nvm use 20
+    ```
+  </Accordion>
+
+  <Accordion title="Python statusline not working">
+    1. Check Python installation:
+       ```bash
+       python --version
+       python3 --version
+       py --version
+       ```
+    
+    2. Verify script permissions:
+       ```bash
+       chmod +x .claude/scripts/*.py
+       ```
+    
+    3. Check script path in statusline configuration
+    
+    4. The CLI automatically handles platform differences
+  </Accordion>
+
+  <Accordion title="Global agent installation fails">
+    Global agents require additional setup:
+    
+    ```bash
+    # Create global agent
+    npx claude-code-templates@latest --create-agent my-agent
+    
+    # List agents
+    npx claude-code-templates@latest --list-agents
+    
+    # Ensure proper permissions
+    chmod +x ~/.claude-code-templates/agents/*
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Browse Components"
+    icon="magnifying-glass"
+    href="https://aitmpl.com"
+  >
+    Explore 900+ components in the interactive catalog.
+  </Card>
+  <Card
+    title="CLI Reference"
+    icon="book"
+    href="/cli/overview"
+  >
+    Complete documentation for all CLI commands and options.
+  </Card>
+  <Card
+    title="Analytics Dashboard"
+    icon="chart-line"
+    href="/tools/analytics-dashboard"
+  >
+    Monitor your Claude Code sessions in real-time.
+  </Card>
+  <Card
+    title="Contributing"
+    icon="code-pull-request"
+    href="/contributing/getting-started"
+  >
+    Add your own components to the collection.
+  </Card>
+</CardGroup>
+
+---
+
+<Card
+  title="Need help?"
+  icon="life-ring"
+  href="https://github.com/davila7/claude-code-templates/discussions"
+>
+  Join our GitHub Discussions to ask questions and get support from the community.
+</Card>

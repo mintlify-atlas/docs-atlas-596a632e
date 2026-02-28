@@ -1,0 +1,529 @@
+---
+title: Remote Access
+description: Access Claude Code analytics and chat dashboards remotely using Cloudflare Tunnel
+---
+
+# Remote Access
+
+Monitor Claude Code sessions from anywhere using secure Cloudflare Tunnels.
+
+## Overview
+
+Cloudflare Tunnel creates secure, temporary public URLs for local Claude Code dashboards:
+
+- **Analytics Dashboard** - Real-time session monitoring
+- **Chat Interface** - Mobile-optimized conversation viewer
+- **2025 Year in Review** - Usage statistics dashboard
+
+<Info>
+  Tunnels are **temporary and private** - they expire when you close the dashboard and require the full URL to access.
+</Info>
+
+## Setup
+
+### Install Cloudflared
+
+<Tabs>
+  <Tab title="macOS">
+    ```bash
+    brew install cloudflared
+    ```
+  </Tab>
+  
+  <Tab title="Windows">
+    ```bash
+    winget install --id Cloudflare.cloudflared
+    ```
+  </Tab>
+  
+  <Tab title="Linux">
+    ```bash
+    # Debian/Ubuntu
+    wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+    sudo dpkg -i cloudflared-linux-amd64.deb
+    
+    # Or via package manager
+    sudo apt-get install cloudflared
+    ```
+  </Tab>
+</Tabs>
+
+Verify installation:
+
+```bash
+cloudflared version
+# cloudflared version 2024.2.1
+```
+
+## Using Remote Access
+
+### Analytics Dashboard
+
+Launch analytics with remote access:
+
+```bash
+npx claude-code-templates@latest --analytics --tunnel
+```
+
+**Output:**
+```
+🚀 Starting Claude Code Analytics Dashboard...
+🚀 Creating secure tunnel...
+
+╔════════════════════════════════════════════════════════════╗
+║                                                            ║
+║             🌍 CLOUDFLARE TUNNEL ACTIVE                    ║
+║                                                            ║
+║   🔗 https://abc-def-ghi.trycloudflare.com                ║
+║                                                            ║
+║   🔒 This tunnel is private and secure - only             ║
+║      accessible by you                                     ║
+║                                                            ║
+╚════════════════════════════════════════════════════════════╝
+
+📊 Analytics running locally: http://localhost:3333
+```
+
+Share the `trycloudflare.com` URL to access from:
+- Mobile devices
+- Remote machines
+- Team members (temporary access)
+
+### Chat Interface
+
+Mobile-optimized chat viewer with tunnel:
+
+```bash
+npx claude-code-templates@latest --chats --tunnel
+```
+
+**Output:**
+```
+💬 Starting Claude Code Chat Interface...
+☁️  Cloudflare Tunnel ready: https://xyz-123-abc.trycloudflare.com
+
+📱 Local access: http://localhost:3334
+☁️  Remote access: https://xyz-123-abc.trycloudflare.com
+
+🌐 Opening remote URL: https://xyz-123-abc.trycloudflare.com
+```
+
+The remote URL opens automatically in your default browser.
+
+### 2025 Year in Review
+
+Share your usage statistics:
+
+```bash
+npx claude-code-templates@latest --2025 --tunnel
+```
+
+## How It Works
+
+### Tunnel Architecture
+
+Cloudflare Tunnel creates a secure connection:
+
+```
+Your Machine                    Cloudflare Edge           Internet
+┌─────────────────┐            ┌────────────────┐       ┌─────────┐
+│ Dashboard       │            │                │       │         │
+│ localhost:3333  │<─────────>│  Tunnel Proxy  │<─────>│ Browser │
+│                 │   WebSocket│                │ HTTPS │         │
+└─────────────────┘            └────────────────┘       └─────────┘
+```
+
+**Key features:**
+- **No port forwarding** required
+- **No firewall changes** needed
+- **Automatic HTTPS** with valid certificates
+- **WebSocket support** for real-time updates
+
+### Implementation
+
+The tunnel launcher (from `src/analytics.js` and `src/chats-mobile.js`):
+
+```javascript
+async startCloudflareTunnel() {
+  // Check if cloudflared is installed
+  const checkProcess = spawn('cloudflared', ['version'], { stdio: 'pipe' });
+  
+  // Start tunnel
+  this.cloudflareProcess = spawn('cloudflared', [
+    'tunnel',
+    '--url', `http://localhost:${this.port}`,
+    '--no-autoupdate'
+  ]);
+  
+  // Parse tunnel URL from output
+  this.cloudflareProcess.stderr.on('data', (data) => {
+    const output = data.toString();
+    const urlMatch = output.match(/https:\/\/[a-zA-Z0-9.-]+\.trycloudflare\.com/);
+    
+    if (urlMatch) {
+      const tunnelUrl = urlMatch[0];
+      console.log(`☁️  Cloudflare Tunnel ready: ${tunnelUrl}`);
+    }
+  });
+}
+```
+
+### URL Format
+
+Tunnel URLs follow the pattern:
+```
+https://{random-slug}.trycloudflare.com
+```
+
+Examples:
+- `https://abc-def-ghi.trycloudflare.com`
+- `https://xyz-123-abc.trycloudflare.com`
+- `https://quick-fire-light.trycloudflare.com`
+
+<Warning>
+  Tunnel URLs are **randomly generated** each time. Don't bookmark them - they won't work after the tunnel closes.
+</Warning>
+
+## Mobile Access
+
+Access dashboards from your phone or tablet:
+
+<Steps>
+  <Step title="Start Dashboard with Tunnel">
+    ```bash
+    npx claude-code-templates@latest --chats --tunnel
+    ```
+  </Step>
+  
+  <Step title="Copy Tunnel URL">
+    ```
+    ☁️  Remote access: https://xyz-123-abc.trycloudflare.com
+    ```
+  </Step>
+  
+  <Step title="Open on Mobile">
+    - Send URL to yourself (Slack, email, SMS)
+    - Scan QR code (if using `--qr` flag)
+    - Type URL directly in mobile browser
+  </Step>
+</Steps>
+
+### Mobile Optimization
+
+The chat interface is optimized for mobile:
+
+```css
+/* From chats-mobile.js */
+@media (max-width: 768px) {
+  .conversation-card {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .message-content {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+```
+
+**Mobile features:**
+- Responsive layouts
+- Touch-optimized controls
+- Swipe gestures
+- Auto-scrolling conversations
+
+## Security
+
+### Tunnel Privacy
+
+<Info>
+  **Free Cloudflare Tunnels are:**
+  - Private (require full random URL)
+  - Temporary (expire when you close the tunnel)
+  - Not indexed by search engines
+  - Not guessable (URLs have high entropy)
+</Info>
+
+However, anyone with the URL can access the dashboard while the tunnel is active.
+
+### Best Practices
+
+**DO:**
+- ✅ Use tunnels for temporary access
+- ✅ Share URLs through private channels (Slack DM, encrypted email)
+- ✅ Close tunnel when done (`Ctrl+C` in terminal)
+- ✅ Use local access (`localhost`) when possible
+
+**DON'T:**
+- ❌ Share tunnel URLs publicly
+- ❌ Post tunnel URLs on social media
+- ❌ Leave tunnels running indefinitely
+- ❌ Use tunnels for sensitive production data
+
+### Protecting Sensitive Data
+
+If dashboards show sensitive information:
+
+```bash
+# 1. Don't use --tunnel flag
+npx claude-code-templates@latest --analytics
+
+# 2. Access via localhost only
+# Open: http://localhost:3333
+
+# 3. Or use SSH tunneling for secure remote access
+ssh -L 3333:localhost:3333 user@remote-machine
+```
+
+## Advanced Usage
+
+### Custom Tunnel Configuration
+
+Cloudflared supports additional options:
+
+```bash
+# Custom tunnel with specific hostname
+cloudflared tunnel --url http://localhost:3333 --hostname custom-name.trycloudflare.com
+
+# With authentication
+cloudflared tunnel --url http://localhost:3333 --credentials-file /path/to/credentials.json
+```
+
+Modify the launcher in `src/analytics.js` to add custom flags:
+
+```javascript
+this.cloudflareProcess = spawn('cloudflared', [
+  'tunnel',
+  '--url', `http://localhost:${this.port}`,
+  '--no-autoupdate',
+  // Add custom flags here
+  '--protocol', 'http2',
+  '--compression-quality', '5'
+]);
+```
+
+### Persistent Named Tunnels
+
+For longer-term access, create a named tunnel:
+
+```bash
+# Login to Cloudflare
+cloudflared login
+
+# Create named tunnel
+cloudflared tunnel create claude-analytics
+
+# Configure tunnel
+cat > ~/.cloudflared/config.yml <<EOF
+tunnel: claude-analytics
+credentials-file: /path/to/credentials.json
+
+ingress:
+  - hostname: analytics.yourdomain.com
+    service: http://localhost:3333
+  - service: http_status:404
+EOF
+
+# Run named tunnel
+cloudflared tunnel run claude-analytics
+```
+
+**Benefits:**
+- Consistent URL
+- Custom domain
+- Access control
+- Load balancing
+
+<Info>
+  Named tunnels require a Cloudflare account and domain. Free tier is sufficient for personal use.
+</Info>
+
+### Tunnel Monitoring
+
+Monitor tunnel status:
+
+```bash
+# Check tunnel process
+ps aux | grep cloudflared
+
+# View tunnel logs
+cloudflared tunnel info claude-analytics
+
+# List active tunnels
+cloudflared tunnel list
+```
+
+## Troubleshooting
+
+### Tunnel Not Starting
+
+```
+❌ Error: cloudflared command not found
+```
+
+**Solutions:**
+1. Install cloudflared (see Setup section)
+2. Add to PATH:
+   ```bash
+   export PATH="$PATH:/path/to/cloudflared"
+   ```
+3. Use full path in scripts
+
+### No Tunnel URL Displayed
+
+```
+🚀 Creating secure tunnel...
+[cloudflared] ... (output but no URL)
+```
+
+**Debugging:**
+```bash
+# Test cloudflared manually
+cloudflared tunnel --url http://localhost:3333
+
+# Check for errors in output
+# Look for firewall/network issues
+```
+
+### Tunnel Disconnects Frequently
+
+**Causes:**
+- Network instability
+- Firewall blocking WebSocket connections
+- ISP restrictions
+
+**Solutions:**
+```bash
+# Use HTTP/2 protocol (more stable)
+cloudflared tunnel --url http://localhost:3333 --protocol http2
+
+# Increase heartbeat interval
+cloudflared tunnel --url http://localhost:3333 --heartbeat-interval 30s
+```
+
+### WebSocket Errors
+
+```
+WebSocket connection failed: Error during WebSocket handshake
+```
+
+Cloudflare Tunnel supports WebSocket by default, but check:
+
+```bash
+# Verify cloudflared version (ensure latest)
+cloudflared version
+
+# Update if needed
+brew upgrade cloudflared  # macOS
+```
+
+## Alternatives to Tunnels
+
+### SSH Port Forwarding
+
+For secure remote access without Cloudflare:
+
+```bash
+# On remote machine
+ssh -R 3333:localhost:3333 user@remote-server
+
+# Or reverse tunnel
+ssh -L 3333:localhost:3333 user@remote-machine
+```
+
+### VPN Access
+
+Access via VPN:
+
+```bash
+# Connect to VPN
+sudo openvpn --config company.ovpn
+
+# Start dashboard (local only)
+npx claude-code-templates@latest --analytics
+
+# Access via VPN IP
+http://10.0.0.5:3333
+```
+
+### ngrok Alternative
+
+Similar tunnel service:
+
+```bash
+# Install ngrok
+brew install ngrok  # macOS
+
+# Start tunnel
+ngrok http 3333
+```
+
+## Examples
+
+### Monitor from Mobile While Coding
+
+```bash
+# On development machine
+npx claude-code-templates@latest --analytics --tunnel
+
+# Copy URL to phone
+# Monitor Claude Code activity in real-time from mobile
+```
+
+### Share Demo with Team
+
+```bash
+# Start chat interface with tunnel
+npx claude-code-templates@latest --chats --tunnel
+
+# Share URL in Slack:
+# "Check out this conversation: https://xyz.trycloudflare.com"
+```
+
+### Remote Debugging
+
+```bash
+# Developer 1: Start analytics with tunnel
+npx claude-code-templates@latest --analytics --tunnel
+
+# Developer 2: Access from home
+# Open tunnel URL
+# See real-time conversation state and debug issues
+```
+
+## Performance Considerations
+
+### Latency
+
+Cloudflare Tunnel adds minimal latency:
+- **Local**: Less than 1ms
+- **Tunnel**: 10-50ms (depending on location)
+- **WebSocket**: Real-time updates still feel instant
+
+### Bandwidth
+
+Analytics dashboard bandwidth usage:
+- **Initial load**: ~500KB (HTML, CSS, JS)
+- **WebSocket updates**: ~1-5KB per message
+- **Polling**: ~10KB per refresh
+
+### Scaling
+
+Free tunnels support:
+- Unlimited bandwidth
+- 100+ concurrent connections
+- WebSocket connections
+
+For higher traffic, consider named tunnels with load balancing.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Creating Components" icon="puzzle-piece" href="/advanced/creating-components">
+    Build custom agents, commands, and MCPs
+  </Card>
+  <Card title="Sandbox Execution" icon="box" href="/advanced/sandbox-execution">
+    Run Claude Code in isolated environments
+  </Card>
+</CardGroup>

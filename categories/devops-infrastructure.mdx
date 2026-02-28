@@ -1,0 +1,676 @@
+---
+title: DevOps & Infrastructure Components
+description: Cloud platforms, Kubernetes, Terraform, CI/CD, and infrastructure automation specialists
+---
+
+# DevOps & Infrastructure Components
+
+The DevOps & Infrastructure category includes specialists for cloud platforms, container orchestration, infrastructure as code, CI/CD pipelines, and site reliability engineering.
+
+<Card title="Browse DevOps Components" icon="globe" href="https://aitmpl.com/?category=devops-infrastructure">
+  Explore all DevOps and infrastructure components at **aitmpl.com**
+</Card>
+
+## Quick Install
+
+```bash
+# Install DevOps essentials
+npx claude-code-templates@latest \
+  --agent devops-engineer \
+  --agent cloud-architect \
+  --agent kubernetes-specialist \
+  --agent terraform-engineer
+
+# Or install the DevOps template
+npx claude-code-templates@latest --template devops-pipeline
+```
+
+## Core DevOps Agents
+
+<CardGroup cols={2}>
+  <Card title="DevOps Engineer" icon="gear">
+    Complete DevOps specialist for infrastructure and deployment
+    
+    **Expertise:**
+    - CI/CD pipeline design and implementation
+    - Container orchestration (Docker, Kubernetes)
+    - Infrastructure as Code (Terraform, Pulumi)
+    - Cloud platforms (AWS, Azure, GCP)
+    - Monitoring and observability
+    - Incident response
+    
+    **Technologies:**
+    - Docker, Kubernetes, Helm
+    - GitHub Actions, GitLab CI, Jenkins
+    - Terraform, Ansible, Pulumi
+    - Prometheus, Grafana, DataDog
+    - AWS/Azure/GCP CLIs and SDKs
+    
+    ```bash
+    npx claude-code-templates@latest --agent devops-engineer
+    ```
+    
+    **Example Usage:**
+    ```
+    @devops-engineer Set up a production-ready Kubernetes cluster
+    with auto-scaling, monitoring, and CI/CD pipeline for our
+    microservices application.
+    ```
+  </Card>
+  
+  <Card title="Cloud Architect" icon="cloud">
+    Multi-cloud architecture and infrastructure design
+    
+    **Expertise:**
+    - Cloud architecture patterns
+    - Multi-cloud and hybrid cloud
+    - Cost optimization
+    - Security and compliance
+    - High availability design
+    - Disaster recovery
+    
+    **Platforms:**
+    - AWS (EC2, S3, RDS, Lambda, ECS, EKS)
+    - Azure (VMs, Blob Storage, SQL, Functions, AKS)
+    - GCP (Compute Engine, Cloud Storage, Cloud Run, GKE)
+    
+    ```bash
+    npx claude-code-templates@latest --agent cloud-architect
+    ```
+  </Card>
+  
+  <Card title="Platform Engineer" icon="layer-group">
+    Platform engineering and developer experience
+    
+    **Expertise:**
+    - Internal developer platforms
+    - Developer tooling
+    - Self-service infrastructure
+    - Platform observability
+    - Golden paths
+    
+    ```bash
+    npx claude-code-templates@latest --agent platform-engineer
+    ```
+  </Card>
+  
+  <Card title="SRE Engineer" icon="shield">
+    Site Reliability Engineering for production systems
+    
+    **Expertise:**
+    - Service Level Objectives (SLOs)
+    - Incident response and postmortems
+    - Reliability engineering
+    - Capacity planning
+    - Automation and toil reduction
+    - Production debugging
+    
+    ```bash
+    npx claude-code-templates@latest --agent sre-engineer
+    ```
+  </Card>
+</CardGroup>
+
+## Container Orchestration
+
+<CardGroup cols={2}>
+  <Card title="Kubernetes Specialist" icon="dharmachakra">
+    Kubernetes deployment, scaling, and operations
+    
+    **Expertise:**
+    - Kubernetes architecture
+    - Deployments, StatefulSets, DaemonSets
+    - Services, Ingress, NetworkPolicies
+    - ConfigMaps and Secrets management
+    - Helm charts and Kustomize
+    - Service mesh (Istio, Linkerd)
+    - Autoscaling (HPA, VPA, Cluster Autoscaler)
+    - Monitoring and logging
+    
+    **Use cases:**
+    - Microservices deployment
+    - Stateful application management
+    - Multi-tenant clusters
+    - Blue-green and canary deployments
+    
+    ```bash
+    npx claude-code-templates@latest --agent kubernetes-specialist
+    ```
+    
+    **Example Usage:**
+    ```
+    @kubernetes-specialist Deploy our microservices to Kubernetes
+    with:
+    - Horizontal Pod Autoscaling based on CPU and custom metrics
+    - Ingress with TLS termination
+    - Network policies for pod-to-pod communication
+    - Prometheus monitoring
+    ```
+  </Card>
+  
+  <Card title="Microservices Architect" icon="cubes">
+    Microservices architecture and design patterns
+    
+    ```bash
+    npx claude-code-templates@latest --agent microservices-architect
+    ```
+  </Card>
+</CardGroup>
+
+## Infrastructure as Code
+
+<Tabs>
+  <Tab title="Terraform">
+    ### Terraform Specialists
+    
+    <CardGroup cols={2}>
+      <Card title="Terraform Engineer" icon="code">
+        Infrastructure as Code with Terraform
+        
+        **Expertise:**
+        - Terraform configuration
+        - Module development
+        - State management
+        - Multi-environment setups
+        - Provider configuration
+        - Best practices
+        
+        ```bash
+        npx claude-code-templates@latest --agent terraform-engineer
+        ```
+      </Card>
+      
+      <Card title="Terraform Specialist" icon="file-code">
+        Advanced Terraform patterns and optimization
+        
+        ```bash
+        npx claude-code-templates@latest --agent terraform-specialist
+        ```
+      </Card>
+      
+      <Card title="Terragrunt Expert" icon="layer-group">
+        Terragrunt for DRY Terraform configurations
+        
+        ```bash
+        npx claude-code-templates@latest --agent terragrunt-expert
+        ```
+      </Card>
+      
+      <Card title="Terraform IaC Reviewer" icon="magnifying-glass">
+        Review Terraform code for best practices
+        
+        ```bash
+        npx claude-code-templates@latest --agent terraform-iac-reviewer
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Azure">
+    ### Azure Infrastructure Specialists
+    
+    <CardGroup cols={2}>
+      <Card title="Azure Principal Architect" icon="microsoft">
+        Azure cloud architecture and best practices
+        
+        **Expertise:**
+        - Azure architecture patterns
+        - Landing zones
+        - Security and compliance
+        - Cost optimization
+        - Migration strategies
+        
+        ```bash
+        npx claude-code-templates@latest --agent azure-principal-architect
+        ```
+      </Card>
+      
+      <Card title="Azure Infrastructure Engineer" icon="server">
+        Azure infrastructure deployment and management
+        
+        ```bash
+        npx claude-code-templates@latest --agent azure-infra-engineer
+        ```
+      </Card>
+      
+      <Card title="Azure SaaS Architect" icon="cloud">
+        Azure SaaS application architecture
+        
+        ```bash
+        npx claude-code-templates@latest --agent azure-saas-architect
+        ```
+      </Card>
+      
+      <Card title="Azure IaC Exporter" icon="file-export">
+        Export existing Azure infrastructure to IaC
+        
+        ```bash
+        npx claude-code-templates@latest --agent azure-iac-exporter
+        ```
+      </Card>
+      
+      <Card title="Azure IaC Generator" icon="wand-magic-sparkles">
+        Generate Azure IaC from requirements
+        
+        ```bash
+        npx claude-code-templates@latest --agent azure-iac-generator
+        ```
+      </Card>
+      
+      <Card title="Terraform Azure Planning" icon="map">
+        Plan Azure infrastructure with Terraform
+        
+        ```bash
+        npx claude-code-templates@latest --agent terraform-azure-planning
+        ```
+      </Card>
+      
+      <Card title="Terraform Azure Implement" icon="hammer">
+        Implement Azure infrastructure with Terraform
+        
+        ```bash
+        npx claude-code-templates@latest --agent terraform-azure-implement
+        ```
+      </Card>
+      
+      <Card title="Bicep Plan" icon="pencil">
+        Plan Azure infrastructure with Bicep
+        
+        ```bash
+        npx claude-code-templates@latest --agent bicep-plan
+        ```
+      </Card>
+      
+      <Card title="Bicep Implement" icon="code">
+        Implement Azure infrastructure with Bicep
+        
+        ```bash
+        npx claude-code-templates@latest --agent bicep-implement
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+## Deployment & CI/CD
+
+<CardGroup cols={2}>
+  <Card title="Deployment Engineer" icon="rocket">
+    Deployment automation and release management
+    
+    **Expertise:**
+    - Deployment strategies (blue-green, canary, rolling)
+    - Release automation
+    - Rollback procedures
+    - Feature flags
+    - Progressive delivery
+    
+    ```bash
+    npx claude-code-templates@latest --agent deployment-engineer
+    ```
+  </Card>
+  
+  <Card title="Vercel Deployment Specialist" icon="triangle">
+    Vercel platform deployment and optimization
+    
+    ```bash
+    npx claude-code-templates@latest --agent vercel-deployment-specialist
+    ```
+  </Card>
+</CardGroup>
+
+## Monitoring & Operations
+
+<CardGroup cols={2}>
+  <Card title="Monitoring Specialist" icon="chart-line">
+    Observability, monitoring, and alerting
+    
+    **Expertise:**
+    - Metrics collection (Prometheus, DataDog, CloudWatch)
+    - Logging (ELK, Loki, CloudWatch Logs)
+    - Distributed tracing (Jaeger, Zipkin, Tempo)
+    - Dashboards and visualization
+    - Alerting and on-call
+    - SLO/SLI definition
+    
+    ```bash
+    npx claude-code-templates@latest --agent monitoring-specialist
+    ```
+  </Card>
+  
+  <Card title="Incident Responder" icon="fire-extinguisher">
+    Incident response and troubleshooting
+    
+    ```bash
+    npx claude-code-templates@latest --agent incident-responder
+    ```
+  </Card>
+  
+  <Card title="DevOps Incident Responder" icon="bell">
+    DevOps-focused incident management
+    
+    ```bash
+    npx claude-code-templates@latest --agent devops-incident-responder
+    ```
+  </Card>
+  
+  <Card title="DevOps Troubleshooter" icon="screwdriver-wrench">
+    Production troubleshooting and debugging
+    
+    ```bash
+    npx claude-code-templates@latest --agent devops-troubleshooter
+    ```
+  </Card>
+</CardGroup>
+
+## Security Engineering
+
+<CardGroup cols={2}>
+  <Card title="Security Engineer" icon="shield">
+    Infrastructure security and compliance
+    
+    **Expertise:**
+    - Security architecture
+    - Compliance (SOC2, HIPAA, GDPR)
+    - Vulnerability management
+    - Security automation
+    - Penetration testing
+    - Zero trust architecture
+    
+    ```bash
+    npx claude-code-templates@latest --agent security-engineer
+    ```
+  </Card>
+  
+  <Card title="Network Engineer" icon="network-wired">
+    Network architecture and security
+    
+    ```bash
+    npx claude-code-templates@latest --agent network-engineer
+    ```
+  </Card>
+</CardGroup>
+
+## Specialized Infrastructure Agents
+
+<Tabs>
+  <Tab title="Azure Specialized">
+    <CardGroup cols={2}>
+      <Card title="Azure Logic Apps Expert" icon="diagram-project">
+        Azure Logic Apps integration and automation
+        ```bash
+        npx claude-code-templates@latest --agent azure-logic-apps-expert
+        ```
+      </Card>
+      <Card title="Azure Verified Modules Bicep" icon="check-circle">
+        Azure Verified Modules with Bicep
+        ```bash
+        npx claude-code-templates@latest --agent azure-verified-modules-bicep
+        ```
+      </Card>
+      <Card title="Azure Verified Modules Terraform" icon="check-circle">
+        Azure Verified Modules with Terraform
+        ```bash
+        npx claude-code-templates@latest --agent azure-verified-modules-terraform
+        ```
+      </Card>
+      <Card title="M365 Admin" icon="microsoft">
+        Microsoft 365 administration
+        ```bash
+        npx claude-code-templates@latest --agent m365-admin
+        ```
+      </Card>
+      <Card title="Kusto Assistant" icon="database">
+        Azure Data Explorer (Kusto) queries
+        ```bash
+        npx claude-code-templates@latest --agent kusto-assistant
+        ```
+      </Card>
+      <Card title="Windows Infrastructure Admin" icon="windows">
+        Windows server infrastructure
+        ```bash
+        npx claude-code-templates@latest --agent windows-infra-admin
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Migration">
+    <CardGroup cols={2}>
+      <Card title="ARM Migration" icon="right-left">
+        Migrate from ARM templates to Bicep or Terraform
+        ```bash
+        npx claude-code-templates@latest --agent arm-migration
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+  
+  <Tab title="Other">
+    <CardGroup cols={2}>
+      <Card title="Apify Integration Expert" icon="spider">
+        Apify web scraping and automation
+        ```bash
+        npx claude-code-templates@latest --agent apify-integration-expert
+        ```
+      </Card>
+      <Card title="Neo4j Docker Client Generator" icon="diagram-project">
+        Neo4j graph database Docker setup
+        ```bash
+        npx claude-code-templates@latest --agent neo4j-docker-client-generator
+        ```
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+## DevOps Workflows
+
+### Complete CI/CD Pipeline
+
+```bash
+# 1. Infrastructure setup
+@terraform-engineer Create Terraform configuration for:
+- Kubernetes cluster (EKS/AKS/GKE)
+- Container registry
+- Monitoring stack
+- Load balancer
+
+# 2. Kubernetes deployment
+@kubernetes-specialist Create Kubernetes manifests for:
+- Microservices deployment
+- Ingress configuration
+- ConfigMaps and Secrets
+- HorizontalPodAutoscaler
+
+# 3. CI/CD pipeline
+@devops-engineer Set up GitHub Actions workflow for:
+- Build and test
+- Docker image build and push
+- Kubernetes deployment
+- Automated rollback on failure
+
+# 4. Monitoring
+@monitoring-specialist Set up:
+- Prometheus metrics
+- Grafana dashboards
+- Alert rules for SLOs
+- On-call rotation
+```
+
+### Infrastructure as Code Workflow
+
+```bash
+# 1. Plan infrastructure
+@cloud-architect Design AWS infrastructure for microservices
+
+# 2. Generate Terraform
+@terraform-engineer Create Terraform modules for:
+- VPC and networking
+- EKS cluster
+- RDS database
+- S3 buckets
+- IAM roles
+
+# 3. Review
+@terraform-iac-reviewer Review Terraform code for best practices
+
+# 4. Apply
+@devops-engineer Apply Terraform and verify infrastructure
+```
+
+### Kubernetes Migration
+
+```bash
+# 1. Architecture
+@microservices-architect Design microservices architecture
+
+# 2. Containerization
+@devops-engineer Containerize existing applications
+
+# 3. Kubernetes setup
+@kubernetes-specialist:
+- Create Kubernetes manifests
+- Set up namespaces and RBAC
+- Configure networking
+- Set up persistent storage
+
+# 4. Migration
+@deployment-engineer Plan and execute migration with zero downtime
+```
+
+## Best Practices
+
+### 1. Infrastructure as Code
+
+```bash
+# Version control everything
+@terraform-engineer Store all infrastructure as code in Git
+
+# Use modules for reusability
+@terraform-engineer Create reusable Terraform modules
+
+# Implement GitOps
+@devops-engineer Set up ArgoCD for Kubernetes deployments
+```
+
+### 2. Observability
+
+```bash
+# Three pillars of observability
+@monitoring-specialist Set up:
+- Metrics (Prometheus)
+- Logs (Loki/ELK)
+- Traces (Tempo/Jaeger)
+
+# Define SLOs
+@sre-engineer Define Service Level Objectives:
+- Availability: 99.9%
+- Latency: p95 < 200ms
+- Error rate: < 0.1%
+```
+
+### 3. Security
+
+```bash
+# Security scanning
+@security-engineer Implement:
+- Container image scanning
+- Infrastructure vulnerability scanning
+- Secrets management (Vault, AWS Secrets Manager)
+- Network policies
+
+# Compliance
+@security-engineer Ensure compliance with SOC2/HIPAA/GDPR
+```
+
+### 4. Cost Optimization
+
+```bash
+# Right-sizing
+@cloud-architect Analyze and optimize resource usage
+
+# Auto-scaling
+@kubernetes-specialist Implement HPA and cluster autoscaling
+
+# Reserved instances
+@cloud-architect Purchase reserved instances for predictable workloads
+```
+
+## Real-World Examples
+
+### Example 1: Microservices on Kubernetes
+
+```bash
+# Install specialists
+npx claude-code-templates@latest \
+  --agent kubernetes-specialist \
+  --agent microservices-architect \
+  --agent monitoring-specialist
+
+# Deploy
+@microservices-architect Design service boundaries and communication
+@kubernetes-specialist Deploy services with:
+- Service mesh (Istio) for traffic management
+- mTLS for secure communication
+- Distributed tracing
+- Canary deployments
+@monitoring-specialist Set up observability stack
+```
+
+### Example 2: Multi-Cloud Infrastructure
+
+```bash
+# Install cloud specialists
+npx claude-code-templates@latest \
+  --agent cloud-architect \
+  --agent terraform-engineer \
+  --agent devops-engineer
+
+# Design and implement
+@cloud-architect Design multi-cloud architecture with:
+- Primary workloads on AWS
+- DR site on Azure
+- CDN on Cloudflare
+
+@terraform-engineer Implement with Terraform Cloud
+```
+
+### Example 3: SRE Implementation
+
+```bash
+# Install SRE tools
+npx claude-code-templates@latest \
+  --agent sre-engineer \
+  --agent monitoring-specialist \
+  --agent incident-responder
+
+# Implement SRE practices
+@sre-engineer:
+- Define SLOs and error budgets
+- Set up monitoring and alerting
+- Create runbooks
+- Implement chaos engineering
+```
+
+## DevOps Template
+
+```bash
+npx claude-code-templates@latest --template devops-pipeline
+```
+
+**Includes:**
+- DevOps engineer agent
+- Cloud architect agent
+- Kubernetes specialist agent
+- Terraform engineer agent
+- Monitoring specialist agent
+- Deployment automation
+- Infrastructure monitoring
+
+## Next Steps
+
+- [Browse all DevOps components](https://aitmpl.com/?category=devops-infrastructure)
+- [View development team](/categories/development-team)
+- [Explore database components](/categories/database)
+- [Check out security components](/categories/security)

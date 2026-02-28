@@ -1,0 +1,182 @@
+---
+title: Getting Started with Contributing
+description: Learn how to start contributing to Claude Code Templates
+---
+
+We welcome contributions to Claude Code Templates! This guide will help you get started with contributing components, templates, and improvements to the project.
+
+## Quick Start
+
+<Steps>
+  <Step title="Fork and Clone">
+    ```bash
+    # Fork the repository on GitHub
+    # Then clone your fork
+    git clone https://github.com/your-username/claude-code-templates.git
+    cd claude-code-templates
+    ```
+  </Step>
+  
+  <Step title="Install Dependencies">
+    ```bash
+    # Navigate to CLI tool directory
+    cd cli-tool
+    
+    # Install dependencies
+    npm install
+    
+    # Link for local testing
+    npm link
+    ```
+  </Step>
+  
+  <Step title="Create Feature Branch">
+    ```bash
+    git checkout -b feature/your-contribution
+    ```
+  </Step>
+  
+  <Step title="Make Your Changes">
+    Follow the guidelines in this documentation for your specific contribution type.
+  </Step>
+</Steps>
+
+## What Can You Contribute?
+
+There are several ways to contribute to the project:
+
+### Individual Components
+
+The easiest way to contribute is by adding individual components:
+
+- **Agents** (600+) - AI specialists for specific domains
+- **Commands** (200+) - Custom slash commands for workflows  
+- **MCPs** (55+) - External service integrations
+- **Settings** (60+) - Claude Code configuration files
+- **Hooks** (39+) - Automation triggers
+- **Skills** - Modular capabilities using Anthropic's progressive disclosure pattern
+
+### Complete Templates
+
+Templates are complete project configurations that include `CLAUDE.md`, `.claude/*` files, and `.mcp.json`.
+
+### Additional Tools
+
+For advanced contributors, you can improve CLI tools like:
+- Analytics dashboard
+- Health check diagnostics
+- Chat monitor interface
+
+## Before You Start
+
+<Info>
+  Read our [Code of Conduct](https://github.com/davila7/claude-code-templates/blob/main/CODE_OF_CONDUCT.md) to ensure a respectful and inclusive environment for all contributors.
+</Info>
+
+### Browse Existing Components
+
+Before creating a new component:
+
+1. Visit [aitmpl.com](https://aitmpl.com) to browse existing components
+2. Check if a similar component already exists
+3. Review successful components for structure reference
+4. Understand the naming conventions and patterns
+
+### Prerequisites
+
+- **Node.js 14+** for the CLI tool
+- **npm or yarn** for package management
+- **Git** for version control
+- **Python 3.x** (optional, for component catalog generation)
+
+## Your First Contribution
+
+<Warning>
+  All components must be reviewed using the `component-reviewer` agent before submitting. See [Component Guidelines](/contributing/component-guidelines) for details.
+</Warning>
+
+A good first contribution is adding a simple agent or command:
+
+```bash
+# Create a new agent file
+cd cli-tool/components/agents/domain-experts/
+touch your-agent-name.md
+```
+
+See the [Adding Components](/contributing/adding-components) guide for detailed instructions.
+
+## Testing Your Changes
+
+Before submitting a pull request:
+
+```bash
+# Test component installation
+npx claude-code-templates@latest --agent your-agent --dry-run
+
+# Run test suite
+npm test
+```
+
+See the [Testing](/contributing/testing) guide for comprehensive testing workflows.
+
+## Getting Help
+
+### Community Support
+
+- **GitHub Issues** - [Report bugs or request features](https://github.com/davila7/claude-code-templates/issues)
+- **GitHub Discussions** - [Join community discussions](https://github.com/davila7/claude-code-templates/discussions)  
+- **Documentation** - [Complete guides at docs.aitmpl.com](https://docs.aitmpl.com/)
+
+### Quick Start Guides
+
+- Browse existing components at [aitmpl.com](https://aitmpl.com)
+- Check component examples in the repository
+- Review successful templates for best practices
+
+## What We're Looking For
+
+### High Priority Components
+
+- **Security Agents** - Security auditing, vulnerability scanning
+- **Performance Commands** - Optimization, profiling, monitoring
+- **Cloud MCPs** - AWS, Azure, GCP integrations
+- **Framework Agents** - React, Vue, Angular, Next.js specialists
+
+### High Priority Templates
+
+- **Modern Frameworks** - Svelte, SvelteKit, Astro, Qwik
+- **Backend Frameworks** - NestJS, Fastify, Hono, tRPC
+- **Full-Stack** - T3 Stack, create-remix-app, SvelteKit
+- **Mobile** - React Native, Expo, Flutter
+
+### Medium Priority Tools
+
+- **Analytics Enhancements** - Better visualizations, export options
+- **Chat Monitor Features** - Search, filtering, conversation history
+- **Health Check Improvements** - More diagnostic categories, fix suggestions
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Adding Components" icon="puzzle-piece" href="/contributing/adding-components">
+    Learn how to create agents, commands, MCPs, hooks, and settings
+  </Card>
+  <Card title="Component Guidelines" icon="check-circle" href="/contributing/component-guidelines">
+    Best practices and quality standards for components
+  </Card>
+  <Card title="Testing Workflow" icon="vial" href="/contributing/testing">
+    Complete testing guide before submitting contributions
+  </Card>
+  <Card title="Publishing Workflow" icon="rocket" href="/contributing/publishing">
+    Learn the process for publishing to npm
+  </Card>
+</CardGroup>
+
+## Recognition
+
+All contributors are recognized in:
+- GitHub Contributors page
+- Release Notes for significant contributions
+- Community Discussions for helpful contributions
+
+Thank you for helping make Claude Code Templates better for everyone!
